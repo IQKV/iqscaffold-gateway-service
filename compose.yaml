@@ -48,7 +48,7 @@ services:
     image: wiremock/wiremock:3-alpine
     container_name: iqscaffold-mock-lead-service-dev
     ports:
-      - "8084:8080"
+      - "8080:8080"
     networks:
       - gateway-network
     healthcheck:
@@ -65,7 +65,7 @@ services:
     image: wiremock/wiremock:3-alpine
     container_name: iqscaffold-mock-pipeline-service-dev
     ports:
-      - "8085:8080"
+      - "8080:8080"
     networks:
       - gateway-network
     healthcheck:
@@ -82,7 +82,7 @@ services:
     image: wiremock/wiremock:3-alpine
     container_name: iqscaffold-mock-contact-service-dev
     ports:
-      - "8083:8080"
+      - "8080:8080"
     networks:
       - gateway-network
     healthcheck:
@@ -115,9 +115,9 @@ services:
 
       # Gateway Routing Configuration
       IQSCAFFOLD_GATEWAY_ROUTING_SERVICES_USER_SERVICE_URI: http://mock-user-service:8080
-      IQSCAFFOLD_GATEWAY_ROUTING_LEAD_SERVICE_URI: http://mock-lead-service:8084
-      IQSCAFFOLD_GATEWAY_ROUTING_PIPELINE_SERVICE_URI: http://mock-pipeline-service:8085
-      IQSCAFFOLD_GATEWAY_ROUTING_CONTACT_SERVICE_URI: http://mock-contact-service:8083
+      IQSCAFFOLD_GATEWAY_ROUTING_LEAD_SERVICE_URI: http://mock-lead-service:8080
+      IQSCAFFOLD_GATEWAY_ROUTING_PIPELINE_SERVICE_URI: http://mock-pipeline-service:8080
+      IQSCAFFOLD_GATEWAY_ROUTING_CONTACT_SERVICE_URI: http://mock-contact-service:8080
       USER_SERVICE_JWK_URI: http://mock-user-service:8080/.well-known/jwks.json
 
       # CORS Configuration

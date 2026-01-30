@@ -27,7 +27,7 @@ iqscaffold:
     routing:
       # API prefix configuration - keep /api prefix in local development
       api-prefix:
-        strip-count: 0  # Don't strip in local development
+        strip-count: ${API_STRIP_COUNT:0}  # Don't strip in local development
       services:
         user-service:
           connect-timeout: 10000  # Extended for development

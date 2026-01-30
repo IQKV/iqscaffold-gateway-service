@@ -179,7 +179,7 @@ iqscaffold:
       api-prefix:
         enabled: true
         prefix: /api
-        strip-count: 0  # Number of path segments to strip (0 = no stripping, 1 = strip first segment)
+        strip-count: ${API_STRIP_COUNT:0}  # Number of path segments to strip (0 = no stripping, 1 = strip first segment)
       services:
         user-service:
           uri: ${IQSCAFFOLD_GATEWAY_ROUTING_USER_SERVICE_URI:http://localhost:8080}

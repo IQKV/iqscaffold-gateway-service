@@ -33,7 +33,7 @@ iqscaffold:
     routing:
       # API prefix configuration - strip /api prefix in production (deployed on api.iqscaffold.com)
       api-prefix:
-        prefix: ""  # No prefix in production (api.iqscaffold.com already indicates API)
+        strip-count: ${API_STRIP_COUNT:1} # No prefix in production (api.iqscaffold.com already indicates API)
       services:
         user-service:
           uri: ${IQSCAFFOLD_GATEWAY_ROUTING_USER_SERVICE_URI}

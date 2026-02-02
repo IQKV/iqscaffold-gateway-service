@@ -51,13 +51,13 @@ class ServiceRegistryInitializerTest {
 
     verify(loadBalancingService).registerServiceInstances(
         eq("user-service"),
-        eq(List.of(URI.create("http://user-service:8080")))
+        eq(List.of(URI.create("http://iqscaffold-user-service:8080")))
     );
   }
 
   private IqScaffoldProperties createTestProperties() {
     var serviceProps = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties(
-        "http://user-service:8080", "/users/**", true, 5000, 30000, null
+        "http://iqscaffold-user-service:8080", "/users/**", true, 5000, 30000, null
     );
 
     var apiPrefix = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties(

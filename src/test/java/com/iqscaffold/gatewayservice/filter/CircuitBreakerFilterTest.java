@@ -277,7 +277,7 @@ class CircuitBreakerFilterTest {
 
   private IqScaffoldProperties createTestProperties() {
     var serviceProps = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties(
-        "http://user-service:8080", "/users/**", true, 5000, 30000, null
+        "http://iqscaffold-user-service:8080", "/users/**", true, 5000, 30000, null
     );
 
     var apiPrefix = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties(
@@ -377,7 +377,7 @@ class CircuitBreakerFilterTest {
 
   private IqScaffoldProperties createDisabledProperties() {
     var serviceProps = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties(
-        "http://user-service:8080", "/users/**", true, 5000, 30000, null
+        "http://iqscaffold-user-service:8080", "/users/**", true, 5000, 30000, null
     );
 
     var apiPrefix = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties(

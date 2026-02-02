@@ -202,7 +202,7 @@ class GatewayPropertiesTest {
     @DisplayName("Should fail validation when path is blank")
     void shouldFailValidationWhenPathIsBlank() {
       var serviceProperties = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties(
-          "http://user-service:8080",
+          "http://iqscaffold-user-service:8080",
           "",
           true,
           5000,
@@ -220,7 +220,7 @@ class GatewayPropertiesTest {
     @DisplayName("Should fail validation when connectTimeout is not positive")
     void shouldFailValidationWhenConnectTimeoutIsNotPositive() {
       var serviceProperties = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties(
-          "http://user-service:8080",
+          "http://iqscaffold-user-service:8080",
           "/users/**",
           true,
           0,
@@ -238,7 +238,7 @@ class GatewayPropertiesTest {
     @DisplayName("Should fail validation when responseTimeout is not positive")
     void shouldFailValidationWhenResponseTimeoutIsNotPositive() {
       var serviceProperties = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties(
-          "http://user-service:8080",
+          "http://iqscaffold-user-service:8080",
           "/users/**",
           true,
           5000,
@@ -584,7 +584,7 @@ class GatewayPropertiesTest {
     void shouldFailValidationWhenTokenValidationTimeoutIsNull() {
       var authProperties = new IqScaffoldProperties.GatewayProperties.SecurityProperties.AuthenticationProperties(
           true,
-          "http://user-service:8080",
+          "http://iqscaffold-user-service:8080",
           null,
           true
       );
@@ -1220,7 +1220,7 @@ class GatewayPropertiesTest {
 
   private IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties createValidServiceProperties() {
     return new IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties(
-        "http://user-service:8080",
+        "http://iqscaffold-user-service:8080",
         "/users/**",
         true,
         5000,
@@ -1259,7 +1259,7 @@ class GatewayPropertiesTest {
   private IqScaffoldProperties.GatewayProperties.SecurityProperties.AuthenticationProperties createValidAuthenticationProperties() {
     return new IqScaffoldProperties.GatewayProperties.SecurityProperties.AuthenticationProperties(
         true,
-        "http://user-service:8080",
+        "http://iqscaffold-user-service:8080",
         Duration.ofSeconds(5),
         true
     );

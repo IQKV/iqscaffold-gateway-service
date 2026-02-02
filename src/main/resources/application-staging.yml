@@ -33,13 +33,13 @@ iqscaffold:
     routing:
       services:
         user-service:
-          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_USER_SERVICE_URI:http://user-service:8080}
+          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_USER_SERVICE_URI:http://iqscaffold-user-service:8080}
     
     security:
       jwt:
-        jwk-set-uri: ${USER_SERVICE_JWK_URI:http://user-service:8080/.well-known/jwks.json}
+        jwk-set-uri: ${USER_SERVICE_JWK_URI:http://iqscaffold-user-service:8080/.well-known/jwks.json}
       authentication:
-        user-service-url: ${IQSCAFFOLD_GATEWAY_SECURITY_USER_SERVICE_URL:http://user-service:8080}
+        user-service-url: ${IQSCAFFOLD_GATEWAY_SECURITY_USER_SERVICE_URL:http://iqscaffold-user-service:8080}
     
     rate-limiting:
       redis:

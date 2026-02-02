@@ -818,7 +818,7 @@
           "description": "Local User Service JWK endpoint"
         },
         {
-          "value": "http://user-service:8080/.well-known/jwks.json",
+          "value": "http://iqscaffold-user-service:8080/.well-known/jwks.json",
           "description": "Docker/Kubernetes User Service JWK endpoint"
         },
         {

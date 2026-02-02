@@ -30,7 +30,7 @@ public class FeatureValidationService {
       final WebClient.Builder webClientBuilder,
       final FeatureUsageTrackingService usageTrackingService) {
     this.billingServiceClient = webClientBuilder
-        .baseUrl("http://billing-service")
+        .baseUrl("http://iqscaffold-billing-service")
         .build();
     this.usageTrackingService = usageTrackingService;
   }

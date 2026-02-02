@@ -45,9 +45,9 @@ class LoadBalancingServiceTest {
     // Arrange
     var serviceName = "user-service";
     var instances = List.of(
-        URI.create("http://user-service:8080"),
-        URI.create("http://billing-service:8080"),
-        URI.create("http://contact-service:8080")
+        URI.create("http://iqscaffold-user-service:8080"),
+        URI.create("http://iqscaffold-billing-service:8080"),
+        URI.create("http://iqscaffold-contact-service:8080")
     );
     loadBalancingService.registerServiceInstances(serviceName, instances);
 
@@ -122,8 +122,8 @@ class LoadBalancingServiceTest {
     // Arrange
     var serviceName = "user-service";
     var instances = List.of(
-        URI.create("http://user-service:8080"),
-        URI.create("http://billing-service:8080")
+        URI.create("http://iqscaffold-user-service:8080"),
+        URI.create("http://iqscaffold-billing-service:8080")
     );
 
     // Act

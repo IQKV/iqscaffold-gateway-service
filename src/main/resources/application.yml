@@ -193,7 +193,7 @@ iqscaffold:
             description: "Authentication and user management APIs"
             context-path: "user-service"
         billing-service:
-          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_BILLING_SERVICE_URI:http://billing-service:8080}
+          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_BILLING_SERVICE_URI:http://iqscaffold-billing-service:8080}
           path: /v1/**
           enabled: true
           connect-timeout: 5000
@@ -216,10 +216,10 @@ iqscaffold:
         issuer: iqscaffold-user-service
         audience: iqscaffold-services
         algorithm: RS256
-        jwk-set-uri: ${USER_SERVICE_JWK_URI:http://user-service:8080/.well-known/jwks.json}
+        jwk-set-uri: ${USER_SERVICE_JWK_URI:http://iqscaffold-user-service:8080/.well-known/jwks.json}
       authentication:
         enabled: true
-        user-service-url: ${IQSCAFFOLD_GATEWAY_SECURITY_USER_SERVICE_URL:http://user-service:8080}
+        user-service-url: ${IQSCAFFOLD_GATEWAY_SECURITY_USER_SERVICE_URL:http://iqscaffold-user-service:8080}
         token-validation-timeout: PT5S
         enable-user-context-propagation: true
       public-paths:

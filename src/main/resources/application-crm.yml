@@ -25,7 +25,7 @@ iqscaffold:
             description: "Sales pipeline and follow-up management"
             context-path: "pipeline-service"
         contact-service:
-          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_CONTACT_SERVICE_URI:http://contact-service:8080}
+          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_CONTACT_SERVICE_URI:http://iqscaffold-contact-service:8080}
           path: /v1/**
           enabled: true
           connect-timeout: 5000

@@ -66,7 +66,7 @@ class ApiDocumentationResourceTest {
     );
 
     var serviceProps = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties(
-        "http://user-service:8080", "/users/**", true, 5000, 30000, openApiProps
+        "http://iqscaffold-user-service:8080", "/users/**", true, 5000, 30000, openApiProps
     );
 
     var apiPrefix = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties(

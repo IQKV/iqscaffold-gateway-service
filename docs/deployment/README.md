@@ -57,7 +57,7 @@ helm upgrade --install --atomic --wait --timeout 5m iqscaffold-gateway-service .
   --values ./values.yaml \
   --values ./values-dev.yaml \
   --set image.tag=wip \
-  --set infraServices.redis.password=${REDIS_PASSWORD} \
+  --set infraServices.redis.password=${INFRA_REDIS_PASSWORD} \
   --set config.gateway.security.jwt.secret=${JWT_SECRET_KEY} \
   --namespace iqscaffold-dev-env
 
@@ -66,7 +66,7 @@ helm upgrade --install --atomic --wait --timeout 5m iqscaffold-gateway-service .
   --values ./values.yaml \
   --values ./values-production.yaml \
   --set image.tag=${DRONE_TAG} \
-  --set infraServices.redis.password=${REDIS_PASSWORD} \
+  --set infraServices.redis.password=${INFRA_REDIS_PASSWORD} \
   --set config.gateway.security.jwt.secret=${JWT_SECRET_KEY} \
   --namespace iqscaffold-production-env
 ```
@@ -83,6 +83,7 @@ cd charts/IQKV/iqscaffold-gateway-service
 # Deploy to development
 helm upgrade --install gateway-service ./ \
   --values values-dev.yaml \
+  --set infraServices.redis.password="your-redis-password" \
   --set config.gateway.security.jwt.secret="your-jwt-secret" \
   --namespace iqscaffold-dev-env \
   --create-namespace
@@ -95,6 +96,8 @@ helm upgrade --install gateway-service ./ \
 ```bash
 helm upgrade --install gateway-service ./ \
   --values values-dev.yaml \
+  --set infraServices.redis.password="${REDIS_PASSWORD}" \
+  --set config.gateway.security.jwt.secret="${JWT_SECRET_KEY}" \
   --namespace iqscaffold-dev-env \
   --create-namespace
 ```
@@ -112,12 +115,42 @@ helm upgrade --install gateway-service ./ \
 
 ### Configuration
 
+#### Drone CI Secrets
+
+The following secrets must be configured in Drone CI for automated deployments:
+
+```bash
+# Infrastructure Secrets
+drone secret add --repository IQKV/iqscaffold-gateway-service --name INFRA_REDIS_PASSWORD --data "your-redis-password"
+
+# Application Secrets
+drone secret add --repository IQKV/iqscaffold-gateway-service --name JWT_SECRET_KEY --data "your-jwt-secret-key"
+
+# Repository and Registry Secrets (already configured)
+drone secret add --repository IQKV/iqscaffold-gateway-service --name HELM_CHARTS_REPOSITORY --data "your-helm-charts-repo-url"
+drone secret add --repository IQKV/iqscaffold-gateway-service --name NEXUS_DEPLOYER_USERNAME --data "your-nexus-username"
+drone secret add --repository IQKV/iqscaffold-gateway-service --name NEXUS_DEPLOYER_PASSWORD --data "your-nexus-password"
+```
+
 #### Required Secrets
 
-| Secret         | Environment Variable | Required | Description               |
-| -------------- | -------------------- | -------- | ------------------------- |
-| JWT Secret     | `JWT_SECRET_KEY`     | ✅       | JWT validation secret key |
-| Redis Password | `INFRA_REDIS_PASSWORD`     | ⚠️       | Cache and rate limiting   |
+| Secret         | Environment Variable   | Required | Description                   |
+| -------------- | ---------------------- | -------- | ----------------------------- |
+| Redis Password | `INFRA_REDIS_PASSWORD` | ✅       | Redis cache and rate limiting |
+| JWT Secret     | `JWT_SECRET_KEY`       | ✅       | JWT validation secret key     |
+
+**Legend:**
+
+- ✅ **Required**: Service will fail to start without this secret
+
+#### Environment Variable Mapping
+
+The Helm chart maps Drone CI secrets to application environment variables:
+
+| Drone Secret           | Helm --set Parameter                 | Application Environment Variable         |
+| ---------------------- | ------------------------------------ | ---------------------------------------- |
+| `INFRA_REDIS_PASSWORD` | `infraServices.redis.password`       | `IQSCAFFOLD_CACHE_REDIS_PASSWORD`        |
+| `JWT_SECRET_KEY`       | `config.gateway.security.jwt.secret` | `IQSCAFFOLD_GATEWAY_SECURITY_JWT_SECRET` |
 
 #### External Services
 
@@ -180,29 +213,53 @@ Production deployments include:
    kubectl logs deployment/iqscaffold-gateway-service -n iqscaffold-dev-env
    ```
 
-2. **JWT Validation Errors**
+2. **Redis Connection Issues**
+
+   ```bash
+   # Check Redis connectivity
+   kubectl exec -it deployment/iqscaffold-gateway-service -n iqscaffold-dev-env -- \
+     redis-cli -h iqscaffold-infra-redis-master.iqscaffold-dev-env.svc.cluster.local ping
+   ```
+
+3. **JWT Validation Errors**
 
    ```bash
    kubectl logs deployment/iqscaffold-gateway-service -n iqscaffold-dev-env | grep "JWT"
    ```
 
-3. **Rate Limiting Issues**
+4. **Rate Limiting Issues**
 
    ```bash
    kubectl logs deployment/iqscaffold-gateway-service -n iqscaffold-dev-env | grep "rate"
    ```
 
-4. **Check Configuration**
+5. **Check Configuration**
 
    ```bash
    kubectl describe configmap iqscaffold-gateway-service-config -n iqscaffold-dev-env
+   kubectl describe secret iqscaffold-gateway-service-secrets -n iqscaffold-dev-env
    ```
 
-5. **Test Health Endpoints**
+6. **Test Health Endpoints**
    ```bash
    kubectl port-forward deployment/iqscaffold-gateway-service 8081:8081 -n iqscaffold-dev-env
    curl http://localhost:8081/actuator/health
    ```
+
+#### Missing Secrets Diagnosis
+
+If deployments fail due to missing secrets, check:
+
+```bash
+# List all secrets in namespace
+kubectl get secrets -n iqscaffold-dev-env
+
+# Check specific secret content
+kubectl get secret iqscaffold-gateway-service-secrets -n iqscaffold-dev-env -o yaml
+
+# Verify Drone CI secrets are configured
+drone secret ls --repository IQKV/iqscaffold-gateway-service
+```
 
 #### Circuit Breaker Status
 
@@ -210,6 +267,19 @@ Production deployments include:
 # Check circuit breaker metrics
 kubectl port-forward deployment/iqscaffold-gateway-service 8081:8081 -n iqscaffold-dev-env
 curl http://localhost:8081/actuator/metrics/resilience4j.circuitbreaker.state
+```
+
+#### Gateway Routing Testing
+
+```bash
+# Test gateway routing through port-forward
+kubectl port-forward deployment/iqscaffold-gateway-service 8080:8080 -n iqscaffold-dev-env
+
+# Test user service routing
+curl -H "Authorization: Bearer your-jwt-token" http://localhost:8080/api/v1/users/profile
+
+# Test health check routing
+curl http://localhost:8080/actuator/health
 ```
 
 #### Rollback

@@ -92,6 +92,9 @@ handling cross-cutting concerns like authentication, rate limiting, and observab
 
 ### Reactive Filter Chain
 
+<details>
+<summary>Click to expand reactive filter chain</summary>
+
 ```
 Request Flow:
 1. CorrelationIdFilter        → Generate/extract correlation ID
@@ -104,6 +107,8 @@ Request Flow:
 8. Route to downstream service
 9. ResponseTransformationFilter → Clean response headers
 ```
+
+</details>
 
 ### Gateway Patterns
 
@@ -178,6 +183,9 @@ Request Flow:
 
 ### Billing Service Integration
 
+<details>
+<summary>Click to expand billing service integration</summary>
+
 The gateway provides comprehensive routing and rate limiting for the billing service:
 
 #### Payment Operations
@@ -215,6 +223,8 @@ The gateway provides comprehensive routing and rate limiting for the billing ser
 #### Webhook Processing (Public Access)
 
 - `POST /api/v1/billing/webhooks/**` - Payment provider webhooks (200 req/min, no auth required)
+
+</details>
 
 ### Authentication Flow
 
@@ -283,6 +293,9 @@ The gateway provides comprehensive routing and rate limiting for the billing ser
 
 ### Routing Configuration
 
+<details>
+<summary>Click to expand routing configuration</summary>
+
 Routes are defined in `application.yml`:
 
 ```yaml
@@ -301,7 +314,12 @@ spring:
                 redis-rate-limiter.burst-capacity: 100
 ```
 
+</details>
+
 ### Public Endpoints (No Authentication)
+
+<details>
+<summary>Click to expand public endpoints</summary>
 
 #### User Service
 
@@ -322,7 +340,12 @@ spring:
 
 - `POST /api/v1/crm/webhooks/**` - External CRM provider webhooks (HubSpot, Salesforce, etc.)
 
+</details>
+
 ### Protected Endpoints (Requires JWT)
+
+<details>
+<summary>Click to expand protected endpoints</summary>
 
 #### User Service
 
@@ -368,6 +391,8 @@ spring:
 - `POST /api/v1/companies` - Create new companies (USER+ role)
 - `GET /api/v1/crm/webhooks` - CRM webhook management (ADMIN+ role)
 
+</details>
+
 ### Monitoring Endpoints
 
 - `/actuator/health` - Health status
@@ -376,6 +401,9 @@ spring:
 - `/swagger-ui.html` - Aggregated API documentation
 
 ### Rate Limit Response
+
+<details>
+<summary>Click to expand rate limit response example</summary>
 
 When rate limit is exceeded:
 
@@ -400,6 +428,8 @@ Headers:
 - `X-RateLimit-Remaining: 0`
 - `X-RateLimit-Reset: 1634568790`
 - `Retry-After: 60`
+
+</details>
 
 ## Learning Points
 
@@ -461,6 +491,9 @@ The patterns demonstrated here apply to any domain requiring centralized API man
 
 ### Consuming Gateway Context
 
+<details>
+<summary>Click to expand gateway context consumption example</summary>
+
 Downstream services receive enriched headers from the gateway:
 
 ```java
@@ -490,7 +523,12 @@ public ResponseEntity<?> protectedEndpoint(
 **Security Note**: The gateway sanitizes all incoming user/tenant context headers before processing the request. This prevents clients from spoofing user identity by injecting malicious
 headers. Only the gateway can set these headers after JWT validation.
 
+</details>
+
 ### JWT Validation Configuration
+
+<details>
+<summary>Click to expand JWT validation configuration</summary>
 
 Services can validate JWTs independently using the same JWK Set:
 
@@ -503,7 +541,12 @@ spring:
           jwk-set-uri: http://iqscaffold-user-service:8080/.well-known/jwks.json
 ```
 
+</details>
+
 ### Rate Limit Headers
+
+<details>
+<summary>Click to expand rate limit headers example</summary>
 
 Services can check rate limit status from gateway responses:
 
@@ -515,7 +558,12 @@ var rateLimitRemaining = response.getHeaders().getFirst("X-RateLimit-Remaining")
 var rateLimitReset = response.getHeaders().getFirst("X-RateLimit-Reset");
 ```
 
+</details>
+
 ### Circuit Breaker Integration
+
+<details>
+<summary>Click to expand circuit breaker integration example</summary>
 
 Services should implement health checks for gateway monitoring:
 
@@ -525,6 +573,8 @@ public ResponseEntity<Map<String, String>> health() {
   return ResponseEntity.ok(Map.of("status", "UP"));
 }
 ```
+
+</details>
 
 ---
 

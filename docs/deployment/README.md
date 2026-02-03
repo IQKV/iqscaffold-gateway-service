@@ -57,7 +57,7 @@ helm upgrade --install --atomic --wait --timeout 5m iqscaffold-gateway-service .
   --values ./values.yaml \
   --values ./values-dev.yaml \
   --set image.tag=wip \
-  --set externalServices.redis.password=${REDIS_PASSWORD} \
+  --set infraServices.redis.password=${REDIS_PASSWORD} \
   --set config.gateway.security.jwt.secret=${JWT_SECRET_KEY} \
   --namespace iqscaffold-dev-env
 
@@ -66,7 +66,7 @@ helm upgrade --install --atomic --wait --timeout 5m iqscaffold-gateway-service .
   --values ./values.yaml \
   --values ./values-production.yaml \
   --set image.tag=${DRONE_TAG} \
-  --set externalServices.redis.password=${REDIS_PASSWORD} \
+  --set infraServices.redis.password=${REDIS_PASSWORD} \
   --set config.gateway.security.jwt.secret=${JWT_SECRET_KEY} \
   --namespace iqscaffold-production-env
 ```
@@ -104,7 +104,7 @@ helm upgrade --install gateway-service ./ \
 ```bash
 helm upgrade --install gateway-service ./ \
   --values values-production.yaml \
-  --set externalServices.redis.password="${REDIS_PASSWORD}" \
+  --set infraServices.redis.password="${REDIS_PASSWORD}" \
   --set config.gateway.security.jwt.secret="${JWT_SECRET_KEY}" \
   --namespace iqscaffold-production-env \
   --create-namespace

@@ -117,7 +117,7 @@ helm upgrade --install gateway-service ./ \
 | Secret         | Environment Variable | Required | Description               |
 | -------------- | -------------------- | -------- | ------------------------- |
 | JWT Secret     | `JWT_SECRET_KEY`     | ✅       | JWT validation secret key |
-| Redis Password | `REDIS_PASSWORD`     | ⚠️       | Cache and rate limiting   |
+| Redis Password | `INFRA_REDIS_PASSWORD`     | ⚠️       | Cache and rate limiting   |
 
 #### External Services
 

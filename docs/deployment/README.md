@@ -25,6 +25,9 @@ The IQ Scaffold Gateway Service is deployed using Helm charts and automated CI/C
 
 #### Drone Pipeline Overview
 
+<details>
+<summary>📋 Pipeline Stages</summary>
+
 The service uses Drone CI/CD pipeline with 10 stages:
 
 1. **VerifyCode** - Code quality, tests, static analysis
@@ -38,6 +41,27 @@ The service uses Drone CI/CD pipeline with 10 stages:
 9. **RollbackDeployment** - Release rollback
 10. **ReleasePackage** - Automated version management
 
+</details>
+
+<details>
+<summary>🔐 Required Drone Secrets</summary>
+
+| Secret Name                       | Purpose                           | Used In                                    |
+| --------------------------------- | --------------------------------- | ------------------------------------------ |
+| `NEXUS_DEPLOYER_USERNAME`         | Nexus repository authentication   | Artifact publishing, dependency resolution |
+| `NEXUS_DEPLOYER_PASSWORD`         | Nexus repository authentication   | Artifact publishing, dependency resolution |
+| `SONAR_HOST`                      | SonarQube server URL              | Static code analysis                       |
+| `SONAR_TOKEN`                     | SonarQube authentication token    | Static code analysis                       |
+| `SLACK_WEBHOOK`                   | Slack notifications webhook URL   | Build status notifications                 |
+| `GITHUB_API_ACCESS_TOKEN`         | GitHub API access for releases    | Release creation, changelog generation     |
+| `SVC_CONTAINER_REGISTRY_USERNAME` | Container registry authentication | Docker image publishing                    |
+| `SVC_CONTAINER_REGISTRY_PASSWORD` | Container registry authentication | Docker image publishing                    |
+| `HELM_CHARTS_REPOSITORY`          | Helm charts repository URL        | Kubernetes deployments                     |
+| `INFRA_REDIS_PASSWORD`            | Redis cache password              | Rate limiting, caching, session storage    |
+| `JWT_SECRET_KEY`                  | JWT token signing/validation key  | Authentication and authorization           |
+
+</details>
+
 #### Branch Deployment Strategy
 
 | Branch Type | Auto Deploy | Manual Promote | Target Environment |
@@ -50,6 +74,9 @@ The service uses Drone CI/CD pipeline with 10 stages:
 #### Deployment Commands
 
 The pipeline uses these Helm commands for deployment:
+
+<details>
+<summary>Helm Commands</summary>
 
 ```bash
 # Development (WIP branches)
@@ -70,6 +97,8 @@ helm upgrade --install --atomic --wait --timeout 5m iqscaffold-gateway-service .
   --set config.gateway.security.jwt.secret=${JWT_SECRET_KEY} \
   --namespace iqscaffold-production-env
 ```
+
+</details>
 
 ### Manual Deployment
 
@@ -131,17 +160,6 @@ drone secret add --repository IQKV/iqscaffold-gateway-service --name HELM_CHARTS
 drone secret add --repository IQKV/iqscaffold-gateway-service --name NEXUS_DEPLOYER_USERNAME --data "your-nexus-username"
 drone secret add --repository IQKV/iqscaffold-gateway-service --name NEXUS_DEPLOYER_PASSWORD --data "your-nexus-password"
 ```
-
-#### Required Secrets
-
-| Secret         | Environment Variable   | Required | Description                   |
-| -------------- | ---------------------- | -------- | ----------------------------- |
-| Redis Password | `INFRA_REDIS_PASSWORD` | ✅       | Redis cache and rate limiting |
-| JWT Secret     | `JWT_SECRET_KEY`       | ✅       | JWT validation secret key     |
-
-**Legend:**
-
-- ✅ **Required**: Service will fail to start without this secret
 
 #### Environment Variable Mapping
 

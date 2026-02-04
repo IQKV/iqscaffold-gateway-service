@@ -46,19 +46,19 @@ The service uses Drone CI/CD pipeline with 10 stages:
 <details>
 <summary>🔐 Required Drone Secrets</summary>
 
-| Secret Name                       | Purpose                           | Used In                                    |
-| --------------------------------- | --------------------------------- | ------------------------------------------ |
-| `NEXUS_DEPLOYER_USERNAME`         | Nexus repository authentication   | Artifact publishing, dependency resolution |
-| `NEXUS_DEPLOYER_PASSWORD`         | Nexus repository authentication   | Artifact publishing, dependency resolution |
-| `SONAR_HOST`                      | SonarQube server URL              | Static code analysis                       |
-| `SONAR_TOKEN`                     | SonarQube authentication token    | Static code analysis                       |
-| `SLACK_WEBHOOK`                   | Slack notifications webhook URL   | Build status notifications                 |
-| `GITHUB_API_ACCESS_TOKEN`         | GitHub API access for releases    | Release creation, changelog generation     |
-| `SVC_CONTAINER_REGISTRY_USERNAME` | Container registry authentication | Docker image publishing                    |
-| `SVC_CONTAINER_REGISTRY_PASSWORD` | Container registry authentication | Docker image publishing                    |
-| `HELM_CHARTS_REPOSITORY`          | Helm charts repository URL        | Kubernetes deployments                     |
-| `INFRA_REDIS_PASSWORD`            | Redis cache password              | Rate limiting, caching, session storage    |
-| `JWT_SECRET_KEY`                  | JWT token signing/validation key  | Authentication and authorization           |
+| Secret Name                       | Purpose                              | Used In                                    |
+| --------------------------------- | ------------------------------------ | ------------------------------------------ |
+| `NEXUS_DEPLOYER_USERNAME`         | Nexus repository authentication      | Artifact publishing, dependency resolution |
+| `NEXUS_DEPLOYER_PASSWORD`         | Nexus repository authentication      | Artifact publishing, dependency resolution |
+| `SONAR_HOST`                      | SonarQube server URL                 | Static code analysis                       |
+| `SONAR_TOKEN`                     | SonarQube authentication token       | Static code analysis                       |
+| `SLACK_WEBHOOK`                   | Slack notifications webhook URL      | Build status notifications                 |
+| `GITHUB_API_ACCESS_TOKEN`         | GitHub API access for releases       | Release creation, changelog generation     |
+| `SVC_CONTAINER_REGISTRY_USERNAME` | Container registry authentication    | Docker image publishing                    |
+| `SVC_CONTAINER_REGISTRY_PASSWORD` | Container registry authentication    | Docker image publishing                    |
+| `HELM_CHARTS_REPOSITORY`          | Helm charts repository URL           | Kubernetes deployments                     |
+| `INFRA_REDIS_PASSWORD`            | Redis cache password                 | Rate limiting, caching, session storage    |
+| `JWT_SECRET_KEY`                  | JWT symmetric validation key (HS256) | Authentication and authorization           |
 
 </details>
 
@@ -113,7 +113,7 @@ cd charts/IQKV/iqscaffold-gateway-service
 helm upgrade --install gateway-service ./ \
   --values values-dev.yaml \
   --set infraServices.redis.password="your-redis-password" \
-  --set config.gateway.security.jwt.secret="your-jwt-secret" \
+  --set config.gateway.security.jwt.secret="your-secure-symmetric-key" \
   --namespace iqscaffold-dev-env \
   --create-namespace
 ```
@@ -153,7 +153,7 @@ The following secrets must be configured in Drone CI for automated deployments:
 drone secret add --repository IQKV/iqscaffold-gateway-service --name INFRA_REDIS_PASSWORD --data "your-redis-password"
 
 # Application Secrets
-drone secret add --repository IQKV/iqscaffold-gateway-service --name JWT_SECRET_KEY --data "your-jwt-secret-key"
+drone secret add --repository IQKV/iqscaffold-gateway-service --name JWT_SECRET_KEY --data "your-secure-symmetric-key"
 
 # Repository and Registry Secrets (already configured)
 drone secret add --repository IQKV/iqscaffold-gateway-service --name HELM_CHARTS_REPOSITORY --data "your-helm-charts-repo-url"
@@ -165,10 +165,10 @@ drone secret add --repository IQKV/iqscaffold-gateway-service --name NEXUS_DEPLO
 
 The Helm chart maps Drone CI secrets to application environment variables:
 
-| Drone Secret           | Helm --set Parameter                 | Application Environment Variable         |
-| ---------------------- | ------------------------------------ | ---------------------------------------- |
-| `INFRA_REDIS_PASSWORD` | `infraServices.redis.password`       | `IQSCAFFOLD_CACHE_REDIS_PASSWORD`        |
-| `JWT_SECRET_KEY`       | `config.gateway.security.jwt.secret` | `IQSCAFFOLD_GATEWAY_SECURITY_JWT_SECRET` |
+| Drone Secret           | Helm --set Parameter                 | Application Environment Variable  |
+| ---------------------- | ------------------------------------ | --------------------------------- |
+| `INFRA_REDIS_PASSWORD` | `infraServices.redis.password`       | `IQSCAFFOLD_CACHE_REDIS_PASSWORD` |
+| `JWT_SECRET_KEY`       | `config.gateway.security.jwt.secret` | `JWT_SECRET_KEY`                  |
 
 #### External Services
 

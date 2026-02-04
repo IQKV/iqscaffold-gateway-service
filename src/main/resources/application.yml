@@ -215,7 +215,8 @@ iqscaffold:
         refresh-token-expiry: P7D
         issuer: iqscaffold-user-service
         audience: iqscaffold-services
-        algorithm: RS256
+        algorithm: HS256
+        secret-key: ${JWT_SECRET_KEY:change-me-in-production}
         jwk-set-uri: ${USER_SERVICE_JWK_URI:http://iqscaffold-user-service:8080/.well-known/jwks.json}
       authentication:
         enabled: true

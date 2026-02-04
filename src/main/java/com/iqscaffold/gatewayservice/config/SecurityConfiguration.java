@@ -13,7 +13,8 @@ import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
 
 /**
- * Security configuration for the Gateway Service. Configures CORS and authorization policies.
+ * Security configuration for the Gateway Service. Configures CORS and
+ * authorization policies.
  * JWT authentication uses RSA256 validation via JWK endpoint from User Service.
  */
 @Configuration
@@ -40,19 +41,34 @@ public class SecurityConfiguration {
             .permitAll()
             // All other requests require authentication
             .anyExchange()
-            .authenticated()
-        )
+            .authenticated())
         // Use OAuth2 Resource Server with JWK Set
         .oauth2ResourceServer(oauth2 -> oauth2
-            .jwt(jwt -> jwt.jwtDecoder(jwtDecoder()))
-        )
+            .jwt(jwt -> jwt.jwtDecoder(jwtDecoder())))
         .build();
   }
 
   @Bean
   public ReactiveJwtDecoder jwtDecoder() {
-    var jwkSetUri = properties.gateway().security().jwt().jwkSetUri();
+    var jwtProps = properties.gateway().security().jwt();
+
+    if (isSymmetricConfigured()) {
+      var algorithm = jwtProps.algorithm();
+      javax.crypto.SecretKey key = new javax.crypto.spec.SecretKeySpec(
+          jwtProps.secretKey().getBytes(), "Hmac" + algorithm.substring(2));
+      return NimbusReactiveJwtDecoder.withSecretKey(key).build();
+    }
+
+    var jwkSetUri = jwtProps.jwkSetUri();
+    if (jwkSetUri == null || jwkSetUri.isBlank()) {
+      throw new IllegalStateException("Neither secret-key nor jwk-set-uri is configured for JWT validation");
+    }
     return NimbusReactiveJwtDecoder.withJwkSetUri(jwkSetUri).build();
+  }
+
+  private boolean isSymmetricConfigured() {
+    var secretKey = properties.gateway().security().jwt().secretKey();
+    return secretKey != null && !secretKey.isBlank() && !"change-me-in-production".equals(secretKey);
   }
 
   /**

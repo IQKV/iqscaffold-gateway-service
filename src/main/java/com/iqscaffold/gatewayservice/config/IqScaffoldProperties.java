@@ -19,7 +19,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Configuration properties for IQ Scaffold Gateway Service. All custom configuration properties use the 'iqscaffold.' prefix for clear namespace separation.
+ * Configuration properties for IQ Scaffold Gateway Service. All custom
+ * configuration properties use the 'iqscaffold.' prefix for clear namespace
+ * separation.
  */
 @ConfigurationProperties(prefix = "iqscaffold")
 @Validated
@@ -27,15 +29,13 @@ public record IqScaffoldProperties(
     @Valid @NotNull CacheProperties cache,
     @Valid @NotNull GatewayProperties gateway,
     @Valid @NotNull I18nProperties i18n,
-    @Valid @NotNull ObservabilityProperties observability
-) {
+    @Valid @NotNull ObservabilityProperties observability) {
 
   /**
    * Cache configuration properties with iqscaffold.cache prefix.
    */
   public record CacheProperties(
-      @Valid @NotNull RedisProperties redis
-  ) {
+      @Valid @NotNull RedisProperties redis) {
 
     public record RedisProperties(
         @NotBlank String host,
@@ -46,15 +46,13 @@ public record IqScaffoldProperties(
         @Valid @NotNull PoolProperties pool,
         @NotBlank String keyPrefix,
         @NotNull Duration defaultTtl,
-        boolean enableStatistics
-    ) {
+        boolean enableStatistics) {
 
       public record PoolProperties(
           @Min(1) @Max(100) int maxActive,
           @Min(0) @Max(50) int maxIdle,
           @Min(0) @Max(25) int minIdle,
-          @NotNull Duration maxWait
-      ) {
+          @NotNull Duration maxWait) {
 
       }
     }
@@ -70,30 +68,31 @@ public record IqScaffoldProperties(
       @Valid @NotNull CircuitBreakerProperties circuitBreaker,
       @Valid @NotNull CorsProperties cors,
       @Valid @NotNull TransformationProperties transformation,
-      @Valid @NotNull FeatureAccessProperties featureAccess
-  ) {
+      @Valid @NotNull FeatureAccessProperties featureAccess) {
 
     public record RoutingProperties(
         @Valid @NotNull ApiPrefixProperties apiPrefix,
         Map<String, ServiceProperties> services,
         boolean enableServiceDiscovery,
-        @Valid @NotNull LoadBalancingProperties loadBalancing
-    ) {
+        @Valid @NotNull LoadBalancingProperties loadBalancing) {
 
       /**
        * API prefix configuration for environment-specific routing.
-       * Allows configuring /api prefix in development/staging and clean URLs in production.
+       * Allows configuring /api prefix in development/staging and clean URLs in
+       * production.
        * <p>
        * Example configurations:
-       * - Development/Staging: enabled=true, prefix="/api", stripCount=0 (keep /api in URLs)
-       * - Production: enabled=true, prefix="", stripCount=0 (no prefix, deployed on api.iqscaffold.com)
-       * - Strip mode: enabled=true, prefix="/api", stripCount=1 (accept /api/v1/admin/users, forward as /v1/admin/users)
+       * - Development/Staging: enabled=true, prefix="/api", stripCount=0 (keep /api
+       * in URLs)
+       * - Production: enabled=true, prefix="", stripCount=0 (no prefix, deployed on
+       * api.iqscaffold.com)
+       * - Strip mode: enabled=true, prefix="/api", stripCount=1 (accept
+       * /api/v1/admin/users, forward as /v1/admin/users)
        */
       public record ApiPrefixProperties(
           boolean enabled,
           @NotBlank String prefix,
-          @Min(0) @Max(5) int stripCount
-      ) {
+          @Min(0) @Max(5) int stripCount) {
 
       }
 
@@ -103,15 +102,13 @@ public record IqScaffoldProperties(
           boolean enabled,
           @Positive int connectTimeout,
           @Positive int responseTimeout,
-          OpenApiProperties openapi
-      ) {
+          OpenApiProperties openapi) {
 
         public record OpenApiProperties(
             boolean enabled,
             String displayName,
             String description,
-            String contextPath
-        ) {
+            String contextPath) {
 
           public OpenApiProperties {
             // Default values if not provided
@@ -131,8 +128,7 @@ public record IqScaffoldProperties(
       public record LoadBalancingProperties(
           @Pattern(regexp = "round-robin|weighted|least-connections") String strategy,
           boolean enableHealthCheck,
-          @NotNull Duration healthCheckInterval
-      ) {
+          @NotNull Duration healthCheckInterval) {
 
       }
     }
@@ -140,8 +136,7 @@ public record IqScaffoldProperties(
     public record SecurityProperties(
         @Valid @NotNull JwtProperties jwt,
         @Valid @NotNull AuthenticationProperties authentication,
-        List<String> publicPaths
-    ) {
+        List<String> publicPaths) {
 
       public record JwtProperties(
           @NotNull Duration accessTokenExpiry,
@@ -149,7 +144,8 @@ public record IqScaffoldProperties(
           @NotBlank String issuer,
           String audience, // Optional
           @Pattern(regexp = "HS256|RS256") String algorithm,
-          @NotBlank String jwkSetUri // Required for RSA validation
+          String secretKey, // Required for HS256 validation
+          String jwkSetUri // Required for RSA validation
       ) {
 
       }
@@ -158,8 +154,7 @@ public record IqScaffoldProperties(
           boolean enabled,
           @NotBlank String userServiceUrl,
           @NotNull Duration tokenValidationTimeout,
-          boolean enableUserContextPropagation
-      ) {
+          boolean enableUserContextPropagation) {
 
       }
     }
@@ -168,27 +163,23 @@ public record IqScaffoldProperties(
         boolean enabled,
         @Valid @NotNull RedisProperties redis,
         @Valid @NotNull PoliciesProperties policies,
-        @Valid @NotNull TenantQuotasProperties tenantQuotas
-    ) {
+        @Valid @NotNull TenantQuotasProperties tenantQuotas) {
 
       public record RedisProperties(
           @NotBlank String keyPrefix,
-          @NotNull Duration keyExpiry
-      ) {
+          @NotNull Duration keyExpiry) {
 
       }
 
       public record PoliciesProperties(
           @Min(1) @Max(10000) int defaultRequestsPerMinute,
           @Min(1) @Max(20000) int defaultBurstCapacity,
-          Map<String, EndpointPolicyProperties> endpoints
-      ) {
+          Map<String, EndpointPolicyProperties> endpoints) {
 
         public record EndpointPolicyProperties(
             @Min(1) @Max(1000) int requestsPerMinute,
             @Min(1) @Max(2000) int burstCapacity,
-            boolean enableTenantQuotas
-        ) {
+            boolean enableTenantQuotas) {
 
         }
       }
@@ -196,8 +187,7 @@ public record IqScaffoldProperties(
       public record TenantQuotasProperties(
           boolean enabled,
           @Min(1) @Max(100000) int defaultTenantRequestsPerMinute,
-          Map<String, Integer> tenantSpecificQuotas
-      ) {
+          Map<String, Integer> tenantSpecificQuotas) {
 
       }
     }
@@ -210,8 +200,7 @@ public record IqScaffoldProperties(
         @Min(1) @Max(100) int minimumNumberOfCalls,
         @NotNull Duration waitDurationInOpenState,
         @Min(10) @Max(1000) int slidingWindowSize,
-        @Pattern(regexp = "COUNT_BASED|TIME_BASED") String slidingWindowType
-    ) {
+        @Pattern(regexp = "COUNT_BASED|TIME_BASED") String slidingWindowType) {
 
     }
 
@@ -221,15 +210,13 @@ public record IqScaffoldProperties(
         List<String> allowedMethods,
         List<String> allowedHeaders,
         boolean allowCredentials,
-        @Min(0) @Max(86400) int maxAge
-    ) {
+        @Min(0) @Max(86400) int maxAge) {
 
     }
 
     public record TransformationProperties(
         @Valid @NotNull RequestTransformationProperties request,
-        @Valid @NotNull ResponseTransformationProperties response
-    ) {
+        @Valid @NotNull ResponseTransformationProperties response) {
 
       public record RequestTransformationProperties(
           boolean enabled,
@@ -238,8 +225,7 @@ public record IqScaffoldProperties(
           boolean enableTenantContextPropagation,
           boolean enableFeatureContextPropagation,
           List<String> headersToRemove,
-          Map<String, String> additionalHeaders
-      ) {
+          Map<String, String> additionalHeaders) {
 
       }
 
@@ -248,8 +234,7 @@ public record IqScaffoldProperties(
           boolean enableSecurityHeaders,
           boolean enableCorrelationHeaders,
           boolean removeInternalHeaders,
-          List<String> additionalHeadersToRemove
-      ) {
+          List<String> additionalHeadersToRemove) {
 
       }
     }
@@ -262,8 +247,7 @@ public record IqScaffoldProperties(
         boolean enabled,
         List<String> excludedPaths,
         List<FeatureMapping> mappings,
-        @Valid @NotNull CacheProperties cache
-    ) {
+        @Valid @NotNull CacheProperties cache) {
 
       /**
        * Mapping between endpoint patterns and required features.
@@ -272,8 +256,7 @@ public record IqScaffoldProperties(
           @NotBlank String pathPattern,
           List<String> methods,
           Set<String> requiredFeatures,
-          String description
-      ) {
+          String description) {
 
         public FeatureMapping {
           // Default to all methods if not specified
@@ -294,8 +277,7 @@ public record IqScaffoldProperties(
       public record CacheProperties(
           @NotNull Duration ttl,
           @Min(100) @Max(10000) int maxSize,
-          boolean enableStatistics
-      ) {
+          boolean enableStatistics) {
 
       }
     }
@@ -307,8 +289,7 @@ public record IqScaffoldProperties(
   public record ObservabilityProperties(
       @Valid @NotNull TracingProperties tracing,
       @Valid @NotNull MetricsProperties metrics,
-      @Valid @NotNull LoggingProperties logging
-  ) {
+      @Valid @NotNull LoggingProperties logging) {
 
     public record TracingProperties(
         boolean enabled,
@@ -317,8 +298,7 @@ public record IqScaffoldProperties(
         @NotBlank String endpoint,
         @NotNull Duration timeout,
         @NotNull Duration exportTimeout,
-        @Positive int batchSize
-    ) {
+        @Positive int batchSize) {
 
     }
 
@@ -330,8 +310,7 @@ public record IqScaffoldProperties(
         boolean includeApplicationTag,
         boolean includeEnvironmentTag,
         Map<String, String> customTags,
-        List<String> enabledMetrics
-    ) {
+        List<String> enabledMetrics) {
 
     }
 
@@ -347,8 +326,7 @@ public record IqScaffoldProperties(
         boolean includeTenantId,
         @NotBlank String correlationIdHeader,
         @NotBlank String requestIdHeader,
-        @NotBlank String tenantIdHeader
-    ) {
+        @NotBlank String tenantIdHeader) {
 
     }
   }
@@ -357,16 +335,14 @@ public record IqScaffoldProperties(
    * Internationalization configuration properties with iqscaffold.i18n prefix.
    */
   public record I18nProperties(
-      @NotNull List<@Pattern(regexp = "^[a-z]{2}(-[A-Z]{2})?$",
-                             message = "Locale must be in format 'xx' or 'xx-XX'") String> supportedLocales,
-      @NotBlank @Pattern(regexp = "^[a-z]{2}(-[A-Z]{2})?$",
-                         message = "Default locale must be in format 'xx' or 'xx-XX'") String defaultLocale
-  ) {
+      @NotNull List<@Pattern(regexp = "^[a-z]{2}(-[A-Z]{2})?$", message = "Locale must be in format 'xx' or 'xx-XX'") String> supportedLocales,
+      @NotBlank @Pattern(regexp = "^[a-z]{2}(-[A-Z]{2})?$", message = "Default locale must be in format 'xx' or 'xx-XX'") String defaultLocale) {
 
     public I18nProperties {
       // Validation: default locale must be in supported locales
       if (supportedLocales != null && !supportedLocales.contains(defaultLocale)) {
-        throw new IllegalArgumentException("Default locale '" + defaultLocale + "' must be included in supported locales");
+        throw new IllegalArgumentException(
+            "Default locale '" + defaultLocale + "' must be included in supported locales");
       }
     }
 
@@ -398,7 +374,7 @@ public record IqScaffoldProperties(
      */
     public boolean isLocaleSupported(Locale locale) {
       return supportedLocales.contains(locale.toLanguageTag())
-             || supportedLocales.contains(locale.getLanguage());
+          || supportedLocales.contains(locale.getLanguage());
     }
   }
 }

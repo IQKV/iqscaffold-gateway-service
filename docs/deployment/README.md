@@ -25,7 +25,7 @@ The IQ Scaffold Gateway Service is deployed using Helm charts and automated CI/C
 
 #### Drone Pipeline Overview
 
-The service uses a comprehensive Drone CI/CD pipeline with 10 stages:
+The service uses Drone CI/CD pipeline with 10 stages:
 
 1. **VerifyCode** - Code quality, tests, static analysis
 2. **PublishArtifacts** - Maven artifacts to Nexus

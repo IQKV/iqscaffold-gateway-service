@@ -47,8 +47,7 @@ class TenantRateLimitingFilterTest {
   void setUp() {
     properties = createTestProperties();
     tenantRateLimitingFilter = new TenantRateLimitingFilter(
-        properties, redisTemplate, quotaMonitoringService
-    );
+        properties, redisTemplate, quotaMonitoringService);
     when(filterChain.filter(any())).thenReturn(Mono.empty());
     when(redisTemplate.opsForZSet()).thenReturn(redisZSetOperations);
     when(redisZSetOperations.removeRangeByScore(anyString(), any())).thenReturn(Mono.just(0L));
@@ -64,8 +63,7 @@ class TenantRateLimitingFilterTest {
   void shouldSkipRateLimitingWhenDisabled() {
     var disabledProperties = createDisabledProperties();
     var filter = new TenantRateLimitingFilter(
-        disabledProperties, redisTemplate, quotaMonitoringService
-    );
+        disabledProperties, redisTemplate, quotaMonitoringService);
 
     var request = MockServerHttpRequest.get("/api/test").build();
     var exchange = MockServerWebExchange.from(request);
@@ -178,24 +176,19 @@ class TenantRateLimitingFilterTest {
   @DisplayName("Should match path patterns with wildcards")
   void shouldMatchPathPatternsWithWildcards() {
     var endpointPolicy = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties(
-        50, 100, true
-    );
+        50, 100, true);
 
     var policies = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties(
-        100, 200, Map.of("/api/admin/**", endpointPolicy)
-    );
+        100, 200, Map.of("/api/admin/**", endpointPolicy));
 
     var redis = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties(
-        "rate-limit:", Duration.ofMinutes(1)
-    );
+        "rate-limit:", Duration.ofMinutes(1));
 
     var tenantQuotas = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties(
-        true, 1000, Map.of("tenant-123", 500)
-    );
+        true, 1000, Map.of("tenant-123", 500));
 
     var rateLimiting = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties(
-        true, redis, policies, tenantQuotas
-    );
+        true, redis, policies, tenantQuotas);
 
     var updatedProps = new IqScaffoldProperties(
         properties.cache(),
@@ -207,8 +200,7 @@ class TenantRateLimitingFilterTest {
             properties.gateway().cors(),
             properties.gateway().transformation(), properties.gateway().featureAccess()),
         properties.i18n(),
-        properties.observability()
-    );
+        properties.observability());
 
     var filter = new TenantRateLimitingFilter(updatedProps, redisTemplate, quotaMonitoringService);
 
@@ -227,14 +219,12 @@ class TenantRateLimitingFilterTest {
   @DisplayName("Should use tenant-specific quota when configured")
   void shouldUseTenantSpecificQuotaWhenConfigured() {
     var tenantQuotas = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties(
-        true, 1000, Map.of("premium-tenant", 5000)
-    );
+        true, 1000, Map.of("premium-tenant", 5000));
 
     var rateLimiting = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties(
         true, properties.gateway().rateLimiting().redis(),
         properties.gateway().rateLimiting().policies(),
-        tenantQuotas
-    );
+        tenantQuotas);
 
     var updatedProps = new IqScaffoldProperties(
         properties.cache(),
@@ -246,8 +236,7 @@ class TenantRateLimitingFilterTest {
             properties.gateway().cors(),
             properties.gateway().transformation(), properties.gateway().featureAccess()),
         properties.i18n(),
-        properties.observability()
-    );
+        properties.observability());
 
     var filter = new TenantRateLimitingFilter(updatedProps, redisTemplate, quotaMonitoringService);
 
@@ -264,200 +253,157 @@ class TenantRateLimitingFilterTest {
 
   private IqScaffoldProperties createTestProperties() {
     var serviceProps = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties(
-        "http://iqscaffold-user-service:8080", "/users/**", true, 5000, 30000, null
-    );
+        "http://iqscaffold-user-service:8080", "/users/**", true, 5000, 30000, null);
 
     var apiPrefix = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties(
-        true, "/api", 0
-    );
+        true, "/api", 0);
 
     var loadBalancing = new IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties(
-        "round-robin", true, Duration.ofSeconds(30)
-    );
+        "round-robin", true, Duration.ofSeconds(30));
 
     var routing = new IqScaffoldProperties.GatewayProperties.RoutingProperties(
-        apiPrefix, Map.of("user-service", serviceProps), true, loadBalancing
-    );
+        apiPrefix, Map.of("user-service", serviceProps), true, loadBalancing);
 
     var jwt = new IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties(
-        Duration.ofMinutes(15), Duration.ofDays(7), "issuer", "audience", "RS256", "http://jwks"
-    );
+        Duration.ofMinutes(15), Duration.ofDays(7), "issuer", "audience", "RS256", null, "http://jwks");
 
     var auth = new IqScaffoldProperties.GatewayProperties.SecurityProperties.AuthenticationProperties(
-        true, "http://user-service", Duration.ofSeconds(5), true
-    );
+        true, "http://user-service", Duration.ofSeconds(5), true);
 
     var security = new IqScaffoldProperties.GatewayProperties.SecurityProperties(
-        jwt, auth, List.of("/health")
-    );
+        jwt, auth, List.of("/health"));
 
     var redis = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties(
-        "rate-limit:", Duration.ofMinutes(1)
-    );
+        "rate-limit:", Duration.ofMinutes(1));
 
     var policies = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties(
-        100, 200, Map.of()
-    );
+        100, 200, Map.of());
 
     var tenantQuotas = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties(
-        true, 1000, Map.of()
-    );
+        true, 1000, Map.of());
 
     var rateLimiting = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties(
-        true, redis, policies, tenantQuotas
-    );
+        true, redis, policies, tenantQuotas);
 
     var circuitBreaker = new IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties(
-        true, 50, 50, Duration.ofSeconds(5), 10, Duration.ofSeconds(60), 100, "COUNT_BASED"
-    );
+        true, 50, 50, Duration.ofSeconds(5), 10, Duration.ofSeconds(60), 100, "COUNT_BASED");
 
     var cors = new IqScaffoldProperties.GatewayProperties.CorsProperties(
-        true, List.of("*"), List.of("GET"), List.of("*"), true, 3600
-    );
+        true, List.of("*"), List.of("GET"), List.of("*"), true, 3600);
 
     var requestTransform = new IqScaffoldProperties.GatewayProperties.TransformationProperties.RequestTransformationProperties(
-        true, true, true, true, true, List.of(), Map.of()
-    );
+        true, true, true, true, true, List.of(), Map.of());
 
     var responseTransform = new IqScaffoldProperties.GatewayProperties.TransformationProperties.ResponseTransformationProperties(
-        true, true, true, true, List.of()
-    );
+        true, true, true, true, List.of());
 
     var transformation = new IqScaffoldProperties.GatewayProperties.TransformationProperties(
-        requestTransform, responseTransform
-    );
+        requestTransform, responseTransform);
 
     var gateway = new IqScaffoldProperties.GatewayProperties(
         routing, security, rateLimiting, circuitBreaker, cors, transformation, null);
 
     var cacheRedis = new IqScaffoldProperties.CacheProperties.RedisProperties(
         "localhost", 6379, null, 0, Duration.ofSeconds(5),
-        new IqScaffoldProperties.CacheProperties.RedisProperties.PoolProperties(10, 5, 2, Duration.ofSeconds(3)),
-        "cache:", Duration.ofMinutes(10), false
-    );
+        new IqScaffoldProperties.CacheProperties.RedisProperties.PoolProperties(10, 5, 2,
+            Duration.ofSeconds(3)),
+        "cache:", Duration.ofMinutes(10), false);
 
     var cache = new IqScaffoldProperties.CacheProperties(cacheRedis);
 
     var tracing = new IqScaffoldProperties.ObservabilityProperties.TracingProperties(
-        true, "gateway", 0.1, "http://jaeger", Duration.ofSeconds(5), Duration.ofSeconds(10), 100
-    );
+        true, "gateway", 0.1, "http://jaeger", Duration.ofSeconds(5), Duration.ofSeconds(10), 100);
 
     var metrics = new IqScaffoldProperties.ObservabilityProperties.MetricsProperties(
-        true, "/metrics", "gateway", true, true, true, Map.of(), List.of()
-    );
+        true, "/metrics", "gateway", true, true, true, Map.of(), List.of());
 
     var logging = new IqScaffoldProperties.ObservabilityProperties.LoggingProperties(
         "INFO", "json", true, true, true, true, true, true, true,
-        "X-Correlation-ID", "X-Request-ID", "X-Tenant-ID"
-    );
+        "X-Correlation-ID", "X-Request-ID", "X-Tenant-ID");
 
     var observability = new IqScaffoldProperties.ObservabilityProperties(tracing, metrics, logging);
 
     var i18nProperties = new IqScaffoldProperties.I18nProperties(
-        List.of("en", "es", "fr"), "en"
-    );
+        List.of("en", "es", "fr"), "en");
 
     return new IqScaffoldProperties(cache, gateway, i18nProperties, observability);
   }
 
   private IqScaffoldProperties createDisabledProperties() {
     var serviceProps = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties(
-        "http://iqscaffold-user-service:8080", "/users/**", true, 5000, 30000, null
-    );
+        "http://iqscaffold-user-service:8080", "/users/**", true, 5000, 30000, null);
 
     var apiPrefix = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties(
-        true, "/api", 0
-    );
+        true, "/api", 0);
 
     var loadBalancing = new IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties(
-        "round-robin", true, Duration.ofSeconds(30)
-    );
+        "round-robin", true, Duration.ofSeconds(30));
 
     var routing = new IqScaffoldProperties.GatewayProperties.RoutingProperties(
-        apiPrefix, Map.of("user-service", serviceProps), true, loadBalancing
-    );
+        apiPrefix, Map.of("user-service", serviceProps), true, loadBalancing);
 
     var jwt = new IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties(
-        Duration.ofMinutes(15), Duration.ofDays(7), "issuer", "audience", "RS256", "http://jwks"
-    );
+        Duration.ofMinutes(15), Duration.ofDays(7), "issuer", "audience", "RS256", null, "http://jwks");
 
     var auth = new IqScaffoldProperties.GatewayProperties.SecurityProperties.AuthenticationProperties(
-        true, "http://user-service", Duration.ofSeconds(5), true
-    );
+        true, "http://user-service", Duration.ofSeconds(5), true);
 
     var security = new IqScaffoldProperties.GatewayProperties.SecurityProperties(
-        jwt, auth, List.of("/health")
-    );
+        jwt, auth, List.of("/health"));
 
     var redis = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties(
-        "rate-limit:", Duration.ofMinutes(1)
-    );
+        "rate-limit:", Duration.ofMinutes(1));
 
     var policies = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties(
-        100, 200, Map.of()
-    );
+        100, 200, Map.of());
 
     var tenantQuotas = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties(
-        true, 1000, Map.of()
-    );
+        true, 1000, Map.of());
 
     var rateLimiting = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties(
-        false, redis, policies, tenantQuotas
-    );
+        false, redis, policies, tenantQuotas);
 
     var circuitBreaker = new IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties(
-        true, 50, 50, Duration.ofSeconds(5), 10, Duration.ofSeconds(60), 100, "COUNT_BASED"
-    );
+        true, 50, 50, Duration.ofSeconds(5), 10, Duration.ofSeconds(60), 100, "COUNT_BASED");
 
     var cors = new IqScaffoldProperties.GatewayProperties.CorsProperties(
-        true, List.of("*"), List.of("GET"), List.of("*"), true, 3600
-    );
+        true, List.of("*"), List.of("GET"), List.of("*"), true, 3600);
 
     var requestTransform = new IqScaffoldProperties.GatewayProperties.TransformationProperties.RequestTransformationProperties(
-        true, true, true, true, true, List.of(), Map.of()
-    );
+        true, true, true, true, true, List.of(), Map.of());
 
     var responseTransform = new IqScaffoldProperties.GatewayProperties.TransformationProperties.ResponseTransformationProperties(
-        true, true, true, true, List.of()
-    );
+        true, true, true, true, List.of());
 
     var transformation = new IqScaffoldProperties.GatewayProperties.TransformationProperties(
-        requestTransform, responseTransform
-    );
+        requestTransform, responseTransform);
 
     var gateway = new IqScaffoldProperties.GatewayProperties(
         routing, security, rateLimiting, circuitBreaker, cors, transformation, null);
 
     var cacheRedis = new IqScaffoldProperties.CacheProperties.RedisProperties(
         "localhost", 6379, null, 0, Duration.ofSeconds(5),
-        new IqScaffoldProperties.CacheProperties.RedisProperties.PoolProperties(10, 5, 2, Duration.ofSeconds(3)),
-        "cache:", Duration.ofMinutes(10), false
-    );
+        new IqScaffoldProperties.CacheProperties.RedisProperties.PoolProperties(10, 5, 2,
+            Duration.ofSeconds(3)),
+        "cache:", Duration.ofMinutes(10), false);
 
     var cache = new IqScaffoldProperties.CacheProperties(cacheRedis);
 
     var tracing = new IqScaffoldProperties.ObservabilityProperties.TracingProperties(
-        true, "gateway", 0.1, "http://jaeger", Duration.ofSeconds(5), Duration.ofSeconds(10), 100
-    );
+        true, "gateway", 0.1, "http://jaeger", Duration.ofSeconds(5), Duration.ofSeconds(10), 100);
 
     var metrics = new IqScaffoldProperties.ObservabilityProperties.MetricsProperties(
-        true, "/metrics", "gateway", true, true, true, Map.of(), List.of()
-    );
+        true, "/metrics", "gateway", true, true, true, Map.of(), List.of());
 
     var logging = new IqScaffoldProperties.ObservabilityProperties.LoggingProperties(
         "INFO", "json", true, true, true, true, true, true, true,
-        "X-Correlation-ID", "X-Request-ID", "X-Tenant-ID"
-    );
+        "X-Correlation-ID", "X-Request-ID", "X-Tenant-ID");
 
     var observability = new IqScaffoldProperties.ObservabilityProperties(tracing, metrics, logging);
 
     var i18nProperties = new IqScaffoldProperties.I18nProperties(
-        List.of("en", "es", "fr"), "en"
-    );
+        List.of("en", "es", "fr"), "en");
 
     return new IqScaffoldProperties(cache, gateway, i18nProperties, observability);
   }
 }
-
-
-

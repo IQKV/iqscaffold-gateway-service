@@ -116,8 +116,7 @@ class JwtAuthenticationFilterTest {
         List.of("ROLE_USER"),
         List.of("READ", "WRITE"),
         "org-123",
-        "en"
-    );
+        "en");
 
     assertThat(userContext.userId()).isEqualTo(1L);
     assertThat(userContext.username()).isEqualTo("testuser");
@@ -144,115 +143,91 @@ class JwtAuthenticationFilterTest {
         JwtClaimNames.EMAIL, "test@example.com",
         JwtClaimNames.AUTHORITIES, List.of("ROLE_USER"),
         JwtClaimNames.PERMISSIONS, List.of("READ", "WRITE"),
-        JwtClaimNames.TENANT_ID, "tenant-123"
-    );
+        JwtClaimNames.TENANT_ID, "tenant-123");
 
     return new Jwt(
         "token-value",
         Instant.now(),
         Instant.now().plusSeconds(3600),
         headers,
-        claims
-    );
+        claims);
   }
 
   private IqScaffoldProperties createTestProperties() {
     var serviceProps = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties(
-        "http://iqscaffold-user-service:8080", "/users/**", true, 5000, 30000, null
-    );
+        "http://iqscaffold-user-service:8080", "/users/**", true, 5000, 30000, null);
 
     var apiPrefix = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties(
-        true, "/api", 0
-    );
+        true, "/api", 0);
 
     var loadBalancing = new IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties(
-        "round-robin", true, Duration.ofSeconds(30)
-    );
+        "round-robin", true, Duration.ofSeconds(30));
 
     var routing = new IqScaffoldProperties.GatewayProperties.RoutingProperties(
-        apiPrefix, Map.of("user-service", serviceProps), true, loadBalancing
-    );
+        apiPrefix, Map.of("user-service", serviceProps), true, loadBalancing);
 
     var jwt = new IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties(
-        Duration.ofMinutes(15), Duration.ofDays(7), "issuer", "audience", "RS256", "http://jwks"
-    );
+        Duration.ofMinutes(15), Duration.ofDays(7), "issuer", "audience", "RS256", null, "http://jwks");
 
     var auth = new IqScaffoldProperties.GatewayProperties.SecurityProperties.AuthenticationProperties(
-        true, "http://user-service", Duration.ofSeconds(5), true
-    );
+        true, "http://user-service", Duration.ofSeconds(5), true);
 
     var security = new IqScaffoldProperties.GatewayProperties.SecurityProperties(
-        jwt, auth, List.of("/health", "/actuator/**")
-    );
+        jwt, auth, List.of("/health", "/actuator/**"));
 
     var redis = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties(
-        "rate-limit:", Duration.ofMinutes(1)
-    );
+        "rate-limit:", Duration.ofMinutes(1));
 
     var policies = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties(
-        100, 200, Map.of()
-    );
+        100, 200, Map.of());
 
     var tenantQuotas = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties(
-        true, 1000, Map.of()
-    );
+        true, 1000, Map.of());
 
     var rateLimiting = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties(
-        true, redis, policies, tenantQuotas
-    );
+        true, redis, policies, tenantQuotas);
 
     var circuitBreaker = new IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties(
-        true, 50, 50, Duration.ofSeconds(5), 10, Duration.ofSeconds(60), 100, "COUNT_BASED"
-    );
+        true, 50, 50, Duration.ofSeconds(5), 10, Duration.ofSeconds(60), 100, "COUNT_BASED");
 
     var cors = new IqScaffoldProperties.GatewayProperties.CorsProperties(
-        true, List.of("*"), List.of("GET"), List.of("*"), true, 3600
-    );
+        true, List.of("*"), List.of("GET"), List.of("*"), true, 3600);
 
     var requestTransform = new IqScaffoldProperties.GatewayProperties.TransformationProperties.RequestTransformationProperties(
-        true, true, true, true, true, List.of(), Map.of()
-    );
+        true, true, true, true, true, List.of(), Map.of());
 
     var responseTransform = new IqScaffoldProperties.GatewayProperties.TransformationProperties.ResponseTransformationProperties(
-        true, true, true, true, List.of()
-    );
+        true, true, true, true, List.of());
 
     var transformation = new IqScaffoldProperties.GatewayProperties.TransformationProperties(
-        requestTransform, responseTransform
-    );
+        requestTransform, responseTransform);
 
     var gateway = new IqScaffoldProperties.GatewayProperties(
         routing, security, rateLimiting, circuitBreaker, cors, transformation, null);
 
     var cacheRedis = new IqScaffoldProperties.CacheProperties.RedisProperties(
         "localhost", 6379, null, 0, Duration.ofSeconds(5),
-        new IqScaffoldProperties.CacheProperties.RedisProperties.PoolProperties(10, 5, 2, Duration.ofSeconds(3)),
-        "cache:", Duration.ofMinutes(10), false
-    );
+        new IqScaffoldProperties.CacheProperties.RedisProperties.PoolProperties(10, 5, 2,
+            Duration.ofSeconds(3)),
+        "cache:", Duration.ofMinutes(10), false);
 
     var cache = new IqScaffoldProperties.CacheProperties(cacheRedis);
 
     var tracing = new IqScaffoldProperties.ObservabilityProperties.TracingProperties(
-        true, "gateway", 0.1, "http://jaeger", Duration.ofSeconds(5), Duration.ofSeconds(10), 100
-    );
+        true, "gateway", 0.1, "http://jaeger", Duration.ofSeconds(5), Duration.ofSeconds(10), 100);
 
     var metrics = new IqScaffoldProperties.ObservabilityProperties.MetricsProperties(
-        true, "/metrics", "gateway", true, true, true, Map.of(), List.of()
-    );
+        true, "/metrics", "gateway", true, true, true, Map.of(), List.of());
 
     var logging = new IqScaffoldProperties.ObservabilityProperties.LoggingProperties(
         "INFO", "json", true, true, true, true, true, true, true,
-        "X-Correlation-ID", "X-Request-ID", "X-Tenant-ID"
-    );
+        "X-Correlation-ID", "X-Request-ID", "X-Tenant-ID");
 
     var observability = new IqScaffoldProperties.ObservabilityProperties(tracing, metrics, logging);
 
     var i18nProperties = new IqScaffoldProperties.I18nProperties(
-        List.of("en", "es", "fr"), "en"
-    );
+        List.of("en", "es", "fr"), "en");
 
     return new IqScaffoldProperties(cache, gateway, i18nProperties, observability);
   }
 }
-
-

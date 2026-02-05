@@ -2,14 +2,14 @@ package com.iqscaffold.gatewayservice.config;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
-import jakarta.validation.ValidatorFactory;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,7 +36,8 @@ class GatewayPropertiesTest {
     void shouldValidateSuccessfullyWithValidProperties() {
       var gatewayProperties = createValidGatewayProperties();
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties>> violations = validator.validate(gatewayProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties>> violations = validator
+          .validate(gatewayProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -51,10 +52,10 @@ class GatewayPropertiesTest {
           createValidCircuitBreakerProperties(),
           createValidCorsProperties(),
           createValidTransformationProperties(),
-          createValidFeatureAccessProperties()
-      );
+          createValidFeatureAccessProperties());
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties>> violations = validator.validate(gatewayProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties>> violations = validator
+          .validate(gatewayProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getMessage().contains("must not be null"));
@@ -70,7 +71,8 @@ class GatewayPropertiesTest {
     void shouldValidateSuccessfullyWithValidRoutingProperties() {
       var routingProperties = createValidRoutingProperties();
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties>> violations = validator.validate(routingProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties>> violations = validator
+          .validate(routingProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -82,10 +84,10 @@ class GatewayPropertiesTest {
           null,
           Map.of(),
           true,
-          createValidLoadBalancingProperties()
-      );
+          createValidLoadBalancingProperties());
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties>> violations = validator.validate(routingProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties>> violations = validator
+          .validate(routingProperties);
 
       assertThat(violations).isNotEmpty();
     }
@@ -97,10 +99,10 @@ class GatewayPropertiesTest {
           createValidApiPrefixProperties(),
           Map.of(),
           true,
-          null
-      );
+          null);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties>> violations = validator.validate(routingProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties>> violations = validator
+          .validate(routingProperties);
 
       assertThat(violations).isNotEmpty();
     }
@@ -115,7 +117,8 @@ class GatewayPropertiesTest {
     void shouldValidateSuccessfullyWithValidApiPrefixProperties() {
       var apiPrefixProperties = createValidApiPrefixProperties();
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties>> violations = validator.validate(apiPrefixProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties>> violations = validator
+          .validate(apiPrefixProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -126,10 +129,10 @@ class GatewayPropertiesTest {
       var apiPrefixProperties = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties(
           true,
           "",
-          0
-      );
+          0);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties>> violations = validator.validate(apiPrefixProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties>> violations = validator
+          .validate(apiPrefixProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("prefix"));
@@ -141,10 +144,10 @@ class GatewayPropertiesTest {
       var apiPrefixProperties = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties(
           true,
           "/api",
-          -1
-      );
+          -1);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties>> violations = validator.validate(apiPrefixProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties>> violations = validator
+          .validate(apiPrefixProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("stripCount"));
@@ -156,10 +159,10 @@ class GatewayPropertiesTest {
       var apiPrefixProperties = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties(
           true,
           "/api",
-          6
-      );
+          6);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties>> violations = validator.validate(apiPrefixProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties>> violations = validator
+          .validate(apiPrefixProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("stripCount"));
@@ -175,7 +178,8 @@ class GatewayPropertiesTest {
     void shouldValidateSuccessfullyWithValidServiceProperties() {
       var serviceProperties = createValidServiceProperties();
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties>> violations = validator.validate(serviceProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties>> violations = validator
+          .validate(serviceProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -189,10 +193,10 @@ class GatewayPropertiesTest {
           true,
           5000,
           30000,
-          null
-      );
+          null);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties>> violations = validator.validate(serviceProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties>> violations = validator
+          .validate(serviceProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("uri"));
@@ -207,10 +211,10 @@ class GatewayPropertiesTest {
           true,
           5000,
           30000,
-          null
-      );
+          null);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties>> violations = validator.validate(serviceProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties>> violations = validator
+          .validate(serviceProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("path"));
@@ -225,10 +229,10 @@ class GatewayPropertiesTest {
           true,
           0,
           30000,
-          null
-      );
+          null);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties>> violations = validator.validate(serviceProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties>> violations = validator
+          .validate(serviceProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("connectTimeout"));
@@ -243,10 +247,10 @@ class GatewayPropertiesTest {
           true,
           5000,
           -1,
-          null
-      );
+          null);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties>> violations = validator.validate(serviceProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties>> violations = validator
+          .validate(serviceProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("responseTimeout"));
@@ -264,8 +268,7 @@ class GatewayPropertiesTest {
           true,
           null,
           null,
-          null
-      );
+          null);
 
       assertThat(openApiProperties.displayName()).isEqualTo("Service API");
       assertThat(openApiProperties.description()).isEqualTo("API documentation");
@@ -279,8 +282,7 @@ class GatewayPropertiesTest {
           true,
           "",
           "  ",
-          ""
-      );
+          "");
 
       assertThat(openApiProperties.displayName()).isEqualTo("Service API");
       assertThat(openApiProperties.description()).isEqualTo("API documentation");
@@ -294,8 +296,7 @@ class GatewayPropertiesTest {
           true,
           "User Service",
           "User management API",
-          "/api/users"
-      );
+          "/api/users");
 
       assertThat(openApiProperties.displayName()).isEqualTo("User Service");
       assertThat(openApiProperties.description()).isEqualTo("User management API");
@@ -313,10 +314,10 @@ class GatewayPropertiesTest {
       var loadBalancingProperties = new IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties(
           "round-robin",
           true,
-          Duration.ofSeconds(30)
-      );
+          Duration.ofSeconds(30));
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties>> violations = validator.validate(loadBalancingProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties>> violations = validator
+          .validate(loadBalancingProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -327,10 +328,10 @@ class GatewayPropertiesTest {
       var loadBalancingProperties = new IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties(
           "weighted",
           true,
-          Duration.ofSeconds(30)
-      );
+          Duration.ofSeconds(30));
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties>> violations = validator.validate(loadBalancingProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties>> violations = validator
+          .validate(loadBalancingProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -341,10 +342,10 @@ class GatewayPropertiesTest {
       var loadBalancingProperties = new IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties(
           "least-connections",
           true,
-          Duration.ofSeconds(30)
-      );
+          Duration.ofSeconds(30));
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties>> violations = validator.validate(loadBalancingProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties>> violations = validator
+          .validate(loadBalancingProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -355,10 +356,10 @@ class GatewayPropertiesTest {
       var loadBalancingProperties = new IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties(
           "invalid-strategy",
           true,
-          Duration.ofSeconds(30)
-      );
+          Duration.ofSeconds(30));
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties>> violations = validator.validate(loadBalancingProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties>> violations = validator
+          .validate(loadBalancingProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("strategy"));
@@ -370,10 +371,10 @@ class GatewayPropertiesTest {
       var loadBalancingProperties = new IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties(
           "round-robin",
           true,
-          null
-      );
+          null);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties>> violations = validator.validate(loadBalancingProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties>> violations = validator
+          .validate(loadBalancingProperties);
 
       assertThat(violations).isNotEmpty();
     }
@@ -388,7 +389,8 @@ class GatewayPropertiesTest {
     void shouldValidateSuccessfullyWithValidSecurityProperties() {
       var securityProperties = createValidSecurityProperties();
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties>> violations = validator.validate(securityProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties>> violations = validator
+          .validate(securityProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -399,10 +401,10 @@ class GatewayPropertiesTest {
       var securityProperties = new IqScaffoldProperties.GatewayProperties.SecurityProperties(
           null,
           createValidAuthenticationProperties(),
-          List.of("/health", "/actuator/**")
-      );
+          List.of("/health", "/actuator/**"));
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties>> violations = validator.validate(securityProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties>> violations = validator
+          .validate(securityProperties);
 
       assertThat(violations).isNotEmpty();
     }
@@ -413,10 +415,10 @@ class GatewayPropertiesTest {
       var securityProperties = new IqScaffoldProperties.GatewayProperties.SecurityProperties(
           createValidJwtProperties(),
           null,
-          List.of("/health", "/actuator/**")
-      );
+          List.of("/health", "/actuator/**"));
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties>> violations = validator.validate(securityProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties>> violations = validator
+          .validate(securityProperties);
 
       assertThat(violations).isNotEmpty();
     }
@@ -435,10 +437,11 @@ class GatewayPropertiesTest {
           "iqscaffold-gateway",
           "iqscaffold-api",
           "HS256",
-          "http://auth-service:8080/.well-known/jwks.json"
-      );
+          "secret-key",
+          null);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator.validate(jwtProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator
+          .validate(jwtProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -452,10 +455,11 @@ class GatewayPropertiesTest {
           "iqscaffold-gateway",
           "iqscaffold-api",
           "RS256",
-          "http://auth-service:8080/.well-known/jwks.json"
-      );
+          null,
+          "http://auth-service:8080/.well-known/jwks.json");
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator.validate(jwtProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator
+          .validate(jwtProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -469,10 +473,11 @@ class GatewayPropertiesTest {
           "iqscaffold-gateway",
           "iqscaffold-api",
           "ES256",
-          "http://auth-service:8080/.well-known/jwks.json"
-      );
+          null,
+          "http://auth-service:8080/.well-known/jwks.json");
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator.validate(jwtProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator
+          .validate(jwtProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("algorithm"));
@@ -487,10 +492,11 @@ class GatewayPropertiesTest {
           "",
           "iqscaffold-api",
           "RS256",
-          "http://auth-service:8080/.well-known/jwks.json"
-      );
+          null,
+          "http://auth-service:8080/.well-known/jwks.json");
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator.validate(jwtProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator
+          .validate(jwtProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("issuer"));
@@ -505,10 +511,11 @@ class GatewayPropertiesTest {
           "iqscaffold-gateway",
           "iqscaffold-api",
           "RS256",
-          ""
-      );
+          null,
+          "");
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator.validate(jwtProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator
+          .validate(jwtProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("jwkSetUri"));
@@ -523,10 +530,11 @@ class GatewayPropertiesTest {
           "iqscaffold-gateway",
           "iqscaffold-api",
           "RS256",
-          "http://auth-service:8080/.well-known/jwks.json"
-      );
+          null,
+          "http://auth-service:8080/.well-known/jwks.json");
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator.validate(jwtProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator
+          .validate(jwtProperties);
 
       assertThat(violations).isNotEmpty();
     }
@@ -540,10 +548,11 @@ class GatewayPropertiesTest {
           "iqscaffold-gateway",
           "iqscaffold-api",
           "RS256",
-          "http://auth-service:8080/.well-known/jwks.json"
-      );
+          null,
+          "http://auth-service:8080/.well-known/jwks.json");
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator.validate(jwtProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator
+          .validate(jwtProperties);
 
       assertThat(violations).isNotEmpty();
     }
@@ -558,7 +567,8 @@ class GatewayPropertiesTest {
     void shouldValidateSuccessfullyWithValidAuthenticationProperties() {
       var authProperties = createValidAuthenticationProperties();
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.AuthenticationProperties>> violations = validator.validate(authProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.AuthenticationProperties>> violations = validator
+          .validate(authProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -570,10 +580,10 @@ class GatewayPropertiesTest {
           true,
           "",
           Duration.ofSeconds(5),
-          true
-      );
+          true);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.AuthenticationProperties>> violations = validator.validate(authProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.AuthenticationProperties>> violations = validator
+          .validate(authProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("userServiceUrl"));
@@ -586,10 +596,10 @@ class GatewayPropertiesTest {
           true,
           "http://iqscaffold-user-service:8080",
           null,
-          true
-      );
+          true);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.AuthenticationProperties>> violations = validator.validate(authProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.AuthenticationProperties>> violations = validator
+          .validate(authProperties);
 
       assertThat(violations).isNotEmpty();
     }
@@ -604,7 +614,8 @@ class GatewayPropertiesTest {
     void shouldValidateSuccessfullyWithValidRateLimitingProperties() {
       var rateLimitingProperties = createValidRateLimitingProperties();
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties>> violations = validator.validate(rateLimitingProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties>> violations = validator
+          .validate(rateLimitingProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -616,10 +627,10 @@ class GatewayPropertiesTest {
           true,
           null,
           createValidPoliciesProperties(),
-          createValidTenantQuotasProperties()
-      );
+          createValidTenantQuotasProperties());
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties>> violations = validator.validate(rateLimitingProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties>> violations = validator
+          .validate(rateLimitingProperties);
 
       assertThat(violations).isNotEmpty();
     }
@@ -634,10 +645,10 @@ class GatewayPropertiesTest {
     void shouldValidateSuccessfullyWithValidRedisProperties() {
       var redisProperties = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties(
           "rate-limit:",
-          Duration.ofMinutes(1)
-      );
+          Duration.ofMinutes(1));
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties>> violations = validator.validate(redisProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties>> violations = validator
+          .validate(redisProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -647,10 +658,10 @@ class GatewayPropertiesTest {
     void shouldFailValidationWhenKeyPrefixIsBlank() {
       var redisProperties = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties(
           "",
-          Duration.ofMinutes(1)
-      );
+          Duration.ofMinutes(1));
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties>> violations = validator.validate(redisProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties>> violations = validator
+          .validate(redisProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("keyPrefix"));
@@ -661,10 +672,10 @@ class GatewayPropertiesTest {
     void shouldFailValidationWhenKeyExpiryIsNull() {
       var redisProperties = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties(
           "rate-limit:",
-          null
-      );
+          null);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties>> violations = validator.validate(redisProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties>> violations = validator
+          .validate(redisProperties);
 
       assertThat(violations).isNotEmpty();
     }
@@ -679,7 +690,8 @@ class GatewayPropertiesTest {
     void shouldValidateSuccessfullyWithValidPoliciesProperties() {
       var policiesProperties = createValidPoliciesProperties();
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties>> violations = validator.validate(policiesProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties>> violations = validator
+          .validate(policiesProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -690,10 +702,10 @@ class GatewayPropertiesTest {
       var policiesProperties = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties(
           0,
           200,
-          Map.of()
-      );
+          Map.of());
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties>> violations = validator.validate(policiesProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties>> violations = validator
+          .validate(policiesProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("defaultRequestsPerMinute"));
@@ -705,10 +717,10 @@ class GatewayPropertiesTest {
       var policiesProperties = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties(
           10001,
           200,
-          Map.of()
-      );
+          Map.of());
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties>> violations = validator.validate(policiesProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties>> violations = validator
+          .validate(policiesProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("defaultRequestsPerMinute"));
@@ -720,10 +732,10 @@ class GatewayPropertiesTest {
       var policiesProperties = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties(
           100,
           0,
-          Map.of()
-      );
+          Map.of());
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties>> violations = validator.validate(policiesProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties>> violations = validator
+          .validate(policiesProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("defaultBurstCapacity"));
@@ -735,10 +747,10 @@ class GatewayPropertiesTest {
       var policiesProperties = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties(
           100,
           20001,
-          Map.of()
-      );
+          Map.of());
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties>> violations = validator.validate(policiesProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties>> violations = validator
+          .validate(policiesProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("defaultBurstCapacity"));
@@ -755,11 +767,10 @@ class GatewayPropertiesTest {
       var endpointPolicyProperties = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties(
           50,
           100,
-          true
-      );
+          true);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties>> violations =
-          validator.validate(endpointPolicyProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties>> violations = validator
+          .validate(endpointPolicyProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -770,11 +781,10 @@ class GatewayPropertiesTest {
       var endpointPolicyProperties = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties(
           0,
           100,
-          true
-      );
+          true);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties>> violations =
-          validator.validate(endpointPolicyProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties>> violations = validator
+          .validate(endpointPolicyProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("requestsPerMinute"));
@@ -786,11 +796,10 @@ class GatewayPropertiesTest {
       var endpointPolicyProperties = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties(
           1001,
           100,
-          true
-      );
+          true);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties>> violations =
-          validator.validate(endpointPolicyProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties>> violations = validator
+          .validate(endpointPolicyProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("requestsPerMinute"));
@@ -802,11 +811,10 @@ class GatewayPropertiesTest {
       var endpointPolicyProperties = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties(
           50,
           0,
-          true
-      );
+          true);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties>> violations =
-          validator.validate(endpointPolicyProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties>> violations = validator
+          .validate(endpointPolicyProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("burstCapacity"));
@@ -818,11 +826,10 @@ class GatewayPropertiesTest {
       var endpointPolicyProperties = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties(
           50,
           2001,
-          true
-      );
+          true);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties>> violations =
-          validator.validate(endpointPolicyProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties>> violations = validator
+          .validate(endpointPolicyProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("burstCapacity"));
@@ -838,7 +845,8 @@ class GatewayPropertiesTest {
     void shouldValidateSuccessfullyWithValidTenantQuotasProperties() {
       var tenantQuotasProperties = createValidTenantQuotasProperties();
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties>> violations = validator.validate(tenantQuotasProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties>> violations = validator
+          .validate(tenantQuotasProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -849,10 +857,10 @@ class GatewayPropertiesTest {
       var tenantQuotasProperties = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties(
           true,
           0,
-          Map.of()
-      );
+          Map.of());
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties>> violations = validator.validate(tenantQuotasProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties>> violations = validator
+          .validate(tenantQuotasProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("defaultTenantRequestsPerMinute"));
@@ -864,10 +872,10 @@ class GatewayPropertiesTest {
       var tenantQuotasProperties = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties(
           true,
           100001,
-          Map.of()
-      );
+          Map.of());
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties>> violations = validator.validate(tenantQuotasProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties>> violations = validator
+          .validate(tenantQuotasProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("defaultTenantRequestsPerMinute"));
@@ -883,7 +891,8 @@ class GatewayPropertiesTest {
     void shouldValidateSuccessfullyWithValidCircuitBreakerProperties() {
       var circuitBreakerProperties = createValidCircuitBreakerProperties();
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator.validate(circuitBreakerProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator
+          .validate(circuitBreakerProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -899,10 +908,10 @@ class GatewayPropertiesTest {
           10,
           Duration.ofSeconds(60),
           100,
-          "COUNT_BASED"
-      );
+          "COUNT_BASED");
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator.validate(circuitBreakerProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator
+          .validate(circuitBreakerProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -918,10 +927,10 @@ class GatewayPropertiesTest {
           10,
           Duration.ofSeconds(60),
           100,
-          "TIME_BASED"
-      );
+          "TIME_BASED");
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator.validate(circuitBreakerProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator
+          .validate(circuitBreakerProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -937,10 +946,10 @@ class GatewayPropertiesTest {
           10,
           Duration.ofSeconds(60),
           100,
-          "INVALID_TYPE"
-      );
+          "INVALID_TYPE");
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator.validate(circuitBreakerProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator
+          .validate(circuitBreakerProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("slidingWindowType"));
@@ -957,10 +966,10 @@ class GatewayPropertiesTest {
           10,
           Duration.ofSeconds(60),
           100,
-          "COUNT_BASED"
-      );
+          "COUNT_BASED");
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator.validate(circuitBreakerProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator
+          .validate(circuitBreakerProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("failureRateThreshold"));
@@ -977,10 +986,10 @@ class GatewayPropertiesTest {
           10,
           Duration.ofSeconds(60),
           100,
-          "COUNT_BASED"
-      );
+          "COUNT_BASED");
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator.validate(circuitBreakerProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator
+          .validate(circuitBreakerProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("failureRateThreshold"));
@@ -997,10 +1006,10 @@ class GatewayPropertiesTest {
           10,
           Duration.ofSeconds(60),
           9,
-          "COUNT_BASED"
-      );
+          "COUNT_BASED");
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator.validate(circuitBreakerProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator
+          .validate(circuitBreakerProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("slidingWindowSize"));
@@ -1017,10 +1026,10 @@ class GatewayPropertiesTest {
           10,
           Duration.ofSeconds(60),
           1001,
-          "COUNT_BASED"
-      );
+          "COUNT_BASED");
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator.validate(circuitBreakerProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties>> violations = validator
+          .validate(circuitBreakerProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("slidingWindowSize"));
@@ -1036,7 +1045,8 @@ class GatewayPropertiesTest {
     void shouldValidateSuccessfullyWithValidCorsProperties() {
       var corsProperties = createValidCorsProperties();
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CorsProperties>> violations = validator.validate(corsProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CorsProperties>> violations = validator
+          .validate(corsProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -1050,10 +1060,10 @@ class GatewayPropertiesTest {
           List.of("GET", "POST", "PUT", "DELETE"),
           List.of("*"),
           true,
-          -1
-      );
+          -1);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CorsProperties>> violations = validator.validate(corsProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CorsProperties>> violations = validator
+          .validate(corsProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("maxAge"));
@@ -1068,10 +1078,10 @@ class GatewayPropertiesTest {
           List.of("GET", "POST", "PUT", "DELETE"),
           List.of("*"),
           true,
-          86401
-      );
+          86401);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CorsProperties>> violations = validator.validate(corsProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.CorsProperties>> violations = validator
+          .validate(corsProperties);
 
       assertThat(violations).isNotEmpty();
       assertThat(violations).anyMatch(v -> v.getPropertyPath().toString().equals("maxAge"));
@@ -1087,7 +1097,8 @@ class GatewayPropertiesTest {
     void shouldValidateSuccessfullyWithValidTransformationProperties() {
       var transformationProperties = createValidTransformationProperties();
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.TransformationProperties>> violations = validator.validate(transformationProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.TransformationProperties>> violations = validator
+          .validate(transformationProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -1097,10 +1108,10 @@ class GatewayPropertiesTest {
     void shouldFailValidationWhenRequestIsNull() {
       var transformationProperties = new IqScaffoldProperties.GatewayProperties.TransformationProperties(
           null,
-          createValidResponseTransformationProperties()
-      );
+          createValidResponseTransformationProperties());
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.TransformationProperties>> violations = validator.validate(transformationProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.TransformationProperties>> violations = validator
+          .validate(transformationProperties);
 
       assertThat(violations).isNotEmpty();
     }
@@ -1110,10 +1121,10 @@ class GatewayPropertiesTest {
     void shouldFailValidationWhenResponseIsNull() {
       var transformationProperties = new IqScaffoldProperties.GatewayProperties.TransformationProperties(
           createValidRequestTransformationProperties(),
-          null
-      );
+          null);
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.TransformationProperties>> violations = validator.validate(transformationProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.TransformationProperties>> violations = validator
+          .validate(transformationProperties);
 
       assertThat(violations).isNotEmpty();
     }
@@ -1128,8 +1139,8 @@ class GatewayPropertiesTest {
     void shouldValidateSuccessfullyWithValidRequestTransformationProperties() {
       var requestTransformationProperties = createValidRequestTransformationProperties();
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.TransformationProperties.RequestTransformationProperties>>
-          violations = validator.validate(requestTransformationProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.TransformationProperties.RequestTransformationProperties>> violations = validator
+          .validate(requestTransformationProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -1144,8 +1155,7 @@ class GatewayPropertiesTest {
           true,
           true, // enableFeatureContextPropagation
           List.of("X-Internal-Header"),
-          Map.of("X-Custom-Header", "custom-value")
-      );
+          Map.of("X-Custom-Header", "custom-value"));
 
       assertThat(requestTransformationProperties.enabled()).isTrue();
       assertThat(requestTransformationProperties.enableHeaderEnrichment()).isTrue();
@@ -1163,8 +1173,8 @@ class GatewayPropertiesTest {
     void shouldValidateSuccessfullyWithValidResponseTransformationProperties() {
       var responseTransformationProperties = createValidResponseTransformationProperties();
 
-      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.TransformationProperties.ResponseTransformationProperties>> violations =
-          validator.validate(responseTransformationProperties);
+      Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.TransformationProperties.ResponseTransformationProperties>> violations = validator
+          .validate(responseTransformationProperties);
 
       assertThat(violations).isEmpty();
     }
@@ -1177,8 +1187,7 @@ class GatewayPropertiesTest {
           true,
           true,
           true,
-          List.of("X-Internal-Response-Header")
-      );
+          List.of("X-Internal-Response-Header"));
 
       assertThat(responseTransformationProperties.enabled()).isTrue();
       assertThat(responseTransformationProperties.enableSecurityHeaders()).isTrue();
@@ -1197,8 +1206,7 @@ class GatewayPropertiesTest {
         createValidCircuitBreakerProperties(),
         createValidCorsProperties(),
         createValidTransformationProperties(),
-        createValidFeatureAccessProperties()
-    );
+        createValidFeatureAccessProperties());
   }
 
   private IqScaffoldProperties.GatewayProperties.RoutingProperties createValidRoutingProperties() {
@@ -1206,16 +1214,14 @@ class GatewayPropertiesTest {
         createValidApiPrefixProperties(),
         Map.of("user-service", createValidServiceProperties()),
         true,
-        createValidLoadBalancingProperties()
-    );
+        createValidLoadBalancingProperties());
   }
 
   private IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties createValidApiPrefixProperties() {
     return new IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties(
         true,
         "/api",
-        0
-    );
+        0);
   }
 
   private IqScaffoldProperties.GatewayProperties.RoutingProperties.ServiceProperties createValidServiceProperties() {
@@ -1225,24 +1231,21 @@ class GatewayPropertiesTest {
         true,
         5000,
         30000,
-        null
-    );
+        null);
   }
 
   private IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties createValidLoadBalancingProperties() {
     return new IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties(
         "round-robin",
         true,
-        Duration.ofSeconds(30)
-    );
+        Duration.ofSeconds(30));
   }
 
   private IqScaffoldProperties.GatewayProperties.SecurityProperties createValidSecurityProperties() {
     return new IqScaffoldProperties.GatewayProperties.SecurityProperties(
         createValidJwtProperties(),
         createValidAuthenticationProperties(),
-        List.of("/health", "/actuator/**")
-    );
+        List.of("/health", "/actuator/**"));
   }
 
   private IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties createValidJwtProperties() {
@@ -1252,8 +1255,8 @@ class GatewayPropertiesTest {
         "iqscaffold-gateway",
         "iqscaffold-api",
         "RS256",
-        "http://auth-service:8080/.well-known/jwks.json"
-    );
+        null,
+        "http://auth-service:8080/.well-known/jwks.json");
   }
 
   private IqScaffoldProperties.GatewayProperties.SecurityProperties.AuthenticationProperties createValidAuthenticationProperties() {
@@ -1261,8 +1264,7 @@ class GatewayPropertiesTest {
         true,
         "http://iqscaffold-user-service:8080",
         Duration.ofSeconds(5),
-        true
-    );
+        true);
   }
 
   private IqScaffoldProperties.GatewayProperties.RateLimitingProperties createValidRateLimitingProperties() {
@@ -1270,27 +1272,23 @@ class GatewayPropertiesTest {
         true,
         new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties(
             "rate-limit:",
-            Duration.ofMinutes(1)
-        ),
+            Duration.ofMinutes(1)),
         createValidPoliciesProperties(),
-        createValidTenantQuotasProperties()
-    );
+        createValidTenantQuotasProperties());
   }
 
   private IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties createValidPoliciesProperties() {
     return new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties(
         100,
         200,
-        Map.of()
-    );
+        Map.of());
   }
 
   private IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties createValidTenantQuotasProperties() {
     return new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties(
         true,
         1000,
-        Map.of()
-    );
+        Map.of());
   }
 
   private IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties createValidCircuitBreakerProperties() {
@@ -1302,8 +1300,7 @@ class GatewayPropertiesTest {
         10,
         Duration.ofSeconds(60),
         100,
-        "COUNT_BASED"
-    );
+        "COUNT_BASED");
   }
 
   private IqScaffoldProperties.GatewayProperties.CorsProperties createValidCorsProperties() {
@@ -1313,15 +1310,13 @@ class GatewayPropertiesTest {
         List.of("GET", "POST", "PUT", "DELETE"),
         List.of("*"),
         true,
-        3600
-    );
+        3600);
   }
 
   private IqScaffoldProperties.GatewayProperties.TransformationProperties createValidTransformationProperties() {
     return new IqScaffoldProperties.GatewayProperties.TransformationProperties(
         createValidRequestTransformationProperties(),
-        createValidResponseTransformationProperties()
-    );
+        createValidResponseTransformationProperties());
   }
 
   private IqScaffoldProperties.GatewayProperties.TransformationProperties.RequestTransformationProperties createValidRequestTransformationProperties() {
@@ -1332,8 +1327,7 @@ class GatewayPropertiesTest {
         true,
         true, // enableFeatureContextPropagation
         List.of(),
-        Map.of()
-    );
+        Map.of());
   }
 
   private IqScaffoldProperties.GatewayProperties.TransformationProperties.ResponseTransformationProperties createValidResponseTransformationProperties() {
@@ -1342,8 +1336,7 @@ class GatewayPropertiesTest {
         true,
         true,
         true,
-        List.of()
-    );
+        List.of());
   }
 
   private IqScaffoldProperties.GatewayProperties.FeatureAccessProperties createValidFeatureAccessProperties() {
@@ -1355,14 +1348,10 @@ class GatewayPropertiesTest {
                 "/api/v1/analytics/**",
                 List.of("GET", "POST"),
                 Set.of("advanced_analytics"),
-                "Analytics endpoints"
-            )
-        ),
+                "Analytics endpoints")),
         new IqScaffoldProperties.GatewayProperties.FeatureAccessProperties.CacheProperties(
             Duration.ofMinutes(15),
             1000,
-            true
-        )
-    );
+            true));
   }
 }

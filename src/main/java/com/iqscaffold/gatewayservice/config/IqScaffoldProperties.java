@@ -144,8 +144,8 @@ public record IqScaffoldProperties(
           @NotBlank String issuer,
           String audience, // Optional
           @Pattern(regexp = "HS256|RS256") String algorithm,
-          String secretKey, // Required for HS256 validation
-          String jwkSetUri // Required for RSA validation
+          @NotBlank String secretKey, // Required for HS256 validation
+          @NotBlank String jwkSetUri // Required for RSA validation
       ) {
 
       }
@@ -374,7 +374,7 @@ public record IqScaffoldProperties(
      */
     public boolean isLocaleSupported(Locale locale) {
       return supportedLocales.contains(locale.toLanguageTag())
-             || supportedLocales.contains(locale.getLanguage());
+          || supportedLocales.contains(locale.getLanguage());
     }
   }
 }

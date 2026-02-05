@@ -193,7 +193,7 @@ class TenantQuotaMonitoringServiceTest {
         apiPrefix, Map.of("user-service", serviceProps), true, loadBalancing);
 
     var jwt = new IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties(
-        Duration.ofMinutes(15), Duration.ofDays(7), "issuer", "audience", "RS256", null, "http://jwks");
+        Duration.ofMinutes(15), Duration.ofDays(7), "issuer", "audience", "RS256", "none", "http://jwks");
 
     var auth = new IqScaffoldProperties.GatewayProperties.SecurityProperties.AuthenticationProperties(
         true, "http://user-service", Duration.ofSeconds(5), true);

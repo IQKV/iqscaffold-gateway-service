@@ -438,7 +438,7 @@ class GatewayPropertiesTest {
           "iqscaffold-api",
           "HS256",
           "secret-key",
-          null);
+          "http://none");
 
       Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator
           .validate(jwtProperties);
@@ -455,7 +455,7 @@ class GatewayPropertiesTest {
           "iqscaffold-gateway",
           "iqscaffold-api",
           "RS256",
-          null,
+          "none",
           "http://auth-service:8080/.well-known/jwks.json");
 
       Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator
@@ -473,7 +473,7 @@ class GatewayPropertiesTest {
           "iqscaffold-gateway",
           "iqscaffold-api",
           "ES256",
-          null,
+          "none",
           "http://auth-service:8080/.well-known/jwks.json");
 
       Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator
@@ -492,7 +492,7 @@ class GatewayPropertiesTest {
           "",
           "iqscaffold-api",
           "RS256",
-          null,
+          "none",
           "http://auth-service:8080/.well-known/jwks.json");
 
       Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator
@@ -511,7 +511,7 @@ class GatewayPropertiesTest {
           "iqscaffold-gateway",
           "iqscaffold-api",
           "RS256",
-          null,
+          "none",
           "");
 
       Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator
@@ -530,7 +530,7 @@ class GatewayPropertiesTest {
           "iqscaffold-gateway",
           "iqscaffold-api",
           "RS256",
-          null,
+          "none",
           "http://auth-service:8080/.well-known/jwks.json");
 
       Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator
@@ -548,7 +548,7 @@ class GatewayPropertiesTest {
           "iqscaffold-gateway",
           "iqscaffold-api",
           "RS256",
-          null,
+          "none",
           "http://auth-service:8080/.well-known/jwks.json");
 
       Set<ConstraintViolation<IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties>> violations = validator
@@ -1255,7 +1255,7 @@ class GatewayPropertiesTest {
         "iqscaffold-gateway",
         "iqscaffold-api",
         "RS256",
-        null,
+        "none",
         "http://auth-service:8080/.well-known/jwks.json");
   }
 

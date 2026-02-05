@@ -12,7 +12,7 @@ import org.springframework.validation.annotation.Validated;
 
 /**
  * Platform configuration properties for the gateway service.
- * 
+ *
  * <p>This configuration allows the gateway to enforce access control based on
  * configurable route patterns and authority requirements, making the platform
  * extensible without code changes.

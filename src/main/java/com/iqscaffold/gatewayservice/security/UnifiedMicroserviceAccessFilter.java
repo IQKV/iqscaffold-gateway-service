@@ -17,11 +17,11 @@ import reactor.core.publisher.Mono;
 
 /**
  * Gateway filter that enforces unified microservice and feature access control.
- * 
+ *
  * <p>This filter provides comprehensive access control for all microservices and features
  * by checking user authorities against route-based requirements. It replaces multiple
  * feature-specific filters with a single, configurable, and scalable approach.
- * 
+ *
  * <h3>Access Control Features</h3>
  * <ul>
  *   <li><strong>Route-Based Protection</strong> - Maps URL patterns to required authorities</li>
@@ -30,7 +30,7 @@ import reactor.core.publisher.Mono;
  *   <li><strong>Admin Override</strong> - ADMIN and SUPER_ADMIN have universal access</li>
  *   <li><strong>Public Routes</strong> - Configurable public access patterns</li>
  * </ul>
- * 
+ *
  * <h3>Protected Microservices</h3>
  * <ul>
  *   <li><strong>CRM Services</strong> - contact-service, lead-service, pipeline-service</li>
@@ -38,14 +38,14 @@ import reactor.core.publisher.Mono;
  *   <li><strong>User Service</strong> - user-service (admin endpoints)</li>
  *   <li><strong>Gateway Service</strong> - API access control</li>
  * </ul>
- * 
+ *
  * <h3>Route Protection Patterns</h3>
  * <ul>
  *   <li><strong>CRM Routes</strong> - /api/&#42;/crm/&#42;&#42;, /api/&#42;/leads/&#42;&#42;, /api/&#42;/contacts/&#42;&#42;</li>
  *   <li><strong>Billing Routes</strong> - /api/&#42;/billing/&#42;&#42;, /api/&#42;/payments/&#42;&#42;</li>
  *   <li><strong>Admin Routes</strong> - /api/&#42;/admin/&#42;&#42;, /actuator/&#42;&#42;</li>
  * </ul>
- * 
+ *
  * <h3>Authority Hierarchy</h3>
  * <ul>
  *   <li><strong>SUPER_ADMIN</strong> - Universal access to all microservices</li>
@@ -85,14 +85,14 @@ public class UnifiedMicroserviceAccessFilter implements GlobalFilter, Ordered {
 
     // Extract user authorities from headers (set by JWT authentication filter)
     var authoritiesHeader = request.getHeaders().getFirst(GatewayConstants.Headers.X_USER_AUTHORITIES);
-    
+
     if (!StringUtils.hasText(authoritiesHeader)) {
       logger.warn("No user authorities found for protected route: {}", path);
       return unauthorizedResponse(exchange, "Authentication required", "AUTHENTICATION_REQUIRED");
     }
 
     var userAuthorities = List.of(authoritiesHeader.split(","));
-    
+
     // Check if user has required access
     if (hasRequiredAccess(userAuthorities, requiredAuthorities)) {
       var username = request.getHeaders().getFirst(GatewayConstants.Headers.X_USERNAME);
@@ -103,11 +103,11 @@ public class UnifiedMicroserviceAccessFilter implements GlobalFilter, Ordered {
     // Access denied
     var username = request.getHeaders().getFirst(GatewayConstants.Headers.X_USERNAME);
     var accessType = getAccessType(path);
-    logger.warn("Access denied for user: {} on path: {} (authorities: {})", 
+    logger.warn("Access denied for user: {} on path: {} (authorities: {})",
         username, path, userAuthorities);
-    
-    return unauthorizedResponse(exchange, 
-        accessType + " access required", 
+
+    return unauthorizedResponse(exchange,
+        accessType + " access required",
         accessType.toUpperCase().replace(" ", "_") + "_REQUIRED");
   }
 
@@ -137,11 +137,11 @@ public class UnifiedMicroserviceAccessFilter implements GlobalFilter, Ordered {
    * Extract access type from path for error messages.
    */
   private String getAccessType(String path) {
-    if (path.contains("/crm/") || path.contains("/leads/") 
+    if (path.contains("/crm/") || path.contains("/leads/")
         || path.contains("/contacts/") || path.contains("/pipeline/")) {
       return "CRM";
     }
-    if (path.contains("/billing/") || path.contains("/payments/") 
+    if (path.contains("/billing/") || path.contains("/payments/")
         || path.contains("/subscriptions/") || path.contains("/invoices/")) {
       return "Billing";
     }
@@ -158,7 +158,7 @@ public class UnifiedMicroserviceAccessFilter implements GlobalFilter, Ordered {
     var response = exchange.getResponse();
     response.setStatusCode(HttpStatus.FORBIDDEN);
     response.getHeaders().add("Content-Type", "application/json");
-    
+
     var body = String.format("""
         {
           "error": "Access Denied",
@@ -167,7 +167,7 @@ public class UnifiedMicroserviceAccessFilter implements GlobalFilter, Ordered {
           "timestamp": "%s"
         }
         """, message, code, java.time.Instant.now());
-    
+
     var buffer = response.bufferFactory().wrap(body.getBytes());
     return response.writeWith(Mono.just(buffer));
   }

@@ -133,29 +133,29 @@ iqscaffold:
         
         protectedRoutes:
           # CRM Routes
-          "/api/*/crm/**": ["CRM_ACCESS", "ADMIN", "SUPER_ADMIN"]
-          "/api/*/leads/**": ["CRM_ACCESS", "ADMIN", "SUPER_ADMIN"]
-          "/api/*/contacts/**": ["CRM_ACCESS", "ADMIN", "SUPER_ADMIN"]
-          "/api/*/pipeline/**": ["CRM_ACCESS", "ADMIN", "SUPER_ADMIN"]
+          "/api/*/crm/**": [ "CRM_ACCESS", "ADMIN", "SUPER_ADMIN" ]
+          "/api/*/leads/**": [ "CRM_ACCESS", "ADMIN", "SUPER_ADMIN" ]
+          "/api/*/contacts/**": [ "CRM_ACCESS", "ADMIN", "SUPER_ADMIN" ]
+          "/api/*/pipeline/**": [ "CRM_ACCESS", "ADMIN", "SUPER_ADMIN" ]
           
           # Billing Routes
-          "/api/*/billing/**": ["BILLING_ACCESS", "ADMIN", "SUPER_ADMIN"]
-          "/api/*/payments/**": ["BILLING_ACCESS", "ADMIN", "SUPER_ADMIN"]
-          "/api/*/subscriptions/**": ["BILLING_ACCESS", "ADMIN", "SUPER_ADMIN"]
-          "/api/*/invoices/**": ["BILLING_ACCESS", "ADMIN", "SUPER_ADMIN"]
+          "/api/*/billing/**": [ "BILLING_ACCESS", "ADMIN", "SUPER_ADMIN" ]
+          "/api/*/payments/**": [ "BILLING_ACCESS", "ADMIN", "SUPER_ADMIN" ]
+          "/api/*/subscriptions/**": [ "BILLING_ACCESS", "ADMIN", "SUPER_ADMIN" ]
+          "/api/*/invoices/**": [ "BILLING_ACCESS", "ADMIN", "SUPER_ADMIN" ]
           
           # Admin Routes
-          "/api/*/admin/**": ["ADMIN", "SUPER_ADMIN"]
-          "/actuator/**": ["ADMIN", "SUPER_ADMIN"]
+          "/api/*/admin/**": [ "ADMIN", "SUPER_ADMIN" ]
+          "/actuator/**": [ "ADMIN", "SUPER_ADMIN" ]
           
           # API Routes (general)
-          "/api/**": ["API_ACCESS", "CRM_ACCESS", "BILLING_ACCESS", "USER", "ADMIN", "SUPER_ADMIN"]
+          "/api/**": [ "API_ACCESS", "CRM_ACCESS", "BILLING_ACCESS", "USER", "ADMIN", "SUPER_ADMIN" ]
       
       accessControl:
         enableFeatureValidation: true
         enableMicroserviceValidation: true
         enableRouteValidation: true
-        bypassAuthorities: ["SUPER_ADMIN"]
+        bypassAuthorities: [ "SUPER_ADMIN" ]
   
   cache:
     redis:

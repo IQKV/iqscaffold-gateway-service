@@ -12,6 +12,18 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+/**
+ * OpenAPI documentation routing configuration for Billing Service.
+ *
+ * <p>Configures specialized API documentation routes for billing service groups:
+ * <ul>
+ *   <li>billing-payments - Payment processing APIs</li>
+ *   <li>billing-webhooks - Webhook management APIs</li>
+ *   <li>billing-admin - Administrative billing APIs</li>
+ * </ul>
+ *
+ * <p>This configuration is only active when the 'billing' profile is enabled.
+ */
 @Configuration
 @Profile("billing")
 @ConditionalOnProperty(name = "spring.cloud.gateway.enabled", havingValue = "true", matchIfMissing = true)

@@ -1,3 +1,11 @@
+# CRM Services Module Configuration
+#
+# This profile configures CRM services integration (Lead, Pipeline, Contact).
+# Routing and rate-limiting are configured programmatically in:
+# - CrmRouteConfig.java (routes and rate limits)
+#
+# To enable: spring.profiles.active=crm
+
 iqscaffold:
   gateway:
     routing:
@@ -35,56 +43,3 @@ iqscaffold:
             display-name: "Contact Service APIs"
             description: "Contact and company management"
             context-path: "contact-service"
-    
-    rate-limiting:
-      policies:
-        endpoints:
-          # Contact Service Webhook Management (admin operations)
-          "/api/v1/crm/webhooks":
-            requests-per-minute: 30
-            burst-capacity: 50
-            enable-tenant-quotas: true
-          "/api/v1/crm/webhooks/**":
-            requests-per-minute: 40
-            burst-capacity: 60
-            enable-tenant-quotas: true
-          
-          # Company Service Rate Limiting
-          "/api/v1/companies/**":
-            requests-per-minute: 100
-            burst-capacity: 150
-            enable-tenant-quotas: true
-
-          # Contact Service Rate Limiting
-          "/api/v1/contacts/**":
-            requests-per-minute: 100
-            burst-capacity: 150
-            enable-tenant-quotas: true
-
-          # Lead Service Rate Limiting
-          "/api/v1/leads/**":
-            requests-per-minute: 100
-            burst-capacity: 150
-            enable-tenant-quotas: true
-          "/api/v1/leads/*/activities/**":
-            requests-per-minute: 100
-            burst-capacity: 150
-            enable-tenant-quotas: true
-          "/api/v1/leads/*/notes/**":
-            requests-per-minute: 100
-            burst-capacity: 150
-            enable-tenant-quotas: true
-
-          # Pipeline Service Rate Limiting
-          "/api/v1/pipeline/**":
-            requests-per-minute: 100
-            burst-capacity: 150
-            enable-tenant-quotas: true
-          "/api/v1/pipeline/dashboard/**":
-            requests-per-minute: 50
-            burst-capacity: 100
-            enable-tenant-quotas: true
-          "/api/v1/pipeline/follow-ups/**":
-            requests-per-minute: 100
-            burst-capacity: 150
-            enable-tenant-quotas: true

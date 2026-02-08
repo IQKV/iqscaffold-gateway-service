@@ -1,11 +1,15 @@
 package com.iqscaffold.gatewayservice.config.module;
 
-import org.springframework.beans.factory.annotation.Value;
+import com.iqscaffold.gatewayservice.config.IqScaffoldProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
 import org.springframework.cloud.gateway.route.RouteLocator;
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 /**
  * Gateway route configuration for Billing Service endpoints.
@@ -30,23 +34,36 @@ import org.springframework.context.annotation.Configuration;
  *   <li>Correlation ID propagation</li>
  * </ul>
  *
- * <p>This configuration is only active when the Spring Cloud Gateway is enabled.
+ * <p>This configuration is only active when the 'billing' profile is enabled.
  */
 @Configuration
+@Profile("billing")
 @ConditionalOnProperty(name = "spring.cloud.gateway.enabled", havingValue = "true", matchIfMissing = true)
 public class BillingRouteConfig {
 
-  @Value("${iqscaffold.gateway.routing.services.billing-service.uri:http://iqscaffold-billing-service:8080}")
-  private String billingServiceUri;
+  private static final Logger log = LoggerFactory.getLogger(BillingRouteConfig.class);
 
-  @Value("${iqscaffold.gateway.routing.api-prefix.strip-count:0}")
-  private int stripCount;
+  private final IqScaffoldProperties properties;
+
+  public BillingRouteConfig(final IqScaffoldProperties properties) {
+    this.properties = properties;
+  }
 
   /**
    * Configures all billing service routes with appropriate filters and rate limiting.
    */
   @Bean
   public RouteLocator billingServiceRoutes(RouteLocatorBuilder builder) {
+    var stripCount = properties.gateway().routing().apiPrefix().stripCount();
+    var billingServiceUri = properties.gateway().routing().services().get("billing-service").uri();
+
+    // Get rate limiting policies from configuration
+    var rateLimitPolicies = properties.gateway().rateLimiting().policies().endpoints();
+    var defaultReplenishRate = properties.gateway().rateLimiting().policies().defaultRequestsPerMinute();
+    var defaultBurstCapacity = properties.gateway().rateLimiting().policies().defaultBurstCapacity();
+
+    log.info("Configuring Billing routes with {} rate limit policies", rateLimitPolicies.size());
+
     return builder.routes()
 
         // Feature Management Routes (High Priority - Frontend Usage)
@@ -54,6 +71,9 @@ public class BillingRouteConfig {
             .path("/api/v1/features/my-features")
             .filters(f -> f
                 .stripPrefix(stripCount)
+                .requestRateLimiter(c -> c.setRateLimiter(
+                    getRateLimiter("/api/v1/features/my-features", rateLimitPolicies, 
+                        defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-features")
                     .setFallbackUri("forward:/fallback/features"))
@@ -64,6 +84,9 @@ public class BillingRouteConfig {
             .path("/api/v1/features/enabled")
             .filters(f -> f
                 .stripPrefix(stripCount)
+                .requestRateLimiter(c -> c.setRateLimiter(
+                    getRateLimiter("/api/v1/features/enabled", rateLimitPolicies, 
+                        defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-features")
                     .setFallbackUri("forward:/fallback/features"))
@@ -75,6 +98,9 @@ public class BillingRouteConfig {
             .path("/api/v1/billing/subscriptions/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
+                .requestRateLimiter(c -> c.setRateLimiter(
+                    getRateLimiter("/api/v1/billing/subscriptions/**", rateLimitPolicies, 
+                        defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-subscriptions")
                     .setFallbackUri("forward:/fallback/billing"))
@@ -86,6 +112,9 @@ public class BillingRouteConfig {
             .path("/api/v1/billing/payments/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
+                .requestRateLimiter(c -> c.setRateLimiter(
+                    getRateLimiter("/api/v1/billing/payments/**", rateLimitPolicies, 
+                        defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-payments")
                     .setFallbackUri("forward:/fallback/billing"))
@@ -97,6 +126,9 @@ public class BillingRouteConfig {
             .path("/api/v1/billing/invoices/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
+                .requestRateLimiter(c -> c.setRateLimiter(
+                    getRateLimiter("/api/v1/billing/invoices/**", rateLimitPolicies, 
+                        defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-invoices")
                     .setFallbackUri("forward:/fallback/billing"))
@@ -108,6 +140,9 @@ public class BillingRouteConfig {
             .path("/api/v1/billing/payouts/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
+                .requestRateLimiter(c -> c.setRateLimiter(
+                    getRateLimiter("/api/v1/billing/payouts/**", rateLimitPolicies, 
+                        defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-payouts")
                     .setFallbackUri("forward:/fallback/billing"))
@@ -119,6 +154,9 @@ public class BillingRouteConfig {
             .path("/api/v1/billing/subscription-plans/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
+                .requestRateLimiter(c -> c.setRateLimiter(
+                    getRateLimiter("/api/v1/billing/subscription-plans/**", rateLimitPolicies, 
+                        defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-plans")
                     .setFallbackUri("forward:/fallback/billing"))
@@ -130,6 +168,9 @@ public class BillingRouteConfig {
             .path("/api/v1/admin/billing/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
+                .requestRateLimiter(c -> c.setRateLimiter(
+                    getRateLimiter("/api/v1/admin/billing/**", rateLimitPolicies, 
+                        defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-admin")
                     .setFallbackUri("forward:/fallback/billing"))
@@ -141,6 +182,9 @@ public class BillingRouteConfig {
             .path("/api/v1/billing/webhooks/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
+                .requestRateLimiter(c -> c.setRateLimiter(
+                    getRateLimiter("/api/v1/billing/webhooks/**", rateLimitPolicies, 
+                        defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-webhooks")
                     .setFallbackUri("forward:/fallback/webhooks"))
@@ -159,5 +203,27 @@ public class BillingRouteConfig {
             .uri(billingServiceUri))
 
         .build();
+  }
+
+  /**
+   * Gets the appropriate rate limiter for an endpoint.
+   * Falls back to default values if no specific policy is configured.
+   */
+  private RedisRateLimiter getRateLimiter(
+      String endpoint,
+      java.util.Map<String, IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties.EndpointPolicyProperties> policies,
+      int defaultReplenishRate,
+      int defaultBurstCapacity) {
+
+    var policy = policies.get(endpoint);
+    if (policy != null) {
+      log.debug("Using specific rate limit for {}: {} req/min, {} burst", 
+          endpoint, policy.requestsPerMinute(), policy.burstCapacity());
+      return new RedisRateLimiter(policy.requestsPerMinute(), policy.burstCapacity());
+    }
+
+    log.debug("Using default rate limit for {}: {} req/min, {} burst", 
+        endpoint, defaultReplenishRate, defaultBurstCapacity);
+    return new RedisRateLimiter(defaultReplenishRate, defaultBurstCapacity);
   }
 }

@@ -183,6 +183,8 @@
                         <exclude>**/ResponseTransformationFilter.class</exclude>
                         <exclude>**/*Config.class</exclude>
                         <exclude>**/*Config*.class</exclude>
+                        <exclude>**/FeatureUsageTrackingService.class</exclude>
+                        <exclude>**/FeatureUsageTrackingService$*.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>

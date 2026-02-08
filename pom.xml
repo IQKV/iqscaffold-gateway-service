@@ -16,7 +16,12 @@
 
     <name>IQ Scaffold Gateway Service</name>
     <description>API Gateway with routing, authentication, and rate limiting</description>
-
+    <properties>
+        <spring-boot.run.jvmArguments>-Duser.timezone=UTC</spring-boot.run.jvmArguments>
+        <checkstyle.skip>false</checkstyle.skip>
+        <maven.gitcommitid.skip>false</maven.gitcommitid.skip>
+        <jacoco.skip>false</jacoco.skip>
+    </properties>
     <dependencies>
         <!-- Spring Cloud Gateway -->
         <dependency>

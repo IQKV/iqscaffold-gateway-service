@@ -37,7 +37,7 @@ public class SecurityConfiguration {
             .pathMatchers(properties.gateway().security().publicPaths().toArray(new String[0]))
             .permitAll()
             // Health and actuator endpoints
-            .pathMatchers(HttpMethod.GET, "/actuator/health", "/actuator/info")
+            .pathMatchers(HttpMethod.GET, "/actuator/health/**", "/actuator/info")
             .permitAll()
             // All other requests require authentication
             .anyExchange()

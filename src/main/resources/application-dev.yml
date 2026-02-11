@@ -2,6 +2,15 @@
 # This configuration is for development deployment in Kubernetes cluster
 # Uses infrastructure services from iqscaffold-infra Helm chart
 
+server:
+  forward-headers-strategy: FRAMEWORK  # Trust X-Forwarded-* headers from ingress controller
+
+spring:
+  cloud:
+    gateway:
+      forwarded:
+        enabled: true  # Enable X-Forwarded-* header support in Spring Cloud Gateway
+
 iqscaffold:
   cache:
     redis:

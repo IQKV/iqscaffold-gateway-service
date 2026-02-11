@@ -1,22 +1,7 @@
 # Staging Environment Configuration
 # This configuration is optimized for staging with moderate logging and security
 
-server:
-  port: 8080
-
-spring:
-  # Cloud Gateway Configuration - Staging
-  # Note: Routes are defined in main application.yml
-  # Environment-specific overrides only
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: false
-
-# IQ Scaffold Gateway Configuration - Staging Environment
 iqscaffold:
-  # Cache Configuration - Redis
   cache:
     redis:
       host: ${IQSCAFFOLD_CACHE_REDIS_HOST:redis-staging}
@@ -28,7 +13,6 @@ iqscaffold:
       key-prefix: "iqscaffold:gateway:staging"
       default-ttl: PT30M
 
-  # Gateway Configuration
   gateway:
     routing:
       services:
@@ -57,16 +41,15 @@ iqscaffold:
 
   observability:
     tracing:
-      sampling-rate: 0.1  # Reduced sampling for staging
+      sampling-rate: 0.1
       endpoint: ${IQSCAFFOLD_OBSERVABILITY_TRACING_ENDPOINT:http://otel-collector:4317}
     metrics:
       prefix: iqscaffold_gateway_staging
       custom-tags:
         environment: staging
     logging:
-      format: json  # JSON format for staging
+      format: json
 
-# Logging Configuration - Staging
 logging:
   level:
     com.iqscaffold: INFO
@@ -78,13 +61,11 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{correlationId:-}] [%X{traceId:-}] [%X{spanId:-}] %logger{36} - %msg%n"
 
-# Management Configuration - Staging
 management:
   tracing:
     sampling:
-      probability: 0.1  # Reduced sampling for staging
+      probability: 0.1
 
-# SpringDoc Configuration - Staging
 springdoc:
   swagger-ui:
     try-it-out-enabled: false

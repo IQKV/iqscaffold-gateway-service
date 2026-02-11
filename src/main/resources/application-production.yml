@@ -1,22 +1,7 @@
 # Production Environment Configuration
 # This configuration is optimized for production with minimal logging and maximum security
 
-server:
-  port: 8080
-
-spring:
-  # Cloud Gateway Configuration - Production
-  # Note: Routes are defined in main application.yml
-  # Environment-specific overrides only
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: false
-
-# IQ Scaffold Gateway Configuration - Production Environment
 iqscaffold:
-  # Cache Configuration - Redis
   cache:
     redis:
       host: ${IQSCAFFOLD_CACHE_REDIS_HOST}
@@ -28,12 +13,10 @@ iqscaffold:
       key-prefix: "iqscaffold:gateway:production"
       default-ttl: PT15M
 
-  # Gateway Configuration
   gateway:
     routing:
-      # API prefix configuration - strip /api prefix in production (deployed on api.iqscaffold.com)
       api-prefix:
-        strip-count: ${API_STRIP_COUNT:1} # No prefix in production (api.iqscaffold.com already indicates API)
+        strip-count: ${API_STRIP_COUNT:1}
       services:
         user-service:
           uri: ${IQSCAFFOLD_GATEWAY_ROUTING_USER_SERVICE_URI}
@@ -62,7 +45,7 @@ iqscaffold:
 
   observability:
     tracing:
-      sampling-rate: 0.01  # Minimal sampling for production
+      sampling-rate: 0.01
       endpoint: ${IQSCAFFOLD_OBSERVABILITY_TRACING_ENDPOINT}
       batch-size: 1024
     metrics:
@@ -70,11 +53,10 @@ iqscaffold:
         environment: production
     logging:
       level: WARN
-      format: json  # JSON format for production
-      enable-request-logging: false  # Disabled for performance
-      include-user-id: false  # Disabled for privacy in production
+      format: json
+      enable-request-logging: false
+      include-user-id: false
 
-# Logging Configuration - Production
 logging:
   level:
     com.iqscaffold: WARN
@@ -86,7 +68,6 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{correlationId:-}] [%X{traceId:-}] [%X{spanId:-}] %logger{36} - %msg%n"
 
-# Management Configuration - Production
 management:
   endpoints:
     web:
@@ -97,11 +78,10 @@ management:
       show-details: never
   tracing:
     sampling:
-      probability: 0.01  # Minimal sampling for production
+      probability: 0.01
 
-# SpringDoc Configuration - Production
 springdoc:
   api-docs:
-    enabled: false  # Disabled in production
+    enabled: false
   swagger-ui:
-    enabled: false  # Disabled in production
+    enabled: false

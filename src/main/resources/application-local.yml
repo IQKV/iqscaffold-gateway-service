@@ -1,65 +1,48 @@
 # Local Development Environment Configuration
 # This configuration is optimized for development with debug logging and relaxed security
 
-server:
-  port: 8080
-
-spring:
-  # Cloud Gateway Configuration - Development
-  # Note: Routes are defined in main application.yml
-  # Environment-specific overrides only
-  cloud:
-    gateway:
-      discovery:
-        locator:
-          enabled: false
-
-# IQ Scaffold Gateway Configuration - Local Environment
 iqscaffold:
-  # Cache Configuration - Redis
   cache:
     redis:
       key-prefix: "iqscaffold:gateway:local"
       enable-statistics: true
 
-  # Gateway Configuration
   gateway:
     routing:
-      # API prefix configuration - keep /api prefix in local development
       api-prefix:
-        strip-count: ${API_STRIP_COUNT:0}  # Don't strip in local development
+        strip-count: ${API_STRIP_COUNT:0}
       services:
         user-service:
-          connect-timeout: 10000  # Extended for development
-          response-timeout: 60000  # Extended for development
+          connect-timeout: 10000
+          response-timeout: 60000
     
     security:
       jwt:
-        access-token-expiry: PT30M  # Extended for development
-        refresh-token-expiry: P30D  # Extended for development
+        access-token-expiry: PT30M
+        refresh-token-expiry: P30D
       authentication:
-        token-validation-timeout: PT10S  # Extended for development
+        token-validation-timeout: PT10S
     
     rate-limiting:
       redis:
         key-prefix: "iqscaffold:gateway:rate-limit:local"
       policies:
-        default-requests-per-minute: 120  # More lenient for development
+        default-requests-per-minute: 120
         default-burst-capacity: 200
         endpoints:
           "/api/v1/auth/login":
-            requests-per-minute: 20  # More lenient for development
+            requests-per-minute: 20
             burst-capacity: 40
-            enable-tenant-quotas: false  # Disabled for development
+            enable-tenant-quotas: false
       tenant-quotas:
-        enabled: false  # Disabled for development
+        enabled: false
     
     circuit-breaker:
-      failure-rate-threshold: 70  # More lenient for development
+      failure-rate-threshold: 70
       slow-call-rate-threshold: 70
-      slow-call-duration-threshold: PT5S  # More lenient for development
-      minimum-number-of-calls: 5  # Lower threshold for development
-      wait-duration-in-open-state: PT10S  # Shorter for development
+      slow-call-duration-threshold: PT5S
+      minimum-number-of-calls: 5
+      wait-duration-in-open-state: PT10S
       sliding-window-size: 50
     
     transformation:
@@ -68,7 +51,7 @@ iqscaffold:
           X-Gateway-Version: "1.0.0-local"
           X-Environment: "local"
       response:
-        enable-security-headers: false  # Relaxed for development
+        enable-security-headers: false
 
   observability:
     metrics:
@@ -76,10 +59,9 @@ iqscaffold:
       custom-tags:
         environment: local
     logging:
-      level: DEBUG  # Verbose logging for development
-      enable-response-logging: true  # Enabled for development debugging
+      level: DEBUG
+      enable-response-logging: true
 
-# Logging Configuration - Development
 logging:
   level:
     com.iqscaffold: DEBUG
@@ -91,17 +73,15 @@ logging:
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [%X{correlationId:-}] [%X{traceId:-}] [%X{spanId:-}] %logger{36} - %msg%n"
 
-# Management Configuration - Development
 management:
   endpoints:
     web:
       exposure:
-        include: "*"  # Expose all endpoints for development
+        include: "*"
   endpoint:
     health:
-      show-details: always  # Always show health details in development
+      show-details: always
 
-# SpringDoc Configuration - Development
 springdoc:
   swagger-ui:
     try-it-out-enabled: true

@@ -1,0 +1,79 @@
+# Development Environment Configuration (Kubernetes)
+# This configuration is for development deployment in Kubernetes cluster
+# Uses infrastructure services from iqscaffold-infra Helm chart
+
+iqscaffold:
+  cache:
+    redis:
+      host: ${IQSCAFFOLD_CACHE_REDIS_HOST:iqscaffold-infra-redis-master.iqscaffold-dev-env.svc.cluster.local}
+      password: ${IQSCAFFOLD_CACHE_REDIS_PASSWORD:}
+      enable-statistics: true
+
+  gateway:
+    routing:
+      services:
+        user-service:
+          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_USER_SERVICE_URI:http://iqscaffold-user-service:8080}
+        billing-service:
+          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_BILLING_SERVICE_URI:http://iqscaffold-billing-service:8080}
+    
+    security:
+      jwt:
+        secret-key: ${JWT_SECRET_KEY:dev-jwt-secret-not-for-production-use}
+        jwk-set-uri: ${USER_SERVICE_JWK_URI:http://iqscaffold-user-service:8080/.well-known/jwks.json}
+      authentication:
+        user-service-url: ${IQSCAFFOLD_GATEWAY_SECURITY_USER_SERVICE_URL:http://iqscaffold-user-service:8080}
+    
+    cors:
+      allowed-origins:
+        - http://localhost:3000
+        - http://localhost:5173
+        - http://localhost:8080
+        - http://localhost:4200
+        - http://127.0.0.1:3000
+        - http://127.0.0.1:5173
+        - https://app.iqscaffold.com
+        - https://auth.iqscaffold.com
+    
+    rate-limiting:
+      enabled: true
+      policies:
+        default-requests-per-minute: 100
+        default-burst-capacity: 150
+
+  observability:
+    tracing:
+      enabled: true
+      sampling-rate: 1.0
+      endpoint: ${IQSCAFFOLD_OBSERVABILITY_TRACING_ENDPOINT:http://jaeger-collector.monitoring.svc.cluster.local:4317}
+    metrics:
+      prefix: iqscaffold_gateway_dev
+      custom-tags:
+        environment: dev
+    logging:
+      level: DEBUG
+      enable-request-logging: true
+      enable-response-logging: true
+
+logging:
+  level:
+    # Application logging
+    com.iqscaffold: DEBUG
+    com.iqscaffold.gatewayservice.filter: DEBUG
+    com.iqscaffold.gatewayservice.security: DEBUG
+    
+    # Spring Cloud Gateway
+    org.springframework.cloud.gateway: INFO
+    org.springframework.cloud.gateway.handler.RoutePredicateHandlerMapping: DEBUG
+    org.springframework.cloud.gateway.route.RouteDefinitionRouteLocator: DEBUG
+    
+    # Spring Framework
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    
+    # Reactive/Netty
+    reactor.netty: INFO
+    reactor.netty.http.client: DEBUG
+    
+    # Redis
+    io.lettuce: INFO

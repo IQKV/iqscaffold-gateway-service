@@ -31,7 +31,6 @@ spring:
           discovery:
             locator:
               enabled: false
-          fail-on-route-definition-error:
           routes:
             - id: user-service-public-signup
               uri: ${iqscaffold.gateway.routing.services.user-service.uri}

@@ -29,6 +29,12 @@ services:
       file: compose.base.yaml
       service: mock-contact-service
 
+  # Gateway Service - Full platform run including build phase
+  gateway-service:
+    extends:
+      file: compose.base.yaml
+      service: gateway-service
+
 networks:
   gateway-network:
     name: iqscaffold-gateway-network-dev
@@ -37,3 +43,7 @@ networks:
 volumes:
   redis_gateway_data:
     name: iqscaffold_gateway_redis_data_dev
+  gateway_logs:
+    name: iqscaffold_gateway_logs_dev
+  gateway_tmp:
+    name: iqscaffold_gateway_tmp_dev

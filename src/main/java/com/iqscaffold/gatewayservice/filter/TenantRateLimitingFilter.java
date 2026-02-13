@@ -91,8 +91,11 @@ public class TenantRateLimitingFilter implements GlobalFilter, Ordered {
                 });
           }
 
+          logger.info("Rate limit check passed for tenant: {}, path: {}, continuing to next filter", tenantId, path);
           return quotaMonitoringService.recordTenantRequest(tenantId, path, false)
-              .then(chain.filter(exchange));
+              .then(chain.filter(exchange))
+              .doOnSuccess(v -> logger.info("Request completed successfully after rate limiting for path: {}", path))
+              .doOnError(e -> logger.error("Request failed after rate limiting for path: {}", path, e));
         })
         .onErrorResume(error -> {
           // Propagate RateLimitExceededException

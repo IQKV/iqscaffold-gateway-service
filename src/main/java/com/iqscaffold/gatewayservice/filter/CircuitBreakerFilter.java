@@ -33,20 +33,26 @@ public class CircuitBreakerFilter implements GlobalFilter, Ordered {
   @Override
   public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
     if (!properties.gateway().circuitBreaker().enabled()) {
+      logger.info("Circuit breaker disabled, continuing to next filter");
       return chain.filter(exchange);
     }
 
     var request = exchange.getRequest();
     var path = request.getPath().value();
+    var uri = exchange.getAttribute(org.springframework.cloud.gateway.support.ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR);
 
     // Determine which circuit breaker to use based on the route
     var circuitBreakerName = determineCircuitBreakerName(path);
     var circuitBreaker = circuitBreakerRegistry.circuitBreaker(circuitBreakerName);
 
-    logger.debug("Applying circuit breaker '{}' for path: {}, state: {}",
-        circuitBreakerName, path, circuitBreaker.getState());
+    logger.info("Circuit breaker '{}' for path: {}, state: {}, target URI: {}",
+        circuitBreakerName, path, circuitBreaker.getState(), uri);
+
+    logger.info("About to call chain.filter() - this should trigger the HTTP call to downstream service");
 
     return chain.filter(exchange)
+        .doOnSuccess(v -> logger.info("Circuit breaker '{}' - downstream call succeeded for path: {}", circuitBreakerName, path))
+        .doOnError(e -> logger.error("Circuit breaker '{}' - downstream call failed for path: {}", circuitBreakerName, path, e))
         .transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
         .onErrorResume(throwable -> {
           logger.error("Circuit breaker '{}' triggered for path: {}", circuitBreakerName, path, throwable);

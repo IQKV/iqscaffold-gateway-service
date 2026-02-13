@@ -13,44 +13,39 @@ import org.springframework.validation.annotation.Validated;
 /**
  * Platform configuration properties for the gateway service.
  *
- * <p>This configuration allows the gateway to enforce access control based on
+ * <p>
+ * This configuration allows the gateway to enforce access control based on
  * configurable route patterns and authority requirements, making the platform
  * extensible without code changes.
  */
 @ConfigurationProperties(prefix = "iqscaffold.platform")
 @Validated
 public record PlatformConfigurationProperties(
-    @Valid @NotNull Security security
-) {
+    @Valid @NotNull Security security) {
 
   /**
    * Security configuration for access control.
    */
   public record Security(
       @Valid @NotNull RouteProtection routeProtection,
-      @Valid @NotNull AccessControl accessControl
-  ) {
+      @Valid @NotNull AccessControl accessControl) {
 
     /**
      * Route protection configuration.
      */
     public record RouteProtection(
         @NotNull List<@NotBlank String> publicPaths,
-        @NotNull Map<@NotBlank String, @NotEmpty List<@NotBlank String>> protectedRoutes
-    ) {
+        @NotNull Map<@NotBlank String, @NotEmpty List<@NotBlank String>> protectedRoutes) {
 
       /**
        * Check if a path is public.
        */
       public boolean isPublicPath(String path) {
+        if (path == null) {
+          return false;
+        }
         return publicPaths.stream()
-            .anyMatch(publicPath -> {
-              if (publicPath.endsWith("/**")) {
-                var prefix = publicPath.substring(0, publicPath.length() - 3);
-                return path.startsWith(prefix);
-              }
-              return path.equals(publicPath);
-            });
+            .anyMatch(publicPath -> matchesPattern(path, publicPath));
       }
 
       /**
@@ -87,8 +82,7 @@ public record PlatformConfigurationProperties(
         boolean enableFeatureValidation,
         boolean enableMicroserviceValidation,
         boolean enableRouteValidation,
-        @NotNull List<@NotBlank String> bypassAuthorities
-    ) {
+        @NotNull List<@NotBlank String> bypassAuthorities) {
 
       /**
        * Check if an authority can bypass access controls.

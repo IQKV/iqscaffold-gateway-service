@@ -72,7 +72,7 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/features/my-features", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/features/my-features", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-features")
@@ -85,7 +85,7 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/features/enabled", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/features/enabled", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-features")
@@ -99,7 +99,7 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/billing/subscriptions/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/billing/subscriptions/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-subscriptions")
@@ -113,7 +113,7 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/billing/payments/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/billing/payments/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-payments")
@@ -127,7 +127,7 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/billing/invoices/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/billing/invoices/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-invoices")
@@ -141,7 +141,7 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/billing/payouts/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/billing/payouts/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-payouts")
@@ -155,7 +155,7 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/billing/subscription-plans/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/billing/subscription-plans/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-plans")
@@ -169,7 +169,7 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/admin/billing/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/admin/billing/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-admin")
@@ -183,7 +183,7 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/billing/webhooks/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/billing/webhooks/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("billing-service-webhooks")
@@ -217,12 +217,12 @@ public class BillingRouteConfig {
 
     var policy = policies.get(endpoint);
     if (policy != null) {
-      log.debug("Using specific rate limit for {}: {} req/min, {} burst", 
+      log.debug("Using specific rate limit for {}: {} req/min, {} burst",
           endpoint, policy.requestsPerMinute(), policy.burstCapacity());
       return new RedisRateLimiter(policy.requestsPerMinute(), policy.burstCapacity());
     }
 
-    log.debug("Using default rate limit for {}: {} req/min, {} burst", 
+    log.debug("Using default rate limit for {}: {} req/min, {} burst",
         endpoint, defaultReplenishRate, defaultBurstCapacity);
     return new RedisRateLimiter(defaultReplenishRate, defaultBurstCapacity);
   }

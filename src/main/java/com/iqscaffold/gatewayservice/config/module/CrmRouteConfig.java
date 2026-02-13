@@ -65,7 +65,7 @@ public class CrmRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/leads/*/activities/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/leads/*/activities/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("lead-service-activities")
@@ -79,7 +79,7 @@ public class CrmRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/leads/*/notes/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/leads/*/notes/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("lead-service-notes")
@@ -93,7 +93,7 @@ public class CrmRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/leads/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/leads/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("lead-service")
@@ -107,7 +107,7 @@ public class CrmRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/pipeline/dashboard/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/pipeline/dashboard/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("pipeline-service-dashboard")
@@ -121,7 +121,7 @@ public class CrmRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/pipeline/follow-ups/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/pipeline/follow-ups/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("pipeline-service-follow-ups")
@@ -135,7 +135,7 @@ public class CrmRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/pipeline/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/pipeline/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("pipeline-service")
@@ -149,7 +149,7 @@ public class CrmRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/crm/webhooks/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/crm/webhooks/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("contact-service-webhooks")
@@ -163,7 +163,7 @@ public class CrmRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/contacts/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/contacts/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("contact-service")
@@ -177,7 +177,7 @@ public class CrmRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                 .requestRateLimiter(c -> c.setRateLimiter(
-                    getRateLimiter("/api/v1/companies/**", rateLimitPolicies, 
+                    getRateLimiter("/api/v1/companies/**", rateLimitPolicies,
                         defaultReplenishRate, defaultBurstCapacity)))
                 .circuitBreaker(config -> config
                     .setName("company-service")
@@ -199,12 +199,12 @@ public class CrmRouteConfig {
 
     var policy = policies.get(endpoint);
     if (policy != null) {
-      log.debug("Using specific rate limit for {}: {} req/min, {} burst", 
+      log.debug("Using specific rate limit for {}: {} req/min, {} burst",
           endpoint, policy.requestsPerMinute(), policy.burstCapacity());
       return new RedisRateLimiter(policy.requestsPerMinute(), policy.burstCapacity());
     }
 
-    log.debug("Using default rate limit for {}: {} req/min, {} burst", 
+    log.debug("Using default rate limit for {}: {} req/min, {} burst",
         endpoint, defaultReplenishRate, defaultBurstCapacity);
     return new RedisRateLimiter(defaultReplenishRate, defaultBurstCapacity);
   }

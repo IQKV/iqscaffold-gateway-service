@@ -19,40 +19,52 @@ import reactor.core.publisher.Mono;
 /**
  * Gateway filter that enforces unified microservice and feature access control.
  *
- * <p>This filter provides comprehensive access control for all microservices and features
- * by checking user authorities against route-based requirements. It replaces multiple
+ * <p>
+ * This filter provides comprehensive access control for all microservices and
+ * features
+ * by checking user authorities against route-based requirements. It replaces
+ * multiple
  * feature-specific filters with a single, configurable, and scalable approach.
  *
  * <h3>Access Control Features</h3>
  * <ul>
- *   <li><strong>Route-Based Protection</strong> - Maps URL patterns to required authorities</li>
- *   <li><strong>Microservice-Aware</strong> - Understands service boundaries and access</li>
- *   <li><strong>Feature Integration</strong> - Integrates with composable feature system</li>
- *   <li><strong>Admin Override</strong> - ADMIN and SUPER_ADMIN have universal access</li>
- *   <li><strong>Public Routes</strong> - Configurable public access patterns</li>
+ * <li><strong>Route-Based Protection</strong> - Maps URL patterns to required
+ * authorities</li>
+ * <li><strong>Microservice-Aware</strong> - Understands service boundaries and
+ * access</li>
+ * <li><strong>Feature Integration</strong> - Integrates with composable feature
+ * system</li>
+ * <li><strong>Admin Override</strong> - ADMIN and SUPER_ADMIN have universal
+ * access</li>
+ * <li><strong>Public Routes</strong> - Configurable public access patterns</li>
  * </ul>
  *
  * <h3>Protected Microservices</h3>
  * <ul>
- *   <li><strong>CRM Services</strong> - contact-service, lead-service, pipeline-service</li>
- *   <li><strong>Billing Service</strong> - billing-service</li>
- *   <li><strong>User Service</strong> - user-service (admin endpoints)</li>
- *   <li><strong>Gateway Service</strong> - API access control</li>
+ * <li><strong>CRM Services</strong> - contact-service, lead-service,
+ * pipeline-service</li>
+ * <li><strong>Billing Service</strong> - billing-service</li>
+ * <li><strong>User Service</strong> - user-service (admin endpoints)</li>
+ * <li><strong>Gateway Service</strong> - API access control</li>
  * </ul>
  *
  * <h3>Route Protection Patterns</h3>
  * <ul>
- *   <li><strong>CRM Routes</strong> - /api/&#42;/crm/&#42;&#42;, /api/&#42;/leads/&#42;&#42;, /api/&#42;/contacts/&#42;&#42;</li>
- *   <li><strong>Billing Routes</strong> - /api/&#42;/billing/&#42;&#42;, /api/&#42;/payments/&#42;&#42;</li>
- *   <li><strong>Admin Routes</strong> - /api/&#42;/admin/&#42;&#42;, /actuator/&#42;&#42;</li>
+ * <li><strong>CRM Routes</strong> - /api/&#42;/crm/&#42;&#42;,
+ * /api/&#42;/leads/&#42;&#42;, /api/&#42;/contacts/&#42;&#42;</li>
+ * <li><strong>Billing Routes</strong> - /api/&#42;/billing/&#42;&#42;,
+ * /api/&#42;/payments/&#42;&#42;</li>
+ * <li><strong>Admin Routes</strong> - /api/&#42;/admin/&#42;&#42;,
+ * /actuator/&#42;&#42;</li>
  * </ul>
  *
  * <h3>Authority Hierarchy</h3>
  * <ul>
- *   <li><strong>SUPER_ADMIN</strong> - Universal access to all microservices</li>
- *   <li><strong>ADMIN</strong> - Access to all tenant microservices</li>
- *   <li><strong>Feature Authorities</strong> - Access to specific microservices</li>
- *   <li><strong>USER</strong> - Basic access (user-service only)</li>
+ * <li><strong>SUPER_ADMIN</strong> - Universal access to all microservices</li>
+ * <li><strong>ADMIN</strong> - Access to all tenant microservices</li>
+ * <li><strong>Feature Authorities</strong> - Access to specific
+ * microservices</li>
+ * <li><strong>USER</strong> - Basic access (user-service only)</li>
  * </ul>
  */
 @Component
@@ -84,7 +96,7 @@ public class UnifiedMicroserviceAccessFilter implements GlobalFilter, Ordered {
     // Determine required authorities for this route
     var requiredAuthorities = getRequiredAuthorities(path);
     if (requiredAuthorities.isEmpty()) {
-      logger.info("Path does not require specific authorities, continuing: {}", path);
+      logger.debug("Path does not require specific authorities, continuing: {}", path);
       return chain.filter(exchange);
     }
 
@@ -92,8 +104,8 @@ public class UnifiedMicroserviceAccessFilter implements GlobalFilter, Ordered {
     var authoritiesHeader = request.getHeaders().getFirst(GatewayConstants.Headers.X_USER_AUTHORITIES);
 
     if (!StringUtils.hasText(authoritiesHeader)) {
-      logger.warn("No user authorities found for protected route: {}", path);
-      return unauthorizedResponse(exchange, "Authentication required", "AUTHENTICATION_REQUIRED");
+      logger.warn("No user authorities found for protected route: {}. Required: {}", path, requiredAuthorities);
+      return unauthorizedResponse(exchange, "Authentication required for " + path, "AUTHENTICATION_REQUIRED");
     }
 
     var userAuthorities = List.of(authoritiesHeader.split(","));
@@ -108,32 +120,27 @@ public class UnifiedMicroserviceAccessFilter implements GlobalFilter, Ordered {
     // Access denied
     var username = request.getHeaders().getFirst(GatewayConstants.Headers.X_USERNAME);
     var accessType = getAccessType(path);
-    logger.warn("Access denied for user: {} on path: {} (authorities: {})",
-        username, path, userAuthorities);
+    logger.warn("Access denied for user: {} on path: {}. User authorities: {}, Required authorities: {}",
+        username, path, userAuthorities, requiredAuthorities);
 
     return unauthorizedResponse(exchange,
-        accessType + " access required",
+        accessType + " access required. Path: " + path,
         accessType.toUpperCase().replace(" ", "_") + "_REQUIRED");
   }
 
   /**
    * Check if the path is a public path that should skip access control.
-   * Uses the unified public paths configuration from iqscaffold.gateway.security.public-paths
+   * Uses the unified public paths configuration from
+   * iqscaffold.gateway.security.public-paths
    */
   private boolean isPublicPath(String path) {
-    // Use the unified public paths from IqScaffoldProperties
-    return iqScaffoldProperties.gateway().security().publicPaths().stream()
-        .anyMatch(publicPath -> {
-          if (publicPath.endsWith("/**")) {
-            var prefix = publicPath.substring(0, publicPath.length() - 3);
-            return path.startsWith(prefix);
-          }
-          return path.equals(publicPath);
-        });
+    // Use the unified public paths from PlatformConfigurationProperties
+    return platformConfig.security().routeProtection().isPublicPath(path);
   }
 
   /**
-   * Get required authorities for a given path based on route patterns from configuration.
+   * Get required authorities for a given path based on route patterns from
+   * configuration.
    */
   private List<String> getRequiredAuthorities(String path) {
     return platformConfig.security().routeProtection().getRequiredAuthorities(path);

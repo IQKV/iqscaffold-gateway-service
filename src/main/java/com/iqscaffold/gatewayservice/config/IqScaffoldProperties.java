@@ -374,7 +374,7 @@ public record IqScaffoldProperties(
      */
     public boolean isLocaleSupported(Locale locale) {
       return supportedLocales.contains(locale.toLanguageTag())
-          || supportedLocales.contains(locale.getLanguage());
+             || supportedLocales.contains(locale.getLanguage());
     }
   }
 }

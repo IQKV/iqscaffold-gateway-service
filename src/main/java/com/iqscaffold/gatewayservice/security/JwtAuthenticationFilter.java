@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import com.iqscaffold.gatewayservice.common.GatewayConstants;
 import com.iqscaffold.gatewayservice.config.IqScaffoldProperties;
+import com.iqscaffold.gatewayservice.config.PlatformConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -24,8 +25,10 @@ import reactor.core.publisher.Mono;
 
 /**
  * Reactive JWT authentication filter for user context propagation.
- * Extracts user context from validated JWT and propagates via headers to downstream services.
- * JWT validation is handled by Spring Security OAuth2 Resource Server with RSA256.
+ * Extracts user context from validated JWT and propagates via headers to
+ * downstream services.
+ * JWT validation is handled by Spring Security OAuth2 Resource Server with
+ * RSA256.
  */
 @Component
 public final class JwtAuthenticationFilter implements GlobalFilter, Ordered {
@@ -33,9 +36,13 @@ public final class JwtAuthenticationFilter implements GlobalFilter, Ordered {
   private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
   private final IqScaffoldProperties properties;
+  private final PlatformConfigurationProperties platformConfig;
 
-  public JwtAuthenticationFilter(final IqScaffoldProperties properties) {
+  public JwtAuthenticationFilter(
+      final IqScaffoldProperties properties,
+      final PlatformConfigurationProperties platformConfig) {
     this.properties = properties;
+    this.platformConfig = platformConfig;
   }
 
   @Override
@@ -88,7 +95,8 @@ public final class JwtAuthenticationFilter implements GlobalFilter, Ordered {
             MDC.remove(GatewayConstants.MdcKeys.TENANT_ID);
           }
         })
-        .switchIfEmpty(addCorrelationIdAndContinue(exchange.mutate().request(sanitizedRequest).build(), chain, correlationId));
+        .switchIfEmpty(
+            addCorrelationIdAndContinue(exchange.mutate().request(sanitizedRequest).build(), chain, correlationId));
   }
 
   private String getOrGenerateCorrelationId(ServerHttpRequest request) {
@@ -98,7 +106,8 @@ public final class JwtAuthenticationFilter implements GlobalFilter, Ordered {
 
   /**
    * Sanitize incoming headers to prevent header spoofing attacks.
-   * Removes any user/tenant context headers that may have been set by external clients.
+   * Removes any user/tenant context headers that may have been set by external
+   * clients.
    * Only the gateway should set these headers after JWT validation.
    */
   private ServerHttpRequest sanitizeIncomingHeaders(ServerHttpRequest request) {
@@ -128,14 +137,7 @@ public final class JwtAuthenticationFilter implements GlobalFilter, Ordered {
   }
 
   private boolean isPublicPath(String path) {
-    return properties.gateway().security().publicPaths().stream()
-        .anyMatch(publicPath -> {
-          if (publicPath.endsWith("/**")) {
-            var prefix = publicPath.substring(0, publicPath.length() - 3);
-            return path.startsWith(prefix);
-          }
-          return path.equals(publicPath);
-        });
+    return platformConfig.security().routeProtection().isPublicPath(path);
   }
 
   private UserContext extractUserContext(Jwt jwt) {
@@ -156,8 +158,7 @@ public final class JwtAuthenticationFilter implements GlobalFilter, Ordered {
         roles,
         permissions,
         organizationId,
-        preferredLocale
-    );
+        preferredLocale);
   }
 
   private TenantContext extractTenantContext(ServerHttpRequest request, Jwt jwt) {
@@ -204,7 +205,6 @@ public final class JwtAuthenticationFilter implements GlobalFilter, Ordered {
       case null, default -> List.of();
     };
   }
-
 
   private ServerHttpRequest propagateContextHeaders(
       ServerHttpRequest request,
@@ -271,7 +271,8 @@ public final class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     return builder.build();
   }
 
-  private Mono<Void> addCorrelationIdAndContinue(ServerWebExchange exchange, GatewayFilterChain chain, String correlationId) {
+  private Mono<Void> addCorrelationIdAndContinue(ServerWebExchange exchange, GatewayFilterChain chain,
+                                                 String correlationId) {
     var modifiedRequest = exchange.getRequest().mutate()
         .header(GatewayConstants.Headers.X_CORRELATION_ID, correlationId)
         .build();
@@ -294,8 +295,7 @@ public final class JwtAuthenticationFilter implements GlobalFilter, Ordered {
       List<String> roles,
       List<String> permissions,
       String organizationId,
-      String preferredLocale
-  ) {
+      String preferredLocale) {
 
   }
 
@@ -303,8 +303,7 @@ public final class JwtAuthenticationFilter implements GlobalFilter, Ordered {
    * Tenant context extracted from JWT claims or headers.
    */
   public record TenantContext(
-      String tenantId
-  ) {
+      String tenantId) {
 
   }
 }

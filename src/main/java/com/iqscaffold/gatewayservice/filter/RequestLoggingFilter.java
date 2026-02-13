@@ -14,8 +14,11 @@ import reactor.core.publisher.Mono;
 
 /**
  * Filter to log the final request details right before it's sent to the downstream service.
- * This filter runs with a very low order (high priority number) to execute just before
- * the NettyRoutingFilter sends the actual HTTP request.
+ * This filter runs AFTER route resolution (order 10000) to see the actual target URI.
+ * 
+ * Spring Cloud Gateway filter order:
+ * - RouteToRequestUrlFilter: 10000 (resolves target URI)
+ * - NettyRoutingFilter: Integer.MAX_VALUE (makes HTTP call)
  */
 @Component
 public class RequestLoggingFilter implements GlobalFilter, Ordered {
@@ -31,12 +34,16 @@ public class RequestLoggingFilter implements GlobalFilter, Ordered {
     // Get the target URI that Spring Cloud Gateway has resolved
     URI targetUri = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR);
     
-    logger.info("=== FINAL REQUEST LOGGING ===");
+    // Get the route
+    var route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
+    
+    logger.info("=== FINAL REQUEST LOGGING (Order: {}) ===", getOrder());
     logger.info("Original Request: {} {}", method, path);
+    logger.info("Matched Route: {}", route != null ? route.getId() : "null");
     logger.info("Target URI: {}", targetUri);
     logger.info("Request Headers: {}", request.getHeaders().keySet());
     logger.info("About to forward request to downstream service...");
-    logger.info("=============================");
+    logger.info("==========================================");
 
     return chain.filter(exchange)
         .doOnSuccess(v -> {
@@ -56,9 +63,8 @@ public class RequestLoggingFilter implements GlobalFilter, Ordered {
 
   @Override
   public int getOrder() {
-    // Execute just before NettyRoutingFilter (which has order Integer.MAX_VALUE)
-    // NettyRoutingFilter order is typically around 2147483647
-    // We want to run right before it, so use a high number
-    return Ordered.LOWEST_PRECEDENCE - 1;
+    // Execute AFTER RouteToRequestUrlFilter (10000) but BEFORE NettyRoutingFilter (Integer.MAX_VALUE)
+    // This ensures we can see the resolved target URI
+    return 10001;
   }
 }

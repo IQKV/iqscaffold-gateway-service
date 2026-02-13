@@ -35,7 +35,8 @@ public class RequestLoggingFilter implements GlobalFilter, Ordered {
     URI targetUri = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_REQUEST_URL_ATTR);
     
     // Get the route
-    var route = exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
+    org.springframework.cloud.gateway.route.Route route = 
+        exchange.getAttribute(ServerWebExchangeUtils.GATEWAY_ROUTE_ATTR);
     
     logger.info("=== FINAL REQUEST LOGGING (Order: {}) ===", getOrder());
     logger.info("Original Request: {} {}", method, path);

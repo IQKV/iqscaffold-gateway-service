@@ -25,7 +25,7 @@ iqscaffold:
   gateway:
     routing:
       api-prefix:
-        strip-count: ${API_STRIP_COUNT:1}
+        strip-count: ${API_STRIP_COUNT:0}
       services:
         user-service:
           uri: ${IQSCAFFOLD_GATEWAY_ROUTING_USER_SERVICE_URI}

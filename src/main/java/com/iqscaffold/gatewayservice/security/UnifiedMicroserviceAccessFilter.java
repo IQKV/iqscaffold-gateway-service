@@ -3,6 +3,7 @@ package com.iqscaffold.gatewayservice.security;
 import java.util.List;
 
 import com.iqscaffold.gatewayservice.common.GatewayConstants;
+import com.iqscaffold.gatewayservice.config.IqScaffoldProperties;
 import com.iqscaffold.gatewayservice.config.PlatformConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,9 +60,13 @@ public class UnifiedMicroserviceAccessFilter implements GlobalFilter, Ordered {
 
   private static final Logger logger = LoggerFactory.getLogger(UnifiedMicroserviceAccessFilter.class);
 
+  private final IqScaffoldProperties iqScaffoldProperties;
   private final PlatformConfigurationProperties platformConfig;
 
-  public UnifiedMicroserviceAccessFilter(final PlatformConfigurationProperties platformConfig) {
+  public UnifiedMicroserviceAccessFilter(
+      final IqScaffoldProperties iqScaffoldProperties,
+      final PlatformConfigurationProperties platformConfig) {
+    this.iqScaffoldProperties = iqScaffoldProperties;
     this.platformConfig = platformConfig;
   }
 
@@ -113,9 +118,18 @@ public class UnifiedMicroserviceAccessFilter implements GlobalFilter, Ordered {
 
   /**
    * Check if the path is a public path that should skip access control.
+   * Uses the unified public paths configuration from iqscaffold.gateway.security.public-paths
    */
   private boolean isPublicPath(String path) {
-    return platformConfig.security().routeProtection().isPublicPath(path);
+    // Use the unified public paths from IqScaffoldProperties
+    return iqScaffoldProperties.gateway().security().publicPaths().stream()
+        .anyMatch(publicPath -> {
+          if (publicPath.endsWith("/**")) {
+            var prefix = publicPath.substring(0, publicPath.length() - 3);
+            return path.startsWith(prefix);
+          }
+          return path.equals(publicPath);
+        });
   }
 
   /**

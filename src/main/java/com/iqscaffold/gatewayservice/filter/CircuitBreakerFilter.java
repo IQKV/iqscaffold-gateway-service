@@ -50,14 +50,22 @@ public class CircuitBreakerFilter implements GlobalFilter, Ordered {
 
     logger.info("About to call chain.filter() - this should trigger the HTTP call to downstream service");
 
-    return chain.filter(exchange)
-        .doOnSuccess(v -> logger.info("Circuit breaker '{}' - downstream call succeeded for path: {}", circuitBreakerName, path))
-        .doOnError(e -> logger.error("Circuit breaker '{}' - downstream call failed for path: {}", circuitBreakerName, path, e))
+    // Call chain.filter() and apply circuit breaker
+    var result = chain.filter(exchange)
+        .doOnSuccess(v -> {
+          logger.info("Circuit breaker '{}' - chain.filter() completed successfully for path: {}", circuitBreakerName, path);
+          var response = exchange.getResponse();
+          logger.info("Response status: {}", response.getStatusCode());
+        })
+        .doOnError(e -> logger.error("Circuit breaker '{}' - chain.filter() failed for path: {}", circuitBreakerName, path, e))
         .transformDeferred(CircuitBreakerOperator.of(circuitBreaker))
         .onErrorResume(throwable -> {
           logger.error("Circuit breaker '{}' triggered for path: {}", circuitBreakerName, path, throwable);
           return handleCircuitBreakerOpen(exchange, circuitBreakerName, throwable);
         });
+    
+    logger.info("Circuit breaker filter returning Mono for path: {}", path);
+    return result;
   }
 
   private String determineCircuitBreakerName(String path) {

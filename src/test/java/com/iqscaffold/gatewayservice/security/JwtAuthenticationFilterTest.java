@@ -13,6 +13,7 @@ import java.util.Map;
 
 import com.iqscaffold.gatewayservice.common.GatewayConstants;
 import com.iqscaffold.gatewayservice.config.IqScaffoldProperties;
+import com.iqscaffold.gatewayservice.config.PlatformConfigurationProperties;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -38,10 +39,23 @@ class JwtAuthenticationFilterTest {
   private JwtAuthenticationFilter jwtAuthenticationFilter;
   private IqScaffoldProperties properties;
 
+  @Mock
+  private PlatformConfigurationProperties platformConfig;
+
+  @Mock
+  private PlatformConfigurationProperties.Security security;
+
+  @Mock
+  private PlatformConfigurationProperties.Security.RouteProtection routeProtection;
+
   @BeforeEach
   void setUp() {
     properties = createTestProperties();
-    jwtAuthenticationFilter = new JwtAuthenticationFilter(properties);
+
+    when(platformConfig.security()).thenReturn(security);
+    when(security.routeProtection()).thenReturn(routeProtection);
+
+    jwtAuthenticationFilter = new JwtAuthenticationFilter(properties, platformConfig);
     when(filterChain.filter(any())).thenReturn(Mono.empty());
   }
 
@@ -50,6 +64,8 @@ class JwtAuthenticationFilterTest {
   void shouldSkipAuthenticationForPublicPaths() {
     var request = MockServerHttpRequest.get("/health").build();
     var exchange = MockServerWebExchange.from(request);
+
+    when(routeProtection.isPublicPath("/health")).thenReturn(true);
 
     jwtAuthenticationFilter.filter(exchange, filterChain).block();
 
@@ -61,6 +77,8 @@ class JwtAuthenticationFilterTest {
   void shouldAddCorrelationIdToRequest() {
     var request = MockServerHttpRequest.get("/health").build();
     var exchange = MockServerWebExchange.from(request);
+
+    when(routeProtection.isPublicPath("/health")).thenReturn(true);
 
     jwtAuthenticationFilter.filter(exchange, filterChain).block();
 
@@ -75,6 +93,8 @@ class JwtAuthenticationFilterTest {
         .header(GatewayConstants.Headers.X_CORRELATION_ID, correlationId)
         .build();
     var exchange = MockServerWebExchange.from(request);
+
+    when(routeProtection.isPublicPath("/health")).thenReturn(true);
 
     jwtAuthenticationFilter.filter(exchange, filterChain).block();
 

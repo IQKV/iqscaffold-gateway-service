@@ -33,11 +33,12 @@ public class TenantQuotaMonitoringService {
    * Records a request for tenant quota monitoring.
    */
   public Mono<Void> recordTenantRequest(String tenantId, String endpoint, boolean rateLimited) {
-    if (!properties.gateway().rateLimiting().tenantQuotas().enabled()) {
-      return Mono.empty();
-    }
-
     return Mono.fromRunnable(() -> {
+      if (!properties.gateway().rateLimiting().tenantQuotas().enabled()) {
+        return;
+      }
+      
+
       var stats = tenantUsageCache.computeIfAbsent(tenantId, k -> new TenantUsageStats(tenantId));
       stats.recordRequest(endpoint, rateLimited);
 

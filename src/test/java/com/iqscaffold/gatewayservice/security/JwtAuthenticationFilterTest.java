@@ -3,6 +3,7 @@ package com.iqscaffold.gatewayservice.security;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -52,8 +53,8 @@ class JwtAuthenticationFilterTest {
   void setUp() {
     properties = createTestProperties();
 
-    when(platformConfig.security()).thenReturn(security);
-    when(security.routeProtection()).thenReturn(routeProtection);
+    lenient().when(platformConfig.security()).thenReturn(security);
+    lenient().when(security.routeProtection()).thenReturn(routeProtection);
 
     jwtAuthenticationFilter = new JwtAuthenticationFilter(properties, platformConfig);
     when(filterChain.filter(any())).thenReturn(Mono.empty());

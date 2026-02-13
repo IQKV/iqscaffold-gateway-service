@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.iqscaffold.gatewayservice.common.GatewayConstants;
 import com.iqscaffold.gatewayservice.config.IqScaffoldProperties;

@@ -77,14 +77,14 @@ public class UnifiedMicroserviceAccessFilter implements GlobalFilter, Ordered {
 
     // Skip access check for public paths
     if (isPublicPath(path)) {
-      logger.trace("Skipping access check for public path: {}", path);
+      logger.info("Skipping access check for public path: {}", path);
       return chain.filter(exchange);
     }
 
     // Determine required authorities for this route
     var requiredAuthorities = getRequiredAuthorities(path);
     if (requiredAuthorities.isEmpty()) {
-      logger.trace("Path does not require specific authorities, continuing: {}", path);
+      logger.info("Path does not require specific authorities, continuing: {}", path);
       return chain.filter(exchange);
     }
 

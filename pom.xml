@@ -181,6 +181,7 @@
                         <exclude>**/*Application.class</exclude>
                         <exclude>**/common/*.class</exclude>
                         <exclude>**/ResponseTransformationFilter.class</exclude>
+                        <exclude>**/RequestLoggingFilter.class</exclude>
                         <exclude>**/*Config.class</exclude>
                         <exclude>**/*Config*.class</exclude>
                         <exclude>**/FeatureUsageTrackingService.class</exclude>

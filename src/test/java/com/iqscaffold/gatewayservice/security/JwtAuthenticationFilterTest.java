@@ -87,8 +87,6 @@ class JwtAuthenticationFilterTest {
         .build();
     var exchange = MockServerWebExchange.from(request);
 
-    when(routeProtection.isPublicPath("/health")).thenReturn(true);
-
     jwtAuthenticationFilter.filter(exchange, filterChain).block();
 
     verify(filterChain).filter(any());

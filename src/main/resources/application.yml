@@ -99,56 +99,6 @@ iqscaffold:
   platform:
     security:
       routeProtection:
-        publicPaths:
-          - "/.well-known/jwks.json"
-          - "/api/v1/public/**"
-          - "/api/v1/auth/**"
-          - "/actuator/health"
-          - "/actuator/info"
-          - "/api/v1/docs"
-          - "/swagger-ui/**"
-          - "/api-docs/**"
-          - "/user-service/swagger-ui/**"
-          - "/user-service/api-docs/**"
-          - "/user-service/v3/api-docs/**"
-          - "/user-service/swagger-resources/**"
-          - "/user-service/swagger-config/**"
-          - "/user-service/swagger-ui.html"
-          - "/user-service/webjars/**"
-          - "/billing-service/swagger-ui/**"
-          - "/billing-service/api-docs/**"
-          - "/billing-service/v3/api-docs/**"
-          - "/billing-service/swagger-resources/**"
-          - "/billing-service/swagger-config/**"
-          - "/billing-service/swagger-ui.html"
-          - "/billing-service/webjars/**"
-          - "/lead-service/swagger-ui/**"
-          - "/lead-service/api-docs/**"
-          - "/lead-service/v3/api-docs/**"
-          - "/lead-service/swagger-resources/**"
-          - "/lead-service/swagger-config/**"
-          - "/lead-service/swagger-ui.html"
-          - "/lead-service/webjars/**"
-          - "/pipeline-service/swagger-ui/**"
-          - "/pipeline-service/api-docs/**"
-          - "/pipeline-service/v3/api-docs/**"
-          - "/pipeline-service/swagger-resources/**"
-          - "/pipeline-service/swagger-config/**"
-          - "/pipeline-service/swagger-ui.html"
-          - "/pipeline-service/webjars/**"
-          - "/contact-service/swagger-ui/**"
-          - "/contact-service/api-docs/**"
-          - "/contact-service/v3/api-docs/**"
-          - "/contact-service/swagger-resources/**"
-          - "/contact-service/swagger-config/**"
-          - "/contact-service/swagger-ui.html"
-          - "/contact-service/webjars/**"
-          - "/actuator/prometheus"
-          - "/api/v1/billing/webhooks/**"
-          - "/api/v1/crm/webhooks/**"
-          - "/api/v1/billing/subscription-plans/active"
-          - "/api/v1/billing/subscription-plans"
-        
         protectedRoutes:
           # CRM Routes
           "/api/*/crm/**": [ "CRM_ACCESS", "ADMIN", "SUPER_ADMIN" ]
@@ -245,94 +195,37 @@ iqscaffold:
         # JWK endpoint for public key distribution
         - /.well-known/jwks.json
         
-        # Self-service provisioning endpoints (public)
+        # Self-service provisioning endpoints
         - /api/v1/public/**
         
-        # Authentication endpoints (public)
+        # Authentication endpoints
         - /api/v1/auth/**
         
-        # Email verification endpoints (public)
-        
-        # Password reset endpoints (public)
-        - /api/v1/auth/password/forgot
-        - /api/v1/auth/password/reset
-        
-        # Actuator endpoints (public health checks)
-        - /actuator/health
+        # Actuator endpoints
+        - /actuator/health/**
         - /actuator/info
+        - /actuator/prometheus
         
-        # API Documentation endpoints (public in development)
+        # API Documentation (root level)
         - /api/v1/docs
         - /swagger-ui/**
         - /api-docs/**
-        - /user-service/swagger-ui/**
-        - /user-service/api-docs/**
-        - /billing-service/swagger-ui/**
-        - /billing-service/api-docs/**
-        - /lead-service/swagger-ui/**
-        - /lead-service/api-docs/**
-        - /pipeline-service/swagger-ui/**
-        - /pipeline-service/api-docs/**
-        - /contact-service/swagger-ui/**
-        - /contact-service/api-docs/**
-        - /actuator/prometheus
         
-        # Billing Service Webhooks (public - no authentication required)
+        # Service-specific OpenAPI Documentation (consolidated pattern)
+        - /*/swagger-ui/**
+        - /*/api-docs/**
+        - /*/v3/api-docs/**
+        - /*/swagger-resources/**
+        - /*/swagger-config/**
+        - /*/swagger-ui.html
+        - /*/webjars/**
+        
+        # Webhooks (public - no authentication required)
         - /api/v1/billing/webhooks/**
-        
-        # Contact Service Webhooks (public - for external providers)
         - /api/v1/crm/webhooks/**
         
-        # Billing Service OpenAPI Documentation (public)
-        - /billing-service/v3/api-docs/**
-        - /billing-service/swagger-resources/**
-        - /billing-service/swagger-config/**
-        - /billing-service/swagger-ui.html
-        - /billing-service/webjars/**
-        
-        # CRM Services OpenAPI Documentation (public)
-        - /lead-service/v3/api-docs/**
-        - /lead-service/swagger-resources/**
-        - /lead-service/swagger-config/**
-        - /lead-service/swagger-ui.html
-        - /lead-service/webjars/**
-        - /pipeline-service/v3/api-docs/**
-        - /pipeline-service/swagger-resources/**
-        - /pipeline-service/swagger-config/**
-        - /pipeline-service/swagger-ui.html
-        - /pipeline-service/webjars/**
-        - /contact-service/v3/api-docs/**
-        - /contact-service/swagger-resources/**
-        - /contact-service/swagger-config/**
-        - /contact-service/swagger-ui.html
-        - /contact-service/webjars/**
-        
-        # Billing Service Public Subscription Plans (for pricing pages)
-        - /api/v1/billing/subscription-plans/active
-        - /api/v1/billing/subscription-plans
-        
-        # Protected endpoints requiring authentication:
-        # - /api/v1/billing/payments/** (requires Bearer token + USER role)
-        # - /api/v1/billing/subscriptions/** (requires Bearer token + appropriate role)
-        # - /api/v1/billing/invoices/** (requires Bearer token + billing access)
-        # - /api/v1/billing/payouts/** (requires Bearer token + billing access)
-        # - /api/v1/admin/billing/** (requires Bearer token + BILLING_ADMIN/TENANT_OWNER/SUPER_ADMIN role)
-        # - /api/v1/auth/logout (requires Bearer token)
-        # - /api/v1/auth/logout-all (requires Bearer token)
-        # - /api/v1/users/me (requires Bearer token)
-        # - /api/v1/users/me/password (requires Bearer token)
-        # - /api/v1/admin/** (requires Bearer token + ADMIN role)
-        # 
-        # CRM endpoints requiring authentication:
-        # - /api/v1/leads/** (requires Bearer token + USER role)
-        # - /api/v1/leads/{leadId}/notes/** (requires Bearer token + USER role)
-        # - /api/v1/leads/{leadId}/activities/** (requires Bearer token + USER role)
-        # - /api/v1/pipeline/** (requires Bearer token + USER role)
-        # - /api/v1/pipeline/follow-ups/** (requires Bearer token + USER role)
-        # - /api/v1/pipeline/dashboard/** (requires Bearer token + USER role)
-        # - /api/v1/contacts/** (requires Bearer token + USER role)
-        # - /api/v1/companies/** (requires Bearer token + USER role)
-        # - /api/v1/webhooks/** (Public - for external providers; management requires ADMIN role)
+        # Public subscription plans (for pricing pages)
+        - /api/v1/billing/subscription-plans/**
     
     rate-limiting:
       enabled: true

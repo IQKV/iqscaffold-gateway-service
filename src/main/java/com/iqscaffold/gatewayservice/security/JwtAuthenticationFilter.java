@@ -137,7 +137,33 @@ public final class JwtAuthenticationFilter implements GlobalFilter, Ordered {
   }
 
   private boolean isPublicPath(String path) {
-    return platformConfig.security().routeProtection().isPublicPath(path);
+    if (path == null) {
+      return false;
+    }
+    return properties.gateway().security().publicPaths().stream()
+        .anyMatch(publicPath -> matchesPattern(path, publicPath));
+  }
+
+  /**
+   * Check if a path matches a route pattern.
+   * Supports patterns:
+   * - Exact match: /path
+   * - Suffix wildcard: /path/**
+   * - Single segment wildcard: /{star}/path/** (matches any single segment)
+   */
+  private boolean matchesPattern(String path, String pattern) {
+    if (pattern.endsWith("/**")) {
+      var prefix = pattern.substring(0, pattern.length() - 3);
+      
+      // Handle single segment wildcard pattern
+      if (prefix.contains("/*")) {
+        var regex = prefix.replace("/*", "/[^/]+");
+        return path.matches(regex + ".*");
+      }
+      
+      return path.startsWith(prefix);
+    }
+    return path.equals(pattern);
   }
 
   private UserContext extractUserContext(Jwt jwt) {

@@ -46,15 +46,11 @@ class JwtAuthenticationFilterTest {
   @Mock
   private PlatformConfigurationProperties.Security security;
 
-  @Mock
-  private PlatformConfigurationProperties.Security.RouteProtection routeProtection;
-
   @BeforeEach
   void setUp() {
     properties = createTestProperties();
 
     lenient().when(platformConfig.security()).thenReturn(security);
-    lenient().when(security.routeProtection()).thenReturn(routeProtection);
 
     jwtAuthenticationFilter = new JwtAuthenticationFilter(properties, platformConfig);
     when(filterChain.filter(any())).thenReturn(Mono.empty());
@@ -66,8 +62,6 @@ class JwtAuthenticationFilterTest {
     var request = MockServerHttpRequest.get("/health").build();
     var exchange = MockServerWebExchange.from(request);
 
-    when(routeProtection.isPublicPath("/health")).thenReturn(true);
-
     jwtAuthenticationFilter.filter(exchange, filterChain).block();
 
     verify(filterChain).filter(any());
@@ -78,8 +72,6 @@ class JwtAuthenticationFilterTest {
   void shouldAddCorrelationIdToRequest() {
     var request = MockServerHttpRequest.get("/health").build();
     var exchange = MockServerWebExchange.from(request);
-
-    when(routeProtection.isPublicPath("/health")).thenReturn(true);
 
     jwtAuthenticationFilter.filter(exchange, filterChain).block();
 

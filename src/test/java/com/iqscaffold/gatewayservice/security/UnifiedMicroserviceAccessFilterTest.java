@@ -181,7 +181,6 @@ class UnifiedMicroserviceAccessFilterTest {
 
   private PlatformConfigurationProperties createTestPlatformConfig() {
     var routeProtection = new PlatformConfigurationProperties.Security.RouteProtection(
-        List.of("/actuator/**", "/api/*/auth/**", "/api/*/health"),
         Map.of(
             "/api/*/crm/**", List.of(GatewayConstants.Authorities.CRM_ACCESS, GatewayConstants.Authorities.ADMIN, GatewayConstants.Authorities.SUPER_ADMIN),
             "/api/*/billing/**", List.of(GatewayConstants.Authorities.BILLING_ACCESS, GatewayConstants.Authorities.ADMIN, GatewayConstants.Authorities.SUPER_ADMIN),

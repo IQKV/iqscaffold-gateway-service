@@ -34,19 +34,7 @@ public record PlatformConfigurationProperties(
      * Route protection configuration.
      */
     public record RouteProtection(
-        @NotNull List<@NotBlank String> publicPaths,
         @NotNull Map<@NotBlank String, @NotEmpty List<@NotBlank String>> protectedRoutes) {
-
-      /**
-       * Check if a path is public.
-       */
-      public boolean isPublicPath(String path) {
-        if (path == null) {
-          return false;
-        }
-        return publicPaths.stream()
-            .anyMatch(publicPath -> matchesPattern(path, publicPath));
-      }
 
       /**
        * Get required authorities for a route.

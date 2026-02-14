@@ -182,6 +182,8 @@
                         <exclude>**/common/*.class</exclude>
                         <exclude>**/ResponseTransformationFilter.class</exclude>
                         <exclude>**/RequestLoggingFilter.class</exclude>
+                        <exclude>**/DebugLoggingFilter.class</exclude>
+                        <exclude>**/PostRouteDebugFilter.class</exclude>
                         <exclude>**/*Config.class</exclude>
                         <exclude>**/*Config*.class</exclude>
                         <exclude>**/FeatureUsageTrackingService.class</exclude>

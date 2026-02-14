@@ -29,12 +29,20 @@ public class SecurityConfiguration {
 
   @Bean
   public SecurityWebFilterChain securityWebFilterChain(ServerHttpSecurity http) {
+    var publicPaths = properties.gateway().security().publicPaths();
+    
+    // Log public paths for debugging
+    System.out.println("=== SECURITY CONFIGURATION ===");
+    System.out.println("Public paths count: " + publicPaths.size());
+    publicPaths.forEach(path -> System.out.println("  - " + path));
+    System.out.println("==============================");
+    
     return http
         .csrf(csrf -> csrf.disable())
         .cors(cors -> cors.configurationSource(corsConfigurationSource()))
         .authorizeExchange(exchanges -> exchanges
             // Public paths - no authentication required
-            .pathMatchers(properties.gateway().security().publicPaths().toArray(new String[0]))
+            .pathMatchers(publicPaths.toArray(new String[0]))
             .permitAll()
             // Health and actuator endpoints
             .pathMatchers(HttpMethod.GET, "/actuator/health/**", "/actuator/info")

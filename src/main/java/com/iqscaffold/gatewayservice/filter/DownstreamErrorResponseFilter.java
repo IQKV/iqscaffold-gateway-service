@@ -42,54 +42,52 @@ public class DownstreamErrorResponseFilter implements GlobalFilter, Ordered {
       @Override
       public Mono<Void> writeWith(org.reactivestreams.Publisher<? extends DataBuffer> body) {
         var statusCodeValue = getStatusCode();
-        if (statusCodeValue == null) {
-          return super.writeWith(body);
-        }
-        
-        HttpStatus statusCode = HttpStatus.valueOf(statusCodeValue.value());
         var contentType = getHeaders().getContentType();
         
         // Only intercept error responses with application/problem+json content type
-        if (statusCode.isError()
-            && contentType != null
-            && contentType.isCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)) {
+        // Check for null status code and content type before processing
+        if (statusCodeValue != null && contentType != null) {
+          HttpStatus statusCode = HttpStatus.valueOf(statusCodeValue.value());
           
-          if (body instanceof Flux) {
-            Flux<? extends DataBuffer> fluxBody = (Flux<? extends DataBuffer>) body;
+          if (statusCode.isError() && contentType.isCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)) {
             
-            return fluxBody
-                .collectList()
-                .flatMap(dataBuffers -> {
-                  DataBuffer joinedBuffer = originalResponse.bufferFactory().join(dataBuffers);
-                  byte[] content = new byte[joinedBuffer.readableByteCount()];
-                  joinedBuffer.read(content);
-                  DataBufferUtils.release(joinedBuffer);
-                  
-                  String responseBody = new String(content, StandardCharsets.UTF_8);
-                  
-                  try {
-                    // Try to parse as ProblemDetail
-                    ProblemDetail problemDetail = objectMapper.readValue(responseBody, ProblemDetail.class);
+            if (body instanceof Flux) {
+              Flux<? extends DataBuffer> fluxBody = (Flux<? extends DataBuffer>) body;
+              
+              return fluxBody
+                  .collectList()
+                  .flatMap(dataBuffers -> {
+                    DataBuffer joinedBuffer = originalResponse.bufferFactory().join(dataBuffers);
+                    byte[] content = new byte[joinedBuffer.readableByteCount()];
+                    joinedBuffer.read(content);
+                    DataBufferUtils.release(joinedBuffer);
                     
-                    // Re-serialize without type information
-                    String cleanJson = objectMapper.writeValueAsString(problemDetail);
+                    String responseBody = new String(content, StandardCharsets.UTF_8);
                     
-                    logger.debug("Cleaned downstream error response for status {}", statusCode);
-                    
-                    byte[] cleanBytes = cleanJson.getBytes(StandardCharsets.UTF_8);
-                    DataBuffer buffer = originalResponse.bufferFactory().wrap(cleanBytes);
-                    
-                    // Update content length
-                    getHeaders().setContentLength(cleanBytes.length);
-                    
-                    return super.writeWith(Mono.just(buffer));
-                  } catch (final Exception e) {
-                    // If parsing fails, pass through original response
-                    logger.warn("Failed to parse downstream error response as ProblemDetail: {}", e.getMessage());
-                    DataBuffer buffer = originalResponse.bufferFactory().wrap(content);
-                    return super.writeWith(Mono.just(buffer));
-                  }
-                });
+                    try {
+                      // Try to parse as ProblemDetail
+                      ProblemDetail problemDetail = objectMapper.readValue(responseBody, ProblemDetail.class);
+                      
+                      // Re-serialize without type information
+                      String cleanJson = objectMapper.writeValueAsString(problemDetail);
+                      
+                      logger.debug("Cleaned downstream error response for status {}", statusCode);
+                      
+                      byte[] cleanBytes = cleanJson.getBytes(StandardCharsets.UTF_8);
+                      DataBuffer buffer = originalResponse.bufferFactory().wrap(cleanBytes);
+                      
+                      // Update content length
+                      getHeaders().setContentLength(cleanBytes.length);
+                      
+                      return super.writeWith(Mono.just(buffer));
+                    } catch (final Exception e) {
+                      // If parsing fails, pass through original response
+                      logger.warn("Failed to parse downstream error response as ProblemDetail: {}", e.getMessage());
+                      DataBuffer buffer = originalResponse.bufferFactory().wrap(content);
+                      return super.writeWith(Mono.just(buffer));
+                    }
+                  });
+            }
           }
         }
         

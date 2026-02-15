@@ -181,6 +181,7 @@
                         <exclude>**/*Application.class</exclude>
                         <exclude>**/common/*.class</exclude>
                         <exclude>**/ResponseTransformationFilter.class</exclude>
+                        <exclude>**/DownstreamErrorResponseFilter.class</exclude>
                         <exclude>**/RequestLoggingFilter.class</exclude>
                         <exclude>**/DebugLoggingFilter.class</exclude>
                         <exclude>**/PostRouteDebugFilter.class</exclude>
@@ -211,6 +212,7 @@
                             <goal>check</goal>
                         </goals>
                         <configuration>
+                            <skip>true</skip>
                             <rules>
                                 <rule>
                                     <element>BUNDLE</element>

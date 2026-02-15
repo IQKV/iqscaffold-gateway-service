@@ -41,12 +41,18 @@ public class DownstreamErrorResponseFilter implements GlobalFilter, Ordered {
     ServerHttpResponseDecorator decoratedResponse = new ServerHttpResponseDecorator(originalResponse) {
       @Override
       public Mono<Void> writeWith(org.reactivestreams.Publisher<? extends DataBuffer> body) {
-        HttpStatus statusCode = getStatusCode() != null ? HttpStatus.valueOf(getStatusCode().value()) : null;
+        var statusCodeValue = getStatusCode();
+        if (statusCodeValue == null) {
+          return super.writeWith(body);
+        }
+        
+        HttpStatus statusCode = HttpStatus.valueOf(statusCodeValue.value());
+        var contentType = getHeaders().getContentType();
         
         // Only intercept error responses with application/problem+json content type
-        if (statusCode != null && statusCode.isError()
-            && getHeaders().getContentType() != null
-            && getHeaders().getContentType().isCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)) {
+        if (statusCode.isError()
+            && contentType != null
+            && contentType.isCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)) {
           
           if (body instanceof Flux) {
             Flux<? extends DataBuffer> fluxBody = (Flux<? extends DataBuffer>) body;

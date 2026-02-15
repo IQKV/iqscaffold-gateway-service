@@ -65,6 +65,15 @@ public class DownstreamErrorResponseFilter implements GlobalFilter, Ordered {
                     String responseBody = new String(content, StandardCharsets.UTF_8);
                     
                     try {
+                      // Check if response is an array (starts with '[')
+                      String trimmedBody = responseBody.trim();
+                      if (trimmedBody.startsWith("[")) {
+                        // Response is an array, pass through as-is
+                        logger.debug("Downstream error response is an array, passing through unchanged");
+                        DataBuffer buffer = originalResponse.bufferFactory().wrap(content);
+                        return super.writeWith(Mono.just(buffer));
+                      }
+                      
                       // Try to parse as ProblemDetail
                       ProblemDetail problemDetail = objectMapper.readValue(responseBody, ProblemDetail.class);
                       
@@ -82,7 +91,8 @@ public class DownstreamErrorResponseFilter implements GlobalFilter, Ordered {
                       return super.writeWith(Mono.just(buffer));
                     } catch (final Exception e) {
                       // If parsing fails, pass through original response
-                      logger.warn("Failed to parse downstream error response as ProblemDetail: {}", e.getMessage());
+                      logger.debug("Failed to parse downstream error response as ProblemDetail ({}), passing through unchanged", 
+                          e.getClass().getSimpleName());
                       DataBuffer buffer = originalResponse.bufferFactory().wrap(content);
                       return super.writeWith(Mono.just(buffer));
                     }

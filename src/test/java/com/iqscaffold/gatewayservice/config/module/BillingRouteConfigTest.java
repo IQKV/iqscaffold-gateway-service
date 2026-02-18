@@ -2,15 +2,18 @@ package com.iqscaffold.gatewayservice.config.module;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import com.iqscaffold.gatewayservice.config.TestWebClientConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
 @SpringBootTest
 @ActiveProfiles({"test", "billing"})
+@Import(TestWebClientConfiguration.class)
 class BillingRouteConfigTest {
 
   @Autowired

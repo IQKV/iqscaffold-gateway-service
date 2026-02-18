@@ -42,7 +42,7 @@ public class RequestLoggingFilter implements GlobalFilter, Ordered {
     logger.info("Original Request: {} {}", method, path);
     logger.info("Matched Route: {}", route != null ? route.getId() : "null");
     logger.info("Target URI: {}", targetUri);
-    logger.info("Request Headers: {}", request.getHeaders().keySet());
+    logger.info("Request Headers: {}", request.getHeaders().headerSet());
     logger.info("About to forward request to downstream service...");
     logger.info("==========================================");
 
@@ -51,7 +51,7 @@ public class RequestLoggingFilter implements GlobalFilter, Ordered {
           var response = exchange.getResponse();
           logger.info("=== RESPONSE RECEIVED ===");
           logger.info("Status Code: {}", response.getStatusCode());
-          logger.info("Response Headers: {}", response.getHeaders().keySet());
+          logger.info("Response Headers: {}", response.getHeaders().headerSet());
           logger.info("=========================");
         })
         .doOnError(e -> {

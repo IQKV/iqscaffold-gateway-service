@@ -3,7 +3,7 @@ package com.iqscaffold.gatewayservice.config;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.actuate.health.Status;
+import org.springframework.boot.health.contributor.Status;
 
 /**
  * Test for gateway health check configuration.

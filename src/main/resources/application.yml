@@ -68,6 +68,20 @@ spring:
                 - Path=/actuator/health
               filters:
                 - StripPrefix=0
+            # Invitation Management - Authenticated endpoints
+            - id: user-service-invitations
+              uri: ${iqscaffold.gateway.routing.services.user-service.uri}
+              predicates:
+                - Path=/api/v1/invitations,/api/v1/invitations/**
+              filters:
+                - StripPrefix=${iqscaffold.gateway.routing.api-prefix.strip-count:0}
+            # Invitation Management - Public endpoints
+            - id: user-service-public-invitations
+              uri: ${iqscaffold.gateway.routing.services.user-service.uri}
+              predicates:
+                - Path=/api/v1/public/invitations/**
+              filters:
+                - StripPrefix=${iqscaffold.gateway.routing.api-prefix.strip-count:0}
 
 # IQ Scaffold Gateway Configuration
 iqscaffold:

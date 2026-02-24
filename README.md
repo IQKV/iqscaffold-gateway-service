@@ -400,6 +400,18 @@ spring:
 - `/actuator/prometheus` - Prometheus metrics
 - `/swagger-ui.html` - Aggregated API documentation
 
+### Grafana Dashboard
+
+A Grafana dashboard is available at `docs/monitoring/grafana-dashboard.json` providing real-time visibility into:
+
+- Gateway Health: uptime, request rate, error rate, p95 latency, total routed requests
+- Routing & Rate Limiting: request rate by route, gateway response time percentiles (p50/p95/p99)
+- JVM Memory: heap/non-heap usage, GC pause time, thread count
+- Circuit Breaker & Resilience: circuit breaker states (closed/open/half-open), retry attempts
+- Gateway Routing Metrics: rate limiting events, route success vs failures, downstream service latency
+
+The dashboard uses Prometheus as the data source and auto-refreshes every 30 seconds. Import it into your Grafana instance to monitor gateway performance and health.
+
 ### Rate Limit Response
 
 <details>

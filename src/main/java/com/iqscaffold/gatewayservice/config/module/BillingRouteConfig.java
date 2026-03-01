@@ -10,6 +10,7 @@ import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.data.redis.core.ReactiveStringRedisTemplate;
 
 /**
  * Gateway route configuration for Billing Service endpoints.
@@ -44,9 +45,13 @@ public class BillingRouteConfig {
   private static final Logger log = LoggerFactory.getLogger(BillingRouteConfig.class);
 
   private final IqScaffoldProperties properties;
+  private final ReactiveStringRedisTemplate redisTemplate;
 
-  public BillingRouteConfig(final IqScaffoldProperties properties) {
+  public BillingRouteConfig(
+      final IqScaffoldProperties properties,
+      final ReactiveStringRedisTemplate redisTemplate) {
     this.properties = properties;
+    this.redisTemplate = redisTemplate;
   }
 
   /**
@@ -219,11 +224,15 @@ public class BillingRouteConfig {
     if (policy != null) {
       log.debug("Using specific rate limit for {}: {} req/min, {} burst",
           endpoint, policy.requestsPerMinute(), policy.burstCapacity());
-      return new RedisRateLimiter(policy.requestsPerMinute(), policy.burstCapacity());
+      var rateLimiter = new RedisRateLimiter(policy.requestsPerMinute(), policy.burstCapacity());
+      rateLimiter.setRedisTemplate(redisTemplate);
+      return rateLimiter;
     }
 
     log.debug("Using default rate limit for {}: {} req/min, {} burst",
         endpoint, defaultReplenishRate, defaultBurstCapacity);
-    return new RedisRateLimiter(defaultReplenishRate, defaultBurstCapacity);
+    var rateLimiter = new RedisRateLimiter(defaultReplenishRate, defaultBurstCapacity);
+    rateLimiter.setRedisTemplate(redisTemplate);
+    return rateLimiter;
   }
 }

@@ -44,22 +44,10 @@ public class CrmRouteConfig {
     this.properties = properties;
   }
 
-  /**
-   * Default rate limiter bean for CRM endpoints.
-   * RedisRateLimiter is auto-configured by Spring Cloud Gateway when Redis is available.
-   */
-  @Bean
-  public RedisRateLimiter crmDefaultRateLimiter() {
-    var defaultReplenishRate = properties.gateway().rateLimiting().policies().defaultRequestsPerMinute();
-    var defaultBurstCapacity = properties.gateway().rateLimiting().policies().defaultBurstCapacity();
-    log.info("Creating CRM rate limiter: {} req/min, {} burst", defaultReplenishRate, defaultBurstCapacity);
-    return new RedisRateLimiter(defaultReplenishRate, defaultBurstCapacity);
-  }
-
   @Bean
   public RouteLocator crmRoutes(
       final RouteLocatorBuilder builder,
-      RedisRateLimiter crmDefaultRateLimiter) {
+      RedisRateLimiter defaultRateLimiter) {
     var stripCount = properties.gateway().routing().apiPrefix().stripCount();
     var leadServiceUri = properties.gateway().routing().services().get("lead-service").uri();
     var pipelineServiceUri = properties.gateway().routing().services().get("pipeline-service").uri();
@@ -73,7 +61,7 @@ public class CrmRouteConfig {
             .path("/api/v1/leads/{leadId}/activities/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(crmDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("lead-service-activities")
                     .setFallbackUri("forward:/fallback/crm"))
@@ -85,7 +73,7 @@ public class CrmRouteConfig {
             .path("/api/v1/leads/{leadId}/notes/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(crmDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("lead-service-notes")
                     .setFallbackUri("forward:/fallback/crm"))
@@ -97,7 +85,7 @@ public class CrmRouteConfig {
             .path("/api/v1/leads/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(crmDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("lead-service")
                     .setFallbackUri("forward:/fallback/crm"))
@@ -109,7 +97,7 @@ public class CrmRouteConfig {
             .path("/api/v1/pipeline/dashboard/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(crmDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("pipeline-service-dashboard")
                     .setFallbackUri("forward:/fallback/crm"))
@@ -121,7 +109,7 @@ public class CrmRouteConfig {
             .path("/api/v1/pipeline/follow-ups/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(crmDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("pipeline-service-follow-ups")
                     .setFallbackUri("forward:/fallback/crm"))
@@ -133,7 +121,7 @@ public class CrmRouteConfig {
             .path("/api/v1/pipeline/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(crmDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("pipeline-service")
                     .setFallbackUri("forward:/fallback/crm"))
@@ -145,7 +133,7 @@ public class CrmRouteConfig {
             .path("/api/v1/crm/webhooks/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(crmDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("contact-service-webhooks")
                     .setFallbackUri("forward:/fallback/webhooks"))
@@ -157,7 +145,7 @@ public class CrmRouteConfig {
             .path("/api/v1/contacts/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(crmDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("contact-service")
                     .setFallbackUri("forward:/fallback/crm"))
@@ -169,7 +157,7 @@ public class CrmRouteConfig {
             .path("/api/v1/companies/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(crmDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("company-service")
                     .setFallbackUri("forward:/fallback/crm"))

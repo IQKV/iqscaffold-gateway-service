@@ -50,24 +50,12 @@ public class BillingRouteConfig {
   }
 
   /**
-   * Default rate limiter bean for billing endpoints.
-   * RedisRateLimiter is auto-configured by Spring Cloud Gateway when Redis is available.
-   */
-  @Bean
-  public RedisRateLimiter billingDefaultRateLimiter() {
-    var defaultReplenishRate = properties.gateway().rateLimiting().policies().defaultRequestsPerMinute();
-    var defaultBurstCapacity = properties.gateway().rateLimiting().policies().defaultBurstCapacity();
-    log.info("Creating billing rate limiter: {} req/min, {} burst", defaultReplenishRate, defaultBurstCapacity);
-    return new RedisRateLimiter(defaultReplenishRate, defaultBurstCapacity);
-  }
-
-  /**
    * Configures all billing service routes with appropriate filters and rate limiting.
    */
   @Bean
   public RouteLocator billingServiceRoutes(
       RouteLocatorBuilder builder,
-      RedisRateLimiter billingDefaultRateLimiter) {
+      RedisRateLimiter defaultRateLimiter) {
     var stripCount = properties.gateway().routing().apiPrefix().stripCount();
     var billingServiceUri = properties.gateway().routing().services().get("billing-service").uri();
 
@@ -80,7 +68,7 @@ public class BillingRouteConfig {
             .path("/api/v1/features/my-features")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(billingDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("billing-service-features")
                     .setFallbackUri("forward:/fallback/features"))
@@ -91,7 +79,7 @@ public class BillingRouteConfig {
             .path("/api/v1/features/enabled")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(billingDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("billing-service-features")
                     .setFallbackUri("forward:/fallback/features"))
@@ -103,7 +91,7 @@ public class BillingRouteConfig {
             .path("/api/v1/billing/subscriptions/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(billingDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("billing-service-subscriptions")
                     .setFallbackUri("forward:/fallback/billing"))
@@ -115,7 +103,7 @@ public class BillingRouteConfig {
             .path("/api/v1/billing/payments/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(billingDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("billing-service-payments")
                     .setFallbackUri("forward:/fallback/billing"))
@@ -127,7 +115,7 @@ public class BillingRouteConfig {
             .path("/api/v1/billing/invoices/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(billingDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("billing-service-invoices")
                     .setFallbackUri("forward:/fallback/billing"))
@@ -139,7 +127,7 @@ public class BillingRouteConfig {
             .path("/api/v1/billing/payouts/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(billingDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("billing-service-payouts")
                     .setFallbackUri("forward:/fallback/billing"))
@@ -151,7 +139,7 @@ public class BillingRouteConfig {
             .path("/api/v1/billing/subscription-plans/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(billingDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("billing-service-plans")
                     .setFallbackUri("forward:/fallback/billing"))
@@ -163,7 +151,7 @@ public class BillingRouteConfig {
             .path("/api/v1/admin/billing/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(billingDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("billing-service-admin")
                     .setFallbackUri("forward:/fallback/billing"))
@@ -175,7 +163,7 @@ public class BillingRouteConfig {
             .path("/api/v1/billing/webhooks/**")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .requestRateLimiter(c -> c.setRateLimiter(billingDefaultRateLimiter))
+                .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
                 .circuitBreaker(config -> config
                     .setName("billing-service-webhooks")
                     .setFallbackUri("forward:/fallback/webhooks"))

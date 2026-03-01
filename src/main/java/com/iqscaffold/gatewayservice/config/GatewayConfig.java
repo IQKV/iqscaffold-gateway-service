@@ -2,6 +2,8 @@ package com.iqscaffold.gatewayservice.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.cloud.gateway.filter.ratelimit.RedisRateLimiter;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -23,6 +25,18 @@ public class GatewayConfig {
   public GatewayConfig(final IqScaffoldProperties systemProperties) {
     this.systemProperties = systemProperties;
     logGatewayConfiguration();
+  }
+
+  /**
+   * Default rate limiter bean shared across all route configurations.
+   * This prevents bean conflicts when multiple profile-specific route configs are active.
+   */
+  @Bean
+  public RedisRateLimiter defaultRateLimiter() {
+    var defaultReplenishRate = systemProperties.gateway().rateLimiting().policies().defaultRequestsPerMinute();
+    var defaultBurstCapacity = systemProperties.gateway().rateLimiting().policies().defaultBurstCapacity();
+    logger.info("Creating shared default rate limiter: {} req/min, {} burst", defaultReplenishRate, defaultBurstCapacity);
+    return new RedisRateLimiter(defaultReplenishRate, defaultBurstCapacity);
   }
 
   /**

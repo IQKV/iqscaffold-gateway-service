@@ -50,18 +50,20 @@ public final class JwtAuthenticationFilter implements GlobalFilter, Ordered {
     var originalRequest = exchange.getRequest();
     var path = originalRequest.getPath().value();
 
-    // Sanitize incoming headers to prevent spoofing
-    var sanitizedRequest = sanitizeIncomingHeaders(originalRequest);
-
     // Generate correlation ID if not present
-    var correlationId = getOrGenerateCorrelationId(sanitizedRequest);
+    var correlationId = getOrGenerateCorrelationId(originalRequest);
     MDC.put(GatewayConstants.MdcKeys.CORRELATION_ID, correlationId);
 
     // Skip authentication for public paths
     if (isPublicPath(path)) {
       logger.debug("Skipping authentication for public path: {}", path);
+      // For public paths, preserve X-Tenant-ID header but sanitize other headers
+      var sanitizedRequest = sanitizeIncomingHeadersForPublicPath(originalRequest);
       return addCorrelationIdAndContinue(exchange.mutate().request(sanitizedRequest).build(), chain, correlationId);
     }
+
+    // Sanitize incoming headers to prevent spoofing
+    var sanitizedRequest = sanitizeIncomingHeaders(originalRequest);
 
     // Extract user context from authenticated JWT
     return ReactiveSecurityContextHolder.getContext()
@@ -132,6 +134,37 @@ public final class JwtAuthenticationFilter implements GlobalFilter, Ordered {
           headers.remove(GatewayConstants.Headers.AUTHORIZATION_INTERNAL);
 
           logger.trace("Sanitized incoming request headers");
+        })
+        .build();
+  }
+
+  /**
+   * Sanitize incoming headers for public paths (e.g., /auth/login).
+   * Preserves X-Tenant-ID header for tenant-aware authentication.
+   * Removes user context and internal headers to prevent spoofing.
+   */
+  private ServerHttpRequest sanitizeIncomingHeadersForPublicPath(ServerHttpRequest request) {
+    return request.mutate()
+        .headers(headers -> {
+          // Remove user context headers (will be set by gateway after JWT validation)
+          headers.remove(GatewayConstants.Headers.X_USER_ID);
+          headers.remove(GatewayConstants.Headers.X_USERNAME);
+          headers.remove(GatewayConstants.Headers.X_USER_EMAIL);
+          headers.remove(GatewayConstants.Headers.X_USER_AUTHORITIES);
+          headers.remove(GatewayConstants.Headers.X_USER_PERMISSIONS);
+          headers.remove(GatewayConstants.Headers.X_USER_ROLES);
+          headers.remove(GatewayConstants.Headers.X_ORGANIZATION_ID);
+
+          // PRESERVE X-Tenant-ID header for public authentication endpoints
+          // This allows tenant-aware login/signup without JWT
+
+          // Remove internal headers that should never come from external requests
+          headers.remove(GatewayConstants.Headers.X_INTERNAL_SERVICE);
+          headers.remove(GatewayConstants.Headers.X_INTERNAL_VERSION);
+          headers.remove(GatewayConstants.Headers.X_INTERNAL_TOKEN);
+          headers.remove(GatewayConstants.Headers.AUTHORIZATION_INTERNAL);
+
+          logger.trace("Sanitized incoming request headers for public path (preserved X-Tenant-ID)");
         })
         .build();
   }

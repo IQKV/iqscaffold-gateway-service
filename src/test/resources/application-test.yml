@@ -72,6 +72,13 @@ iqscaffold:
       public-paths:
         - "/actuator/**"
         - "/api/v1/auth/**"
+        - "/api/v1/billing/payments/health"
+        - "/api/v1/billing/subscriptions/health"
+        - "/api/v1/billing/invoices/health"
+        - "/api/v1/billing/gateway/health"
+        - "/api/v1/leads/health"
+        - "/api/v1/contacts/health"
+        - "/api/v1/pipeline/health"
     rate-limiting:
       enabled: false
       redis:

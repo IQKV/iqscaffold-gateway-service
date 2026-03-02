@@ -210,6 +210,17 @@ iqscaffold:
         - /actuator/info
         - /actuator/prometheus
         
+        # Billing health check endpoints (public for service monitoring)
+        - /api/v1/billing/payments/health
+        - /api/v1/billing/subscriptions/health
+        - /api/v1/billing/invoices/health
+        - /api/v1/billing/gateway/health
+        
+        # CRM health check endpoints (public for service monitoring)
+        - /api/v1/leads/health
+        - /api/v1/contacts/health
+        - /api/v1/pipeline/health
+        
         # API Documentation (root level)
         - /api/v1/docs
         - /swagger-ui/**

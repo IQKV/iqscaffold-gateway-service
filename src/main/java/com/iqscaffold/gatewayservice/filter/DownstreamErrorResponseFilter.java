@@ -57,6 +57,12 @@ public class DownstreamErrorResponseFilter implements GlobalFilter, Ordered {
               return fluxBody
                   .collectList()
                   .flatMap(dataBuffers -> {
+                    // Handle empty response body
+                    if (dataBuffers.isEmpty()) {
+                      logger.debug("Downstream error response has empty body for status {}, passing through", statusCode);
+                      return super.writeWith(Mono.empty());
+                    }
+                    
                     DataBuffer joinedBuffer = originalResponse.bufferFactory().join(dataBuffers);
                     byte[] content = new byte[joinedBuffer.readableByteCount()];
                     joinedBuffer.read(content);

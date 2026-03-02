@@ -22,16 +22,16 @@ iqscaffold:
     routing:
       services:
         user-service:
-          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_USER_SERVICE_URI:http://iqscaffold-user-service:8080}
+          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_USER_SERVICE_URI:http://iqscaffold-user-service}
         billing-service:
-          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_BILLING_SERVICE_URI:http://iqscaffold-billing-service:8080}
+          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_BILLING_SERVICE_URI:http://iqscaffold-billing-service}
     
     security:
       jwt:
         secret-key: ${JWT_SECRET_KEY:dev-jwt-secret-not-for-production-use}
-        jwk-set-uri: ${USER_SERVICE_JWK_URI:http://iqscaffold-user-service:8080/.well-known/jwks.json}
+        jwk-set-uri: ${USER_SERVICE_JWK_URI:http://iqscaffold-user-service/.well-known/jwks.json}
       authentication:
-        user-service-url: ${IQSCAFFOLD_GATEWAY_SECURITY_USER_SERVICE_URL:http://iqscaffold-user-service:8080}
+        user-service-url: ${IQSCAFFOLD_GATEWAY_SECURITY_USER_SERVICE_URL:http://iqscaffold-user-service}
     
     cors:
       allowed-origins:

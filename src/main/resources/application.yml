@@ -7,7 +7,7 @@ spring:
   main:
     allow-bean-definition-overriding: true
   profiles:
-    active: local,crm
+    active: local,crm,billing
   output:
     ansi:
       enabled: always

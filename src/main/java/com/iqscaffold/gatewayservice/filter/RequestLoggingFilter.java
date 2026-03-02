@@ -42,7 +42,21 @@ public class RequestLoggingFilter implements GlobalFilter, Ordered {
     logger.info("Original Request: {} {}", method, path);
     logger.info("Matched Route: {}", route != null ? route.getId() : "null");
     logger.info("Target URI: {}", targetUri);
-    logger.info("Request Headers: {}", request.getHeaders().headerSet());
+    
+    // Log headers properly with values
+    var headers = request.getHeaders();
+    logger.info("Request Headers:");
+    headers.forEach((name, values) -> {
+      if (name.equalsIgnoreCase("authorization")) {
+        // Mask token but show it exists
+        logger.info("  {} = {} (length: {})", name, 
+            values.isEmpty() ? "[]" : "[" + values.get(0).substring(0, Math.min(20, values.get(0).length())) + "...]",
+            values.isEmpty() ? 0 : values.get(0).length());
+      } else {
+        logger.info("  {} = {}", name, values);
+      }
+    });
+    
     logger.info("About to forward request to downstream service...");
     logger.info("==========================================");
 

@@ -63,6 +63,17 @@ public class BillingRouteConfig {
 
     return builder.routes()
 
+        // Health Check Routes (Public - No Auth Required)
+        .route("billing-service-health", r -> r
+            .path("/api/v1/billing/*/health")
+            .filters(f -> f
+                .stripPrefix(stripCount)
+                .circuitBreaker(config -> config
+                    .setName("billing-service-health")
+                    .setFallbackUri("forward:/fallback/health"))
+                .retry(config -> config.setRetries(1)))
+            .uri(billingServiceUri))
+
         // Feature Management Routes (High Priority - Frontend Usage)
         .route("billing-service-features-my-features", r -> r
             .path("/api/v1/features/my-features")

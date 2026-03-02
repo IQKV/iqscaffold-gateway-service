@@ -56,6 +56,37 @@ public class CrmRouteConfig {
     log.info("Configuring CRM routes with default rate limiter");
 
     return builder.routes()
+        // Health Check Routes (Public - No Auth Required)
+        .route("lead-service-health", r -> r
+            .path("/api/v1/leads/health")
+            .filters(f -> f
+                .stripPrefix(stripCount)
+                .circuitBreaker(config -> config
+                    .setName("lead-service-health")
+                    .setFallbackUri("forward:/fallback/health"))
+                .retry(config -> config.setRetries(1)))
+            .uri(leadServiceUri))
+
+        .route("pipeline-service-health", r -> r
+            .path("/api/v1/pipeline/health")
+            .filters(f -> f
+                .stripPrefix(stripCount)
+                .circuitBreaker(config -> config
+                    .setName("pipeline-service-health")
+                    .setFallbackUri("forward:/fallback/health"))
+                .retry(config -> config.setRetries(1)))
+            .uri(pipelineServiceUri))
+
+        .route("contact-service-health", r -> r
+            .path("/api/v1/contacts/health")
+            .filters(f -> f
+                .stripPrefix(stripCount)
+                .circuitBreaker(config -> config
+                    .setName("contact-service-health")
+                    .setFallbackUri("forward:/fallback/health"))
+                .retry(config -> config.setRetries(1)))
+            .uri(contactServiceUri))
+
         // Lead Service - Activities
         .route("lead-service-activities", r -> r
             .path("/api/v1/leads/{leadId}/activities/**")

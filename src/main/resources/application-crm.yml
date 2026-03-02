@@ -11,7 +11,7 @@ iqscaffold:
     routing:
       services:
         lead-service:
-          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_LEAD_SERVICE_URI:http://lead-service:8080}
+          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_LEAD_SERVICE_URI:http://lead-service}
           path: /v1/**
           enabled: true
           connect-timeout: 5000
@@ -22,7 +22,7 @@ iqscaffold:
             description: "Lead management and tracking"
             context-path: "lead-service"
         pipeline-service:
-          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_PIPELINE_SERVICE_URI:http://pipeline-service:8080}
+          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_PIPELINE_SERVICE_URI:http://pipeline-service}
           path: /v1/**
           enabled: true
           connect-timeout: 5000
@@ -33,7 +33,7 @@ iqscaffold:
             description: "Sales pipeline and follow-up management"
             context-path: "pipeline-service"
         contact-service:
-          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_CONTACT_SERVICE_URI:http://iqscaffold-contact-service:8080}
+          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_CONTACT_SERVICE_URI:http://iqscaffold-contact-service}
           path: /v1/**
           enabled: true
           connect-timeout: 5000

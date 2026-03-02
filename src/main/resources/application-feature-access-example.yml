@@ -62,7 +62,7 @@ iqscaffold:
 
 # Billing service configuration for feature validation
 billing-service:
-  base-url: "http://iqscaffold-billing-service:8080"
+  base-url: "http://iqscaffold-billing-service"
   timeout: PT5S
   retry:
     max-attempts: 3

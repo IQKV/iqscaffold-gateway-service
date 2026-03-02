@@ -154,7 +154,7 @@ iqscaffold:
         strip-count: ${API_STRIP_COUNT:0}  # Number of path segments to strip (0 = no stripping, 1 = strip first segment)
       services:
         user-service:
-          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_USER_SERVICE_URI:http://iqscaffold-user-service:8080}
+          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_USER_SERVICE_URI:http://iqscaffold-user-service}
           path: /v1/**
           enabled: true
           connect-timeout: 10000
@@ -165,7 +165,7 @@ iqscaffold:
             description: "Authentication and user management APIs"
             context-path: "user-service"
         billing-service:
-          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_BILLING_SERVICE_URI:http://iqscaffold-billing-service:8080}
+          uri: ${IQSCAFFOLD_GATEWAY_ROUTING_BILLING_SERVICE_URI:http://iqscaffold-billing-service}
           path: /v1/**
           enabled: true
           connect-timeout: 5000
@@ -189,10 +189,10 @@ iqscaffold:
         audience: iqscaffold-services
         algorithm: HS256
         secret-key: ${JWT_SECRET_KEY:change-me-in-production}
-        jwk-set-uri: ${USER_SERVICE_JWK_URI:http://iqscaffold-user-service:8080/.well-known/jwks.json}
+        jwk-set-uri: ${USER_SERVICE_JWK_URI:http://iqscaffold-user-service/.well-known/jwks.json}
       authentication:
         enabled: true
-        user-service-url: ${IQSCAFFOLD_GATEWAY_SECURITY_USER_SERVICE_URL:http://iqscaffold-user-service:8080}
+        user-service-url: ${IQSCAFFOLD_GATEWAY_SECURITY_USER_SERVICE_URL:http://iqscaffold-user-service}
         token-validation-timeout: PT5S
         enable-user-context-propagation: true
       public-paths:

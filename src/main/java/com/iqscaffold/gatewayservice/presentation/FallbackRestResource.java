@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/fallback")
-public class FallbackController {
+public class FallbackRestRespurce {
 
   /**
    * Fallback for feature-related endpoints.

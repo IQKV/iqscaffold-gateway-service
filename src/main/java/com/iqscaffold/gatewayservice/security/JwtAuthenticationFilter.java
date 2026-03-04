@@ -202,13 +202,21 @@ public final class JwtAuthenticationFilter implements GlobalFilter, Ordered {
   private UserContext extractUserContext(Jwt jwt) {
     var claims = jwt.getClaims();
 
+    // Try multiple sources for user ID (backwards compatibility)
     var userId = extractLong(claims.get(JwtClaimNames.USER_ID));
+    if (userId == null) {
+      userId = extractLong(claims.get(JwtClaimNames.SUBJECT));
+    }
+    
     var username = jwt.getSubject();
     var email = extractString(claims.get(JwtClaimNames.EMAIL));
     var roles = extractStringList(claims.get(JwtClaimNames.AUTHORITIES));
     var permissions = extractStringList(claims.get(JwtClaimNames.PERMISSIONS));
     var organizationId = extractString(claims.get(JwtClaimNames.ORGANIZATION_ID));
     var preferredLocale = extractString(claims.get(JwtClaimNames.PREFERRED_LOCALE));
+
+    logger.debug("Extracted user context from JWT - userId: {}, username: {}, authorities: {}", 
+        userId, username, roles);
 
     return new UserContext(
         userId,

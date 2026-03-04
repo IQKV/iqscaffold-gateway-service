@@ -15,11 +15,13 @@ public final class JwtClaimNames {
 
   // Custom IQ Scaffold claims
   public static final String TYPE = "type";
-  public static final String USER_ID = "userId";
+  public static final String USER_ID = "userId"; // Explicit userId claim for frontend compatibility
   public static final String USERNAME = "username";
   public static final String EMAIL = "email";
   public static final String AUTHORITIES = "authorities";
   public static final String PERMISSIONS = "permissions";
+  public static final String FIRST_NAME = "firstName";
+  public static final String LAST_NAME = "lastName";
   public static final String ORGANIZATION_ID = "organizationId";
   public static final String TENANT_ID = "tenant_id";
   public static final String PREFERRED_LOCALE = "preferred_locale";

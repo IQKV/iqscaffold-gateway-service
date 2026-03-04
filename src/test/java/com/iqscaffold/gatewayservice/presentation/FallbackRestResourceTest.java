@@ -8,11 +8,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 
 /**
- * Unit tests for FallbackController.
+ * Unit tests for FallbackRestResource.
  */
-class FallbackControllerTest {
+class FallbackRestResourceTest {
 
-  private FallbackController controller;
+  private FallbackRestResource controller;
 
   @BeforeEach
   void setUp() {

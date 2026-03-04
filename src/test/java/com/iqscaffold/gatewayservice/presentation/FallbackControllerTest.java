@@ -16,7 +16,7 @@ class FallbackControllerTest {
 
   @BeforeEach
   void setUp() {
-    controller = new FallbackController();
+    controller = new FallbackRestResource();
   }
 
   @Test

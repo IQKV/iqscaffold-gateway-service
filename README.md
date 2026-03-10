@@ -232,13 +232,13 @@ The gateway provides comprehensive routing and rate limiting for the billing ser
 - Extract user context (userId, username, email, authorities, permissions, organizationId)
 - Sanitize incoming headers to prevent spoofing (removes X-User-\*, X-Tenant-ID, X-Organization-ID)
 - Propagate user context to downstream services via headers:
-  - `X-User-ID`: User identifier
-  - `X-Username`: Username
-  - `X-User-Email`: User email address
-  - `X-User-Authorities`: Comma-separated list of authorities (e.g., "ADMIN,USER")
-  - `X-User-Permissions`: Comma-separated list of permissions
-  - `X-Tenant-ID`: Tenant identifier
-  - `X-Organization-ID`: Organization identifier
+    - `X-User-ID`: User identifier
+    - `X-Username`: Username
+    - `X-User-Email`: User email address
+    - `X-User-Authorities`: Comma-separated list of authorities (e.g., "ADMIN,USER")
+    - `X-User-Permissions`: Comma-separated list of permissions
+    - `X-Tenant-ID`: Tenant identifier
+    - `X-Organization-ID`: Organization identifier
 - Skip authentication for public paths
 - Support for both access and refresh tokens
 
@@ -271,12 +271,12 @@ The gateway provides comprehensive routing and rate limiting for the billing ser
 - Add correlation ID to all requests
 - Sanitize incoming headers (remove X-User-\*, X-Tenant-ID, X-Organization-ID to prevent spoofing)
 - Propagate user context headers:
-  - `X-User-ID`: User identifier
-  - `X-Username`: Username
-  - `X-User-Email`: User email address
-  - `X-User-Authorities`: Comma-separated authorities
-  - `X-User-Permissions`: Comma-separated permissions
-  - `X-Organization-ID`: Organization identifier
+    - `X-User-ID`: User identifier
+    - `X-Username`: Username
+    - `X-User-Email`: User email address
+    - `X-User-Authorities`: Comma-separated authorities
+    - `X-User-Permissions`: Comma-separated permissions
+    - `X-Organization-ID`: Organization identifier
 - Propagate tenant context (X-Tenant-ID)
 - Add gateway version header
 - Remove internal headers from requests
@@ -300,18 +300,18 @@ Routes are defined in `application.yml`:
 
 ```yaml
 spring:
-  cloud:
-    gateway:
-      routes:
-        - id: user-service-auth
-          uri: http://iqscaffold-user-service:8080
-          predicates:
-            - Path=/api/v1/auth/**
-          filters:
-            - name: RequestRateLimiter
-              args:
-                redis-rate-limiter.replenish-rate: 60
-                redis-rate-limiter.burst-capacity: 100
+    cloud:
+        gateway:
+            routes:
+                - id: user-service-auth
+                  uri: http://iqscaffold-user-service:8080
+                  predicates:
+                      - Path=/api/v1/auth/**
+                  filters:
+                      - name: RequestRateLimiter
+                        args:
+                            redis-rate-limiter.replenish-rate: 60
+                            redis-rate-limiter.burst-capacity: 100
 ```
 
 </details>
@@ -421,16 +421,16 @@ When rate limit is exceeded:
 
 ```json
 {
-  "type": "/problems/rate_limit_exceeded",
-  "title": "Too Many Requests",
-  "status": 429,
-  "detail": "Tenant rate limit exceeded",
-  "instance": "/api/v1/auth/login",
-  "code": "RATE_LIMIT_EXCEEDED",
-  "timestamp": "2024-01-15T10:30:00Z",
-  "retryAfter": 60,
-  "correlationId": "1634567890-abc12345",
-  "tenantId": "tenant-123"
+    "type": "/problems/rate_limit_exceeded",
+    "title": "Too Many Requests",
+    "status": 429,
+    "detail": "Tenant rate limit exceeded",
+    "instance": "/api/v1/auth/login",
+    "code": "RATE_LIMIT_EXCEEDED",
+    "timestamp": "2024-01-15T10:30:00Z",
+    "retryAfter": 60,
+    "correlationId": "1634567890-abc12345",
+    "tenantId": "tenant-123"
 }
 ```
 
@@ -546,11 +546,11 @@ Services can validate JWTs independently using the same JWK Set:
 
 ```yaml
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: http://iqscaffold-user-service:8080/.well-known/jwks.json
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    jwk-set-uri: http://iqscaffold-user-service:8080/.well-known/jwks.json
 ```
 
 </details>

@@ -227,42 +227,42 @@ Production deployments include:
 
 1. **Downstream Service Connection Failures**
 
-   ```bash
-   kubectl logs deployment/iqscaffold-gateway-service -n iqscaffold-dev-env
-   ```
+    ```bash
+    kubectl logs deployment/iqscaffold-gateway-service -n iqscaffold-dev-env
+    ```
 
 2. **Redis Connection Issues**
 
-   ```bash
-   # Check Redis connectivity
-   kubectl exec -it deployment/iqscaffold-gateway-service -n iqscaffold-dev-env -- \
-     redis-cli -h iqscaffold-infra-redis-master.iqscaffold-dev-env.svc.cluster.local ping
-   ```
+    ```bash
+    # Check Redis connectivity
+    kubectl exec -it deployment/iqscaffold-gateway-service -n iqscaffold-dev-env -- \
+      redis-cli -h iqscaffold-infra-redis-master.iqscaffold-dev-env.svc.cluster.local ping
+    ```
 
 3. **JWT Validation Errors**
 
-   ```bash
-   kubectl logs deployment/iqscaffold-gateway-service -n iqscaffold-dev-env | grep "JWT"
-   ```
+    ```bash
+    kubectl logs deployment/iqscaffold-gateway-service -n iqscaffold-dev-env | grep "JWT"
+    ```
 
 4. **Rate Limiting Issues**
 
-   ```bash
-   kubectl logs deployment/iqscaffold-gateway-service -n iqscaffold-dev-env | grep "rate"
-   ```
+    ```bash
+    kubectl logs deployment/iqscaffold-gateway-service -n iqscaffold-dev-env | grep "rate"
+    ```
 
 5. **Check Configuration**
 
-   ```bash
-   kubectl describe configmap iqscaffold-gateway-service-config -n iqscaffold-dev-env
-   kubectl describe secret iqscaffold-gateway-service-secrets -n iqscaffold-dev-env
-   ```
+    ```bash
+    kubectl describe configmap iqscaffold-gateway-service-config -n iqscaffold-dev-env
+    kubectl describe secret iqscaffold-gateway-service-secrets -n iqscaffold-dev-env
+    ```
 
 6. **Test Health Endpoints**
-   ```bash
-   kubectl port-forward deployment/iqscaffold-gateway-service 8081:8081 -n iqscaffold-dev-env
-   curl http://localhost:8081/actuator/health
-   ```
+    ```bash
+    kubectl port-forward deployment/iqscaffold-gateway-service 8081:8081 -n iqscaffold-dev-env
+    curl http://localhost:8081/actuator/health
+    ```
 
 #### Missing Secrets Diagnosis
 

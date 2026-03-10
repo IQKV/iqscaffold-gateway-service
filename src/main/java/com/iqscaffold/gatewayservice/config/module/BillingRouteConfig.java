@@ -68,10 +68,11 @@ public class BillingRouteConfig {
             .path("/api/v1/billing/*/health")
             .filters(f -> f
                 .stripPrefix(stripCount)
-                .circuitBreaker(config -> config
-                    .setName("billing-service-health")
-                    .setFallbackUri("forward:/fallback/health"))
-                .retry(config -> config.setRetries(1)))
+                // .circuitBreaker(config -> config
+                //     .setName("billing-service-health")
+                //     .setFallbackUri("forward:/fallback/health"))
+                // .retry(config -> config.setRetries(1))
+                )
             .uri(billingServiceUri))
 
         // Feature Management Routes (High Priority - Frontend Usage)
@@ -80,10 +81,11 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                // .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
-                .circuitBreaker(config -> config
-                    .setName("billing-service-features")
-                    .setFallbackUri("forward:/fallback/features"))
-                .retry(config -> config.setRetries(2)))
+                // .circuitBreaker(config -> config
+                //     .setName("billing-service-features")
+                //     .setFallbackUri("forward:/fallback/features"))
+                // .retry(config -> config.setRetries(2))
+                )
             .uri(billingServiceUri))
 
         .route("billing-service-features-enabled", r -> r
@@ -91,10 +93,11 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                // .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
-                .circuitBreaker(config -> config
-                    .setName("billing-service-features")
-                    .setFallbackUri("forward:/fallback/features"))
-                .retry(config -> config.setRetries(2)))
+                // .circuitBreaker(config -> config
+                //     .setName("billing-service-features")
+                //     .setFallbackUri("forward:/fallback/features"))
+                // .retry(config -> config.setRetries(2))
+                )
             .uri(billingServiceUri))
 
         // Subscription Management Routes
@@ -103,10 +106,11 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                // .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
-                .circuitBreaker(config -> config
-                    .setName("billing-service-subscriptions")
-                    .setFallbackUri("forward:/fallback/billing"))
-                .retry(config -> config.setRetries(2)))
+                // .circuitBreaker(config -> config
+                //     .setName("billing-service-subscriptions")
+                //     .setFallbackUri("forward:/fallback/billing"))
+                // .retry(config -> config.setRetries(2))
+                )
             .uri(billingServiceUri))
 
         // Payment Processing Routes
@@ -115,10 +119,11 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                // .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
-                .circuitBreaker(config -> config
-                    .setName("billing-service-payments")
-                    .setFallbackUri("forward:/fallback/billing"))
-                .retry(config -> config.setRetries(1))) // Lower retries for payments
+                // .circuitBreaker(config -> config
+                //     .setName("billing-service-payments")
+                //     .setFallbackUri("forward:/fallback/billing"))
+                // .retry(config -> config.setRetries(1)) // Lower retries for payments
+                )
             .uri(billingServiceUri))
 
         // Invoice Management Routes
@@ -127,10 +132,11 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                // .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
-                .circuitBreaker(config -> config
-                    .setName("billing-service-invoices")
-                    .setFallbackUri("forward:/fallback/billing"))
-                .retry(config -> config.setRetries(2)))
+                // .circuitBreaker(config -> config
+                //     .setName("billing-service-invoices")
+                //     .setFallbackUri("forward:/fallback/billing"))
+                // .retry(config -> config.setRetries(2))
+                )
             .uri(billingServiceUri))
 
         // Payout Operations Routes
@@ -139,10 +145,11 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                // .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
-                .circuitBreaker(config -> config
-                    .setName("billing-service-payouts")
-                    .setFallbackUri("forward:/fallback/billing"))
-                .retry(config -> config.setRetries(2)))
+                // .circuitBreaker(config -> config
+                //     .setName("billing-service-payouts")
+                //     .setFallbackUri("forward:/fallback/billing"))
+                // .retry(config -> config.setRetries(2))
+                )
             .uri(billingServiceUri))
 
         // Subscription Plans Routes (Public + Protected)
@@ -151,10 +158,11 @@ public class BillingRouteConfig {
             .filters(f -> f
                 .stripPrefix(stripCount)
                // .requestRateLimiter(c -> c.setRateLimiter(defaultRateLimiter))
-                .circuitBreaker(config -> config
-                    .setName("billing-service-plans")
-                    .setFallbackUri("forward:/fallback/billing"))
-                .retry(config -> config.setRetries(2)))
+                // .circuitBreaker(config -> config
+                //     .setName("billing-service-plans")
+                //     .setFallbackUri("forward:/fallback/billing"))
+                // .retry(config -> config.setRetries(2))
+                )
             .uri(billingServiceUri))
 
         // Admin Billing Operations Routes

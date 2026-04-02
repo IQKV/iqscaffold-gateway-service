@@ -145,13 +145,13 @@ Request Flow:
 - Extract user context (userId, username, email, authorities, permissions, organizationId)
 - Sanitize incoming headers to prevent spoofing (removes X-User-\*, X-Tenant-ID, X-Organization-ID)
 - Propagate user context to downstream services via headers:
-  - `X-User-ID` - User identifier
-  - `X-Username` - Username
-  - `X-User-Email` - User email address
-  - `X-User-Authorities` - Comma-separated list of authorities (e.g., `ADMIN,USER`)
-  - `X-User-Permissions` - Comma-separated list of permissions
-  - `X-Tenant-ID` - Tenant identifier
-  - `X-Organization-ID` - Organization identifier
+    - `X-User-ID` - User identifier
+    - `X-Username` - Username
+    - `X-User-Email` - User email address
+    - `X-User-Authorities` - Comma-separated list of authorities (e.g., `ADMIN,USER`)
+    - `X-User-Permissions` - Comma-separated list of permissions
+    - `X-Tenant-ID` - Tenant identifier
+    - `X-Organization-ID` - Organization identifier
 - Skip authentication for public paths
 
 ### Feature Access Control
@@ -336,11 +336,11 @@ Services can validate JWTs independently using the same JWK Set:
 
 ```yaml
 spring:
-  security:
-    oauth2:
-      resourceserver:
-        jwt:
-          jwk-set-uri: http://iqscaffold-user-service:8080/.well-known/jwks.json
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    jwk-set-uri: http://iqscaffold-user-service:8080/.well-known/jwks.json
 ```
 
 </details>

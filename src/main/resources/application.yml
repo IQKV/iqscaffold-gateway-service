@@ -176,10 +176,6 @@ iqscaffold:
             description: "Payments, subscriptions, invoicing, and feature management APIs"
             context-path: "billing-service"
       enable-service-discovery: false
-      load-balancing:
-        strategy: round-robin
-        enable-health-check: true
-        health-check-interval: PT30S
     
     security:
       jwt:
@@ -241,86 +237,6 @@ iqscaffold:
         
         # Public subscription plans (for pricing pages)
         - /api/v1/billing/subscription-plans/**
-    
-    rate-limiting:
-      enabled: true
-      redis:
-        key-prefix: "iqscaffold:gateway:rate-limit"
-        key-expiry: PT1M
-      policies:
-        default-requests-per-minute: 60
-        default-burst-capacity: 100
-        endpoints:
-          "/api/v1/auth/login":
-            requests-per-minute: 10
-            burst-capacity: 20
-            enable-tenant-quotas: true
-          "/api/v1/auth/signup":
-            requests-per-minute: 5
-            burst-capacity: 10
-            enable-tenant-quotas: true
-          "/api/v1/auth/email/resend":
-            requests-per-minute: 3
-            burst-capacity: 5
-            enable-tenant-quotas: true
-          "/api/v1/auth/email/verify":
-            requests-per-minute: 10
-            burst-capacity: 15
-            enable-tenant-quotas: true
-          "/api/v1/auth/password/forgot":
-            requests-per-minute: 3
-            burst-capacity: 5
-            enable-tenant-quotas: true
-          "/api/v1/auth/password/reset":
-            requests-per-minute: 5
-            burst-capacity: 10
-            enable-tenant-quotas: true
-          "/api/v1/users/me":
-            requests-per-minute: 100
-            burst-capacity: 150
-            enable-tenant-quotas: true
-          "/api/v1/users/me/password":
-            requests-per-minute: 5
-            burst-capacity: 10
-            enable-tenant-quotas: true
-          "/api/v1/users/me/preferences":
-            requests-per-minute: 100
-            burst-capacity: 150
-            enable-tenant-quotas: true
-          "/api/v1/admin/users/**":
-            requests-per-minute: 100
-            burst-capacity: 150
-            enable-tenant-quotas: true
-          "/api/v1/admin/organizations/**":
-            requests-per-minute: 100
-            burst-capacity: 150
-            enable-tenant-quotas: true
-          "/api/v1/admin/organization-preferences/**":
-            requests-per-minute: 100
-            burst-capacity: 150
-            enable-tenant-quotas: true
-          "/api/v1/admin/tenants/**":
-            requests-per-minute: 50
-            burst-capacity: 75
-            enable-tenant-quotas: true
-          
-          # Module-specific rate limits (billing, crm) are configured programmatically
-          # via profile-based configuration classes when their respective profiles are active
-
-      tenant-quotas:
-        enabled: true
-        default-tenant-requests-per-minute: 1000
-        tenant-specific-quotas: { }
-    
-    circuit-breaker:
-      enabled: true
-      failure-rate-threshold: 50
-      slow-call-rate-threshold: 50
-      slow-call-duration-threshold: PT2S
-      minimum-number-of-calls: 10
-      wait-duration-in-open-state: PT30S
-      sliding-window-size: 100
-      sliding-window-type: COUNT_BASED
     
     cors:
       enabled: true
@@ -398,8 +314,6 @@ iqscaffold:
       enabled-metrics:
         - gateway.requests
         - gateway.response.time
-        - gateway.circuit.breaker
-        - gateway.rate.limit
     logging:
       level: INFO
       format: console

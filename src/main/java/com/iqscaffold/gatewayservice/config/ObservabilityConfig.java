@@ -191,7 +191,6 @@ public class ObservabilityConfig {
 
     private final Timer requestTimer;
     private final Timer authenticationTimer;
-    private final Timer rateLimitTimer;
     private final MeterRegistry meterRegistry;
 
     public GatewayServiceMetrics(final MeterRegistry meterRegistry) {
@@ -201,9 +200,6 @@ public class ObservabilityConfig {
           .register(meterRegistry);
       this.authenticationTimer = Timer.builder(GatewayConstants.Metrics.AUTHENTICATION_DURATION)
           .description("Time taken for authentication validation")
-          .register(meterRegistry);
-      this.rateLimitTimer = Timer.builder(GatewayConstants.Metrics.RATE_LIMIT_DURATION)
-          .description("Time taken for rate limit checking")
           .register(meterRegistry);
     }
 
@@ -243,22 +239,6 @@ public class ObservabilityConfig {
       meterRegistry.counter(GatewayConstants.Metrics.AUTHENTICATION_TOTAL,
           GatewayConstants.Metrics.TAG_RESULT, GatewayConstants.Metrics.RESULT_FAILURE,
           GatewayConstants.Metrics.TAG_REASON, reason).increment();
-    }
-
-    public void recordRateLimitHit(String endpoint, String tenantId) {
-      meterRegistry.counter(GatewayConstants.Metrics.RATE_LIMIT_HIT,
-          GatewayConstants.Metrics.TAG_ENDPOINT, endpoint,
-          GatewayConstants.Metrics.TAG_TENANT, tenantId != null ? tenantId : GatewayConstants.Metrics.TENANT_UNKNOWN).increment();
-    }
-
-    public void recordCircuitBreakerOpen(String service) {
-      meterRegistry.counter(GatewayConstants.Metrics.CIRCUIT_BREAKER_OPEN,
-          GatewayConstants.Metrics.TAG_SERVICE, service).increment();
-    }
-
-    public void recordCircuitBreakerClosed(String service) {
-      meterRegistry.counter(GatewayConstants.Metrics.CIRCUIT_BREAKER_CLOSED,
-          GatewayConstants.Metrics.TAG_SERVICE, service).increment();
     }
 
     public void recordRouteLatency(String route, long latencyMs) {
@@ -301,12 +281,6 @@ public class ObservabilityConfig {
       meterRegistry.timer(GatewayConstants.Metrics.TRANSFORMATION_DURATION,
               GatewayConstants.Metrics.TAG_TYPE, type)
           .record(Duration.ofMillis(durationMs));
-    }
-
-    public void recordLoadBalancingDecision(String service, String instance) {
-      meterRegistry.counter(GatewayConstants.Metrics.LOAD_BALANCING_DECISIONS,
-          GatewayConstants.Metrics.TAG_SERVICE, service,
-          GatewayConstants.Metrics.TAG_INSTANCE, instance).increment();
     }
 
     public void recordHealthCheckResult(String service, boolean healthy) {

@@ -171,11 +171,8 @@ class JwtAuthenticationFilterTest {
     var apiPrefix = new IqScaffoldProperties.GatewayProperties.RoutingProperties.ApiPrefixProperties(
         true, "/api", 0);
 
-    var loadBalancing = new IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties(
-        "round-robin", true, Duration.ofSeconds(30));
-
     var routing = new IqScaffoldProperties.GatewayProperties.RoutingProperties(
-        apiPrefix, Map.of("user-service", serviceProps), true, loadBalancing);
+        apiPrefix, Map.of("user-service", serviceProps), true);
 
     var jwt = new IqScaffoldProperties.GatewayProperties.SecurityProperties.JwtProperties(
         Duration.ofMinutes(15), Duration.ofDays(7), "issuer", "audience", "RS256", "none", "http://jwks");
@@ -185,21 +182,6 @@ class JwtAuthenticationFilterTest {
 
     var security = new IqScaffoldProperties.GatewayProperties.SecurityProperties(
         jwt, auth, List.of("/health", "/actuator/**"));
-
-    var redis = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties(
-        "rate-limit:", Duration.ofMinutes(1));
-
-    var policies = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties(
-        100, 200, Map.of());
-
-    var tenantQuotas = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties(
-        true, 1000, Map.of());
-
-    var rateLimiting = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties(
-        true, redis, policies, tenantQuotas);
-
-    var circuitBreaker = new IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties(
-        true, 50, 50, Duration.ofSeconds(5), 10, Duration.ofSeconds(60), 100, "COUNT_BASED");
 
     var cors = new IqScaffoldProperties.GatewayProperties.CorsProperties(
         true, List.of("*"), List.of("GET"), List.of("*"), true, 3600);
@@ -214,7 +196,7 @@ class JwtAuthenticationFilterTest {
         requestTransform, responseTransform);
 
     var gateway = new IqScaffoldProperties.GatewayProperties(
-        routing, security, rateLimiting, circuitBreaker, cors, transformation, null);
+        routing, security, cors, transformation, null);
 
     var cacheRedis = new IqScaffoldProperties.CacheProperties.RedisProperties(
         "localhost", 6379, null, 0, Duration.ofSeconds(5),

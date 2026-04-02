@@ -79,35 +79,10 @@ class UnifiedMicroserviceAccessFilterTest {
         true, "/api", 0
     );
 
-    var loadBalancingProps = new IqScaffoldProperties.GatewayProperties.RoutingProperties.LoadBalancingProperties(
-        "round-robin", true, Duration.ofSeconds(30)
-    );
-
     var routingProps = new IqScaffoldProperties.GatewayProperties.RoutingProperties(
         apiPrefixProps,
         Map.of(),
-        false,
-        loadBalancingProps
-    );
-
-    var redisProps = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.RedisProperties(
-        "test:", Duration.ofMinutes(1)
-    );
-
-    var policiesProps = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.PoliciesProperties(
-        60, 100, Map.of()
-    );
-
-    var tenantQuotasProps = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties.TenantQuotasProperties(
-        false, 1000, Map.of()
-    );
-
-    var rateLimitingProps = new IqScaffoldProperties.GatewayProperties.RateLimitingProperties(
-        true, redisProps, policiesProps, tenantQuotasProps
-    );
-
-    var circuitBreakerProps = new IqScaffoldProperties.GatewayProperties.CircuitBreakerProperties(
-        true, 50, 50, Duration.ofSeconds(2), 10, Duration.ofSeconds(30), 100, "COUNT_BASED"
+        false
     );
 
     var corsProps = new IqScaffoldProperties.GatewayProperties.CorsProperties(
@@ -137,8 +112,6 @@ class UnifiedMicroserviceAccessFilterTest {
     var gatewayProps = new IqScaffoldProperties.GatewayProperties(
         routingProps,
         securityProps,
-        rateLimitingProps,
-        circuitBreakerProps,
         corsProps,
         transformationProps,
         featureAccessProps

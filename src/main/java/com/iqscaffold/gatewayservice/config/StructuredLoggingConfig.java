@@ -124,54 +124,6 @@ public class StructuredLoggingConfig {
       }
     }
 
-    public void logRateLimitEvent(String endpoint, String tenantId, String result, int currentCount, int limit) {
-      try {
-        MDC.put("event", "rate_limit");
-        MDC.put("endpoint", endpoint);
-        MDC.put("tenantId", tenantId != null ? tenantId : "unknown");
-        MDC.put("result", result);
-        MDC.put("currentCount", String.valueOf(currentCount));
-        MDC.put("limit", String.valueOf(limit));
-
-        if ("exceeded".equals(result)) {
-          logger.warn("Rate limit exceeded for endpoint: {} tenant: {} ({}/{})",
-              endpoint, tenantId, currentCount, limit);
-        } else {
-          logger.debug("Rate limit check for endpoint: {} tenant: {} ({}/{})",
-              endpoint, tenantId, currentCount, limit);
-        }
-      } finally {
-        MDC.remove("event");
-        MDC.remove("endpoint");
-        MDC.remove("tenantId");
-        MDC.remove("result");
-        MDC.remove("currentCount");
-        MDC.remove("limit");
-      }
-    }
-
-    public void logCircuitBreakerEvent(String service, String state, String reason) {
-      try {
-        MDC.put("event", "circuit_breaker");
-        MDC.put("service", service);
-        MDC.put("state", state);
-        MDC.put("reason", reason);
-
-        if ("open".equals(state)) {
-          logger.warn("Circuit breaker opened for service: {} - {}", service, reason);
-        } else if ("closed".equals(state)) {
-          logger.info("Circuit breaker closed for service: {}", service);
-        } else {
-          logger.info("Circuit breaker state change for service: {} to {} - {}",
-              service, state, reason);
-        }
-      } finally {
-        MDC.remove("event");
-        MDC.remove("service");
-        MDC.remove("state");
-        MDC.remove("reason");
-      }
-    }
   }
 
   /**

@@ -67,7 +67,7 @@ class RequestTransformationFilterTest {
     );
 
     var gatewayProperties = new IqScaffoldProperties.GatewayProperties(
-        null, null, null, null, null, transformation, null
+        null, null, null, transformation, null
     );
 
     var observabilityProperties = new IqScaffoldProperties.ObservabilityProperties(null, null, null);
@@ -101,7 +101,7 @@ class RequestTransformationFilterTest {
     );
 
     var gatewayProperties = new IqScaffoldProperties.GatewayProperties(
-        null, null, null, null, null, transformation, null
+        null, null, null, transformation, null
     );
 
     var observabilityProperties = new IqScaffoldProperties.ObservabilityProperties(null, null, null);
@@ -247,7 +247,7 @@ class RequestTransformationFilterTest {
     );
 
     var gatewayProperties = new IqScaffoldProperties.GatewayProperties(
-        null, null, null, null, null, transformation, null
+        null, null, null, transformation, null
     );
 
     var observabilityProperties = new IqScaffoldProperties.ObservabilityProperties(null, null, null);
@@ -297,7 +297,7 @@ class RequestTransformationFilterTest {
     );
 
     var gatewayProperties = new IqScaffoldProperties.GatewayProperties(
-        null, null, null, null, null, transformation, null
+        null, null, null, transformation, null
     );
 
     var observabilityProperties = new IqScaffoldProperties.ObservabilityProperties(null, null, null);

@@ -5,11 +5,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.iqscaffold.gatewayservice.exception.CircuitBreakerOpenException;
 import com.iqscaffold.gatewayservice.exception.InvalidJwtTokenException;
 import com.iqscaffold.gatewayservice.exception.MissingTenantContextException;
-import com.iqscaffold.gatewayservice.exception.NoHealthyInstancesException;
-import com.iqscaffold.gatewayservice.exception.RateLimitExceededException;
 import com.iqscaffold.gatewayservice.exception.UnsupportedApiVersionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,28 +50,7 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
     ProblemDetail pd;
 
     // Handle custom exceptions with specific logic
-    if (ex instanceof RateLimitExceededException rateLimitEx) {
-      status = HttpStatus.TOO_MANY_REQUESTS;
-      errorCode = "RATE_LIMIT_EXCEEDED";
-      message = rateLimitEx.getReason();
-      pd = createProblemDetail(status, message, errorCode, request.getPath().value(), correlationId, tenantId);
-      pd.setProperty("rateLimitType", rateLimitEx.getType().name());
-      pd.setProperty("retryAfter", rateLimitEx.getRetryAfterSeconds());
-      response.getHeaders().add("X-RateLimit-Limit", "60");
-      response.getHeaders().add("X-RateLimit-Remaining", "0");
-      response.getHeaders().add("Retry-After", String.valueOf(rateLimitEx.getRetryAfterSeconds()));
-      logger.warn("Rate limit exceeded - Type: {}, Tenant: {}, Path: {}",
-          rateLimitEx.getType(), rateLimitEx.getTenantId(), rateLimitEx.getPath());
-    } else if (ex instanceof NoHealthyInstancesException noInstancesEx) {
-      status = HttpStatus.SERVICE_UNAVAILABLE;
-      errorCode = "NO_HEALTHY_INSTANCES";
-      message = noInstancesEx.getReason();
-      pd = createProblemDetail(status, message, errorCode, request.getPath().value(), correlationId, tenantId);
-      pd.setProperty("serviceName", noInstancesEx.getServiceName());
-      pd.setProperty("totalInstances", noInstancesEx.getTotalInstances());
-      logger.error("No healthy instances - Service: {}, Total: {}",
-          noInstancesEx.getServiceName(), noInstancesEx.getTotalInstances());
-    } else if (ex instanceof UnsupportedApiVersionException versionEx) {
+    if (ex instanceof UnsupportedApiVersionException versionEx) {
       status = HttpStatus.BAD_REQUEST;
       errorCode = "UNSUPPORTED_API_VERSION";
       message = versionEx.getReason();
@@ -97,18 +73,6 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
       pd = createProblemDetail(status, message, errorCode, request.getPath().value(), correlationId, tenantId);
       pd.setProperty("errorType", jwtEx.getErrorType().name());
       logger.warn("Invalid JWT token - Type: {}, Reason: {}", jwtEx.getErrorType(), jwtEx.getReasonDetail());
-    } else if (ex instanceof CircuitBreakerOpenException circuitEx) {
-      status = HttpStatus.SERVICE_UNAVAILABLE;
-      errorCode = "CIRCUIT_BREAKER_OPEN";
-      message = circuitEx.getReason();
-      pd = createProblemDetail(status, message, errorCode, request.getPath().value(), correlationId, tenantId);
-      pd.setProperty("circuitBreaker", circuitEx.getCircuitBreakerName());
-      pd.setProperty("serviceName", circuitEx.getServiceName());
-      pd.setProperty("retryAfter", circuitEx.getRetryAfterSeconds());
-      response.getHeaders().add("X-Circuit-Breaker", circuitEx.getCircuitBreakerName());
-      response.getHeaders().add("Retry-After", String.valueOf(circuitEx.getRetryAfterSeconds()));
-      logger.warn("Circuit breaker open - Name: {}, Service: {}",
-          circuitEx.getCircuitBreakerName(), circuitEx.getServiceName());
     } else if (ex instanceof ResponseStatusException rse) {
       status = HttpStatus.valueOf(rse.getStatusCode().value());
       errorCode = determineErrorCode(status);
@@ -175,8 +139,6 @@ public class GlobalExceptionHandler implements ErrorWebExceptionHandler {
     return switch (status) {
       case UNAUTHORIZED -> "AUTH_TOKEN_MISSING";
       case FORBIDDEN -> "AUTH_ACCESS_DENIED";
-      case TOO_MANY_REQUESTS -> "RATE_LIMIT_EXCEEDED";
-      case SERVICE_UNAVAILABLE -> "CIRCUIT_BREAKER_OPEN";
       case BAD_REQUEST -> "VALIDATION_ERROR";
       case NOT_FOUND -> "RESOURCE_NOT_FOUND";
       default -> "SYSTEM_ERROR";

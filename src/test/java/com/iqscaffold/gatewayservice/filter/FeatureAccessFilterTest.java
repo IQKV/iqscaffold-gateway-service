@@ -67,7 +67,7 @@ class FeatureAccessFilterTest {
     );
 
     var gatewayProperties = new IqScaffoldProperties.GatewayProperties(
-        null, null, null, null, null, null, featureAccessConfig
+        null, null, null, null, featureAccessConfig
     );
 
     properties = new IqScaffoldProperties(null, gatewayProperties, null, null);
@@ -268,7 +268,7 @@ class FeatureAccessFilterTest {
     );
 
     var gatewayProperties = new IqScaffoldProperties.GatewayProperties(
-        null, null, null, null, null, null, disabledFeatureAccessConfig
+        null, null, null, null, disabledFeatureAccessConfig
     );
 
     var disabledProperties = new IqScaffoldProperties(null, gatewayProperties, null, null);

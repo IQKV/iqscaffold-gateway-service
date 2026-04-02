@@ -1,6 +1,5 @@
 package com.iqscaffold.gatewayservice.service;
 
-import java.time.Duration;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -9,7 +8,6 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import reactor.util.retry.Retry;
 
 /**
  * Service for validating feature access at the gateway level.
@@ -75,9 +73,6 @@ public class FeatureValidationService {
         .uri("/api/v1/internal/features/context/{tenantId}", tenantId)
         .retrieve()
         .bodyToMono(FeatureContext.class)
-        .retryWhen(Retry.backoff(3, Duration.ofMillis(100))
-            .maxBackoff(Duration.ofSeconds(2)))
-        .timeout(Duration.ofSeconds(5))
         .doOnSuccess(context -> logger.debug("Retrieved feature context for tenant {}: {} features",
             tenantId, context.getEnabledFeatureCount()))
         .onErrorResume(error -> {

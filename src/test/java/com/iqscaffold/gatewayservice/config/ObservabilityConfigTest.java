@@ -51,38 +51,6 @@ class ObservabilityConfigTest {
   }
 
   @Test
-  void shouldCreateRateLimitMetrics() {
-    // Given
-    var meterRegistry = new SimpleMeterRegistry();
-    var metrics = new ObservabilityConfig.GatewayServiceMetrics(meterRegistry);
-
-    // When
-    metrics.recordRateLimitHit("/api/v1/auth/login", "tenant-123");
-
-    // Then
-    assertThat(meterRegistry.counter("iqscaffold.gateway.ratelimit.hit", "endpoint", "/api/v1/auth/login", "tenant", "tenant-123").count()).isEqualTo(1.0);
-
-    // Test without tenant
-    metrics.recordRateLimitHit("/api/v1/auth/signup", null);
-    assertThat(meterRegistry.counter("iqscaffold.gateway.ratelimit.hit", "endpoint", "/api/v1/auth/signup", "tenant", "unknown").count()).isEqualTo(1.0);
-  }
-
-  @Test
-  void shouldCreateCircuitBreakerMetrics() {
-    // Given
-    var meterRegistry = new SimpleMeterRegistry();
-    var metrics = new ObservabilityConfig.GatewayServiceMetrics(meterRegistry);
-
-    // When
-    metrics.recordCircuitBreakerOpen("user-service");
-    metrics.recordCircuitBreakerClosed("user-service");
-
-    // Then
-    assertThat(meterRegistry.counter("iqscaffold.gateway.circuitbreaker.open", "service", "user-service").count()).isEqualTo(1.0);
-    assertThat(meterRegistry.counter("iqscaffold.gateway.circuitbreaker.closed", "service", "user-service").count()).isEqualTo(1.0);
-  }
-
-  @Test
   void shouldRecordRouteLatencyMetrics() {
     // Given
     var meterRegistry = new SimpleMeterRegistry();
@@ -174,17 +142,15 @@ class ObservabilityConfigTest {
   }
 
   @Test
-  void shouldRecordLoadBalancingMetrics() {
+  void shouldRecordHealthCheckResult() {
     // Given
     var meterRegistry = new SimpleMeterRegistry();
     var metrics = new ObservabilityConfig.GatewayServiceMetrics(meterRegistry);
 
     // When
-    metrics.recordLoadBalancingDecision("user-service", "instance-1");
     metrics.recordHealthCheckResult("user-service", true);
 
     // Then
-    assertThat(meterRegistry.counter("iqscaffold.gateway.loadbalancing.decisions", "service", "user-service", "instance", "instance-1").count()).isEqualTo(1.0);
     assertThat(meterRegistry.counter("iqscaffold.gateway.healthcheck.results", "service", "user-service", "result", "healthy").count()).isEqualTo(1.0);
   }
 

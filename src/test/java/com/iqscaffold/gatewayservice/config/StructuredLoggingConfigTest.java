@@ -95,34 +95,6 @@ class StructuredLoggingConfigTest {
   }
 
   @Test
-  void shouldLogRateLimitEventSuccessfully() {
-    // Given
-    var logger = new StructuredLoggingConfig.StructuredLogger();
-
-    // When - Should not throw exceptions
-    logger.logRateLimitEvent("/api/v1/auth/login", "tenant-123", "allowed", 5, 10);
-
-    // Then - MDC should be cleaned up after logging
-    assertThat(MDC.get("event")).isNull();
-    assertThat(MDC.get("endpoint")).isNull();
-    assertThat(MDC.get("tenantId")).isNull();
-  }
-
-  @Test
-  void shouldLogCircuitBreakerEventSuccessfully() {
-    // Given
-    var logger = new StructuredLoggingConfig.StructuredLogger();
-
-    // When - Should not throw exceptions
-    logger.logCircuitBreakerEvent("user-service", "open", "failure_rate_exceeded");
-
-    // Then - MDC should be cleaned up after logging
-    assertThat(MDC.get("event")).isNull();
-    assertThat(MDC.get("service")).isNull();
-    assertThat(MDC.get("state")).isNull();
-  }
-
-  @Test
   void shouldLogIncomingRequestSuccessfully() {
     // Given
     var requestLogger = new StructuredLoggingConfig.RequestLogger();

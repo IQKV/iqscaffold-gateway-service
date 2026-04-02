@@ -265,10 +265,6 @@ public final class GatewayConstants {
     public static final String REQUEST_TOTAL = PREFIX + ".request.total";
     public static final String AUTHENTICATION_DURATION = PREFIX + ".authentication.duration";
     public static final String AUTHENTICATION_TOTAL = PREFIX + ".authentication.total";
-    public static final String RATE_LIMIT_DURATION = PREFIX + ".ratelimit.duration";
-    public static final String RATE_LIMIT_HIT = PREFIX + ".ratelimit.hit";
-    public static final String CIRCUIT_BREAKER_OPEN = PREFIX + ".circuitbreaker.open";
-    public static final String CIRCUIT_BREAKER_CLOSED = PREFIX + ".circuitbreaker.closed";
     public static final String ROUTE_LATENCY = PREFIX + ".route.latency";
     public static final String CONNECTIONS_ACTIVE = PREFIX + ".connections.active";
     public static final String REQUESTS_TOTAL = PREFIX + ".requests.total";
@@ -276,7 +272,6 @@ public final class GatewayConstants {
     public static final String TENANT_REQUESTS = PREFIX + ".tenant.requests";
     public static final String CORS_REQUESTS = PREFIX + ".cors.requests";
     public static final String TRANSFORMATION_DURATION = PREFIX + ".transformation.duration";
-    public static final String LOAD_BALANCING_DECISIONS = PREFIX + ".loadbalancing.decisions";
     public static final String HEALTH_CHECK_RESULTS = PREFIX + ".healthcheck.results";
 
     // Metric tag names
@@ -292,7 +287,6 @@ public final class GatewayConstants {
     public static final String TAG_METHOD = "method";
     public static final String TAG_ORIGIN = "origin";
     public static final String TAG_TYPE = "type";
-    public static final String TAG_INSTANCE = "instance";
 
     // Metric tag values
     public static final String RESULT_SUCCESS = "success";

@@ -64,8 +64,6 @@ public record IqScaffoldProperties(
   public record GatewayProperties(
       @Valid @NotNull RoutingProperties routing,
       @Valid @NotNull SecurityProperties security,
-      @Valid @NotNull RateLimitingProperties rateLimiting,
-      @Valid @NotNull CircuitBreakerProperties circuitBreaker,
       @Valid @NotNull CorsProperties cors,
       @Valid @NotNull TransformationProperties transformation,
       @Valid @NotNull FeatureAccessProperties featureAccess) {
@@ -73,8 +71,7 @@ public record IqScaffoldProperties(
     public record RoutingProperties(
         @Valid @NotNull ApiPrefixProperties apiPrefix,
         Map<String, ServiceProperties> services,
-        boolean enableServiceDiscovery,
-        @Valid @NotNull LoadBalancingProperties loadBalancing) {
+        boolean enableServiceDiscovery) {
 
       /**
        * API prefix configuration for environment-specific routing.
@@ -125,12 +122,6 @@ public record IqScaffoldProperties(
         }
       }
 
-      public record LoadBalancingProperties(
-          @Pattern(regexp = "round-robin|weighted|least-connections") String strategy,
-          boolean enableHealthCheck,
-          @NotNull Duration healthCheckInterval) {
-
-      }
     }
 
     public record SecurityProperties(
@@ -157,51 +148,6 @@ public record IqScaffoldProperties(
           boolean enableUserContextPropagation) {
 
       }
-    }
-
-    public record RateLimitingProperties(
-        boolean enabled,
-        @Valid @NotNull RedisProperties redis,
-        @Valid @NotNull PoliciesProperties policies,
-        @Valid @NotNull TenantQuotasProperties tenantQuotas) {
-
-      public record RedisProperties(
-          @NotBlank String keyPrefix,
-          @NotNull Duration keyExpiry) {
-
-      }
-
-      public record PoliciesProperties(
-          @Min(1) @Max(10000) int defaultRequestsPerMinute,
-          @Min(1) @Max(20000) int defaultBurstCapacity,
-          Map<String, EndpointPolicyProperties> endpoints) {
-
-        public record EndpointPolicyProperties(
-            @Min(1) @Max(1000) int requestsPerMinute,
-            @Min(1) @Max(2000) int burstCapacity,
-            boolean enableTenantQuotas) {
-
-        }
-      }
-
-      public record TenantQuotasProperties(
-          boolean enabled,
-          @Min(1) @Max(100000) int defaultTenantRequestsPerMinute,
-          Map<String, Integer> tenantSpecificQuotas) {
-
-      }
-    }
-
-    public record CircuitBreakerProperties(
-        boolean enabled,
-        @Min(1) @Max(100) int failureRateThreshold,
-        @Min(1) @Max(100) int slowCallRateThreshold,
-        @NotNull Duration slowCallDurationThreshold,
-        @Min(1) @Max(100) int minimumNumberOfCalls,
-        @NotNull Duration waitDurationInOpenState,
-        @Min(10) @Max(1000) int slidingWindowSize,
-        @Pattern(regexp = "COUNT_BASED|TIME_BASED") String slidingWindowType) {
-
     }
 
     public record CorsProperties(

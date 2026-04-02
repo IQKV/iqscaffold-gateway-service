@@ -36,14 +36,6 @@ public class HealthCheckConfig {
   }
 
   /**
-   * Custom reactive health indicator for circuit breaker status.
-   */
-  @Bean
-  public ReactiveHealthIndicator circuitBreakerHealthIndicator() {
-    return new CircuitBreakerHealthIndicator();
-  }
-
-  /**
    * Reactive Redis health indicator implementation.
    */
   public static class ReactiveRedisHealthIndicator implements ReactiveHealthIndicator {
@@ -138,34 +130,6 @@ public class HealthCheckConfig {
               .withDetail("url", userServiceUrl)
               .withDetail("status", "Connection failed or timeout")
               .build());
-    }
-  }
-
-  /**
-   * Circuit breaker health indicator implementation.
-   */
-  public static class CircuitBreakerHealthIndicator implements ReactiveHealthIndicator {
-
-    @Override
-    public Mono<Health> health() {
-      return Mono.fromCallable(() -> {
-        // In a real implementation, you would check the actual circuit breaker state
-        // For now, we'll simulate a basic check
-        var circuitBreakerEnabled = true; // This would come from actual circuit breaker configuration
-
-        if (circuitBreakerEnabled) {
-          return Health.up()
-              .withDetail("circuitBreaker", "Enabled")
-              .withDetail("status", "Monitoring downstream services")
-              .withDetail("services", "user-service")
-              .build();
-        } else {
-          return Health.down()
-              .withDetail("circuitBreaker", "Disabled")
-              .withDetail("status", "Circuit breaker not configured")
-              .build();
-        }
-      });
     }
   }
 }

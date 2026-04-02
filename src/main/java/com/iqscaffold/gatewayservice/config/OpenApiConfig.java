@@ -36,8 +36,6 @@ import org.springframework.context.annotation.Configuration;
             ## Features
             - Centralized API routing and load balancing
             - JWT authentication enforcement
-            - Redis-backed distributed rate limiting
-            - Circuit breaker patterns with Resilience4j
             - CORS handling and request/response transformation
             - Aggregated API documentation from all services
             

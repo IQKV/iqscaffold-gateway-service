@@ -1,6 +1,6 @@
 # 🌐 IQ Scaffold Gateway Service
 
-> Reactive API gateway providing intelligent routing, JWT authentication, Redis-backed rate limiting, circuit breaker patterns, and user context propagation across microservices.
+> Reactive API gateway providing intelligent routing, JWT authentication, tenant context propagation, feature-based access control, and observability across microservices.
 
 ## Table of Contents
 
@@ -22,25 +22,23 @@ A centralized entry point for the IQ Scaffold microservices platform that handle
 
 - **Intelligent Routing** - Dynamic request routing to downstream services with path-based and header-based versioning
 - **Authentication Gateway** - JWT validation and user context propagation to all protected services
-- **Rate Limiting** - Redis-backed distributed rate limiting with tenant-specific quotas and burst capacity
-- **Circuit Breaker** - Fault tolerance with automatic failure detection and graceful degradation
-- **Multi-Tenancy** - Tenant context extraction from headers, JWT claims, or subdomain routing
+- **Feature Access Control** - Validates tenant subscription features before forwarding requests
+- **Multi-Tenancy** - Tenant context extraction from headers or JWT claims and propagation downstream
 - **Request Transformation** - Header enrichment, correlation ID generation, and context propagation
+- **Observability** - Distributed tracing, Prometheus metrics, and structured logging
 
 ## Overview
 
-This is the front door to the IQ Scaffold microservices ecosystem. Built on Spring Cloud Gateway with reactive programming, it provides a single entry point for all client requests while
-handling cross-cutting concerns like authentication, rate limiting, and observability.
+This is the front door to the IQ Scaffold microservices ecosystem. Built on Spring Cloud Gateway with reactive programming, it provides a single entry point for all client requests while handling cross-cutting concerns like authentication, authorization, feature validation, and observability.
 
 ## What It Demonstrates
 
 ### 🌐 Reactive Gateway Patterns
 
 - Spring Cloud Gateway with WebFlux for non-blocking I/O
-- Reactive filter chains with ordered execution (GlobalFilter + Ordered)
-- Backpressure handling for high-throughput scenarios
-- Reactive Redis operations with ReactiveStringRedisTemplate
-- Reactive JWT validation with OAuth2 Resource Server (RSA256)
+- Reactive filter chains with ordered execution (`GlobalFilter` + `Ordered`)
+- Reactive JWT validation with OAuth2 Resource Server
+- Reactive Redis operations with `ReactiveStringRedisTemplate`
 
 ### 🔐 Authentication & Authorization
 
@@ -48,83 +46,55 @@ handling cross-cutting concerns like authentication, rate limiting, and observab
 - User context extraction (userId, username, email, authorities, permissions, organizationId)
 - Authority propagation via headers (X-User-Authorities, X-User-Email, X-User-Permissions, X-Organization-ID)
 - Header sanitization to prevent spoofing attacks (removes all user/tenant context headers from incoming requests)
-- Public path pattern matching (exact and wildcard /\*\*)
-- Configurable user context propagation toggle
+- Public path pattern matching (exact and wildcard `/**`)
+- Route-level authority enforcement via `PlatformConfigurationProperties`
 - MDC logging with user and tenant context
 
-### 🚦 Rate Limiting Patterns
+### 🎟️ Feature Access Control
 
-- Redis-backed sliding window log algorithm with sorted sets (ZSET)
-- Dual-layer rate limiting (global IP-based + tenant-specific)
-- Endpoint-specific rate limit policies with pattern matching
-- Burst capacity handling (2x quota) for traffic spikes
-- Configurable quotas per tenant via IqScaffoldProperties
-- Rate limit headers (X-RateLimit-Limit, X-RateLimit-Remaining, Retry-After)
-- Automatic cleanup of expired entries with TTL
-
-### 🔄 Circuit Breaker Implementation
-
-- Resilience4j with reactive CircuitBreakerOperator
-- Path-based circuit breaker selection (per service)
-- Configurable failure rate and slow call thresholds
-- Automatic state transitions (closed → open → half-open)
-- Fallback responses with retry-after headers
-- Sliding window for failure tracking (count-based or time-based)
+- Validates tenant subscription features before routing requests
+- Communicates with billing service to retrieve tenant feature context
+- Supports boolean features, quota-based features, limit-based features, and tier-based features
+- Fail-open policy on validation service errors (requests proceed if billing service is unavailable)
+- Feature context propagated to downstream services via exchange attributes
 
 ### 🏢 Multi-Tenancy Support
 
 - Priority-based tenant extraction (JWT claims → X-Tenant-ID header)
-- Tenant-specific rate limit quotas with default fallback
-- Tenant context stored in exchange attributes
-- Tenant ID propagation via X-Tenant-ID header
-- Tenant-scoped Redis keys for isolation
-- Tenant quota monitoring service for analytics
+- Tenant context stored in exchange attributes and propagated downstream
+- Tenant ID forwarded via X-Tenant-ID header to all services
 
 ### 🎯 Observability & Monitoring
 
-- Correlation ID generation and propagation
-- OpenTelemetry distributed tracing
+- Correlation ID generation and propagation across all requests
+- OpenTelemetry distributed tracing with OTLP export
 - Prometheus metrics for gateway operations
-- Structured JSON logging with MDC context
-- Request/response logging with correlation tracking
+- Structured JSON logging with MDC context (user ID, tenant ID, correlation ID, trace ID)
+- Custom health indicators for Redis and downstream user service
 
 ## Architecture Patterns
 
 ### Reactive Filter Chain
 
-<details>
-<summary>Click to expand reactive filter chain</summary>
-
 ```
 Request Flow:
-1. CorrelationIdFilter        → Generate/extract correlation ID
-2. TenantExtractionFilter     → Extract tenant context
-3. JwtAuthenticationFilter    → Validate JWT and extract user context
-4. ApiVersionRoutingFilter    → Handle API versioning
-5. TenantRateLimitingFilter   → Apply rate limits
-6. CircuitBreakerFilter       → Fault tolerance
-7. RequestTransformationFilter → Enrich headers
+1. CorrelationIdFilter          → Generate/extract correlation ID, set MDC context
+2. TenantExtractionFilter       → Extract tenant context from JWT or header
+3. JwtAuthenticationFilter      → Validate JWT and extract user context
+4. UnifiedMicroserviceAccessFilter → Enforce route-level authority requirements
+5. ApiVersionRoutingFilter      → Handle API versioning
+6. FeatureAccessFilter          → Validate tenant feature access
+7. RequestTransformationFilter  → Enrich headers with user/tenant context
 8. Route to downstream service
-9. ResponseTransformationFilter → Clean response headers
+9. ResponseTransformationFilter → Add security headers, remove internal headers
 ```
-
-</details>
-
-### Gateway Patterns
-
-- Gateway Aggregation pattern for unified API entry
-- Filter Chain pattern for request processing
-- Circuit Breaker pattern for fault tolerance
-- Rate Limiting with sliding window algorithm
-- Context Propagation via headers
-- Service Discovery ready (configurable)
 
 ### API Design
 
-- Centralized routing configuration in YAML
+- Centralized routing configuration in YAML and profile-based Java config
 - Path-based and header-based API versioning
 - Public vs protected endpoint segregation
-- OpenAPI documentation aggregation
+- OpenAPI documentation aggregation from all downstream services
 - Consistent error responses with Problem Details (RFC 7807)
 
 ## Technical Highlights
@@ -132,99 +102,42 @@ Request Flow:
 ### Reactive Programming
 
 - Non-blocking I/O with Project Reactor (Mono/Flux)
-- Reactive Redis operations with ReactiveStringRedisTemplate
-- ReactiveSecurityContextHolder for JWT validation
-- Backpressure support for high load
-- Efficient resource utilization (no thread blocking)
-- Reactive filter chains with transformDeferred and flatMap
-
-### Performance Optimization
-
-- Redis connection pooling
-- Reactive filter chains (no thread blocking)
-- Efficient JWT validation with caching
-- Sliding window rate limiting algorithm
-- Circuit breaker prevents cascading failures
+- Reactive Redis operations with `ReactiveStringRedisTemplate`
+- `ReactiveSecurityContextHolder` for JWT validation
+- Reactive filter chains with `flatMap` and `transformDeferred`
 
 ### Security Features
 
-- JWT validation with RSA256 public key
-- JWK Set endpoint integration
+- JWT validation with RSA256 public key via JWK Set URI
 - CORS configuration per environment
-- Security header injection
+- Security header injection on all responses
 - Internal header removal from responses
+- Route protection with authority-based access control
 
 ### Configuration Management
 
-- Type-safe configuration with Java records (IqScaffoldProperties)
+- Type-safe configuration with Java records (`IqScaffoldProperties`)
 - Nested record structure for organized config hierarchy
-- Bean Validation annotations (@Min, @Max, @NotBlank, @Pattern)
+- Bean Validation annotations (`@Min`, `@Max`, `@NotBlank`, `@Pattern`)
 - Environment-specific profiles (local, staging, production)
-- Externalized service routing configuration
-- Redis-backed distributed state with connection pooling
+- Profile-based route configuration (crm, billing profiles)
 
 ### Operational Features
 
 - Docker containerization
 - Health checks and actuator endpoints
-- Graceful shutdown handling
 - Structured JSON logging
 - Prometheus metrics export
+- OpenAPI documentation aggregation via SpringDoc
 
 ## Use Cases Implemented
 
 ### Request Routing
 
-- Route requests to user-service (/api/v1/auth/**, /api/v1/users/me, /api/v1/admin/**)
-- Route requests to billing-service (/api/v1/billing/**, /api/v1/admin/billing/**)
-- Dynamic service registration support
-- Load balancing across service instances
-- Health check-based routing
-
-### Billing Service Integration
-
-<details>
-<summary>Click to expand billing service integration</summary>
-
-The gateway provides comprehensive routing and rate limiting for the billing service:
-
-#### Payment Operations
-
-- `POST /api/v1/billing/payments/intent` - Create payment intents (30 req/min)
-- `GET /api/v1/billing/payments/**` - Payment queries (60 req/min)
-- `POST /api/v1/billing/payments/*/refund` - Process refunds (10 req/min)
-
-#### Subscription Management
-
-- `POST /api/v1/billing/subscriptions` - Create subscriptions (40 req/min)
-- `GET /api/v1/billing/subscriptions/**` - Subscription queries (50 req/min)
-- `POST /api/v1/billing/subscriptions/*/cancel` - Cancel subscriptions (10 req/min)
-- `POST /api/v1/billing/subscriptions/*/pause` - Pause subscriptions (10 req/min)
-- `POST /api/v1/billing/subscriptions/*/resume` - Resume subscriptions (10 req/min)
-
-#### Subscription Plans (Public Access)
-
-- `GET /api/v1/billing/subscription-plans` - List all plans (public)
-- `GET /api/v1/billing/subscription-plans/active` - List active plans (public)
-
-#### Invoice Operations
-
-- `GET /api/v1/billing/invoices/**` - Invoice queries (50 req/min)
-
-#### Payout Operations
-
-- `GET /api/v1/billing/payouts/**` - Payout queries (40 req/min)
-
-#### Admin Operations
-
-- `POST /api/v1/admin/billing/merchants/**` - Merchant onboarding (20 req/min)
-- `GET/POST/PUT/DELETE /api/v1/admin/billing/gateway-config/**` - Gateway configuration (20 req/min)
-
-#### Webhook Processing (Public Access)
-
-- `POST /api/v1/billing/webhooks/**` - Payment provider webhooks (200 req/min, no auth required)
-
-</details>
+- Route requests to user-service (`/api/v1/auth/**`, `/api/v1/users/me`, `/api/v1/admin/**`)
+- Route requests to billing-service (`/api/v1/billing/**`, `/api/v1/features/**`, `/api/v1/internal/features/**`)
+- Route requests to CRM services (`/api/v1/leads/**`, `/api/v1/contacts/**`, `/api/v1/pipeline/**`, `/api/v1/companies/**`)
+- Profile-based route activation (crm, billing profiles)
 
 ### Authentication Flow
 
@@ -232,89 +145,43 @@ The gateway provides comprehensive routing and rate limiting for the billing ser
 - Extract user context (userId, username, email, authorities, permissions, organizationId)
 - Sanitize incoming headers to prevent spoofing (removes X-User-\*, X-Tenant-ID, X-Organization-ID)
 - Propagate user context to downstream services via headers:
-    - `X-User-ID`: User identifier
-    - `X-Username`: Username
-    - `X-User-Email`: User email address
-    - `X-User-Authorities`: Comma-separated list of authorities (e.g., "ADMIN,USER")
-    - `X-User-Permissions`: Comma-separated list of permissions
-    - `X-Tenant-ID`: Tenant identifier
-    - `X-Organization-ID`: Organization identifier
+  - `X-User-ID` - User identifier
+  - `X-Username` - Username
+  - `X-User-Email` - User email address
+  - `X-User-Authorities` - Comma-separated list of authorities (e.g., `ADMIN,USER`)
+  - `X-User-Permissions` - Comma-separated list of permissions
+  - `X-Tenant-ID` - Tenant identifier
+  - `X-Organization-ID` - Organization identifier
 - Skip authentication for public paths
-- Support for both access and refresh tokens
 
-### Rate Limiting
+### Feature Access Control
 
-- Global rate limiting per IP address
-- Tenant-specific rate limit quotas
-- Endpoint-specific policies (login: 10/min, signup: 5/min, books: 100/min)
-- Burst capacity for traffic spikes
-- Rate limit exceeded responses with retry headers
-
-### Circuit Breaking
-
-- Automatic failure detection
-- Open circuit after threshold breaches
-- Half-open state for recovery testing
-- Fallback responses during outages
-- Service health monitoring
+- Map endpoints to required subscription features via configuration
+- Validate tenant has access to required features before routing
+- Block requests to disabled features with `403 Forbidden`
+- Track feature usage asynchronously for billing analytics
 
 ### Multi-Tenancy
 
-- Extract tenant from X-Tenant-ID header
-- Extract tenant from JWT claims
-- Extract tenant from subdomain (tenant1.api.iqscaffold.com)
-- Tenant-scoped rate limiting
-- Tenant context propagation
+- Extract tenant from X-Tenant-ID header or JWT claims
+- Tenant context propagation to all downstream services
 
 ### Request Transformation
 
 - Add correlation ID to all requests
 - Sanitize incoming headers (remove X-User-\*, X-Tenant-ID, X-Organization-ID to prevent spoofing)
-- Propagate user context headers:
-    - `X-User-ID`: User identifier
-    - `X-Username`: Username
-    - `X-User-Email`: User email address
-    - `X-User-Authorities`: Comma-separated authorities
-    - `X-User-Permissions`: Comma-separated permissions
-    - `X-Organization-ID`: Organization identifier
-- Propagate tenant context (X-Tenant-ID)
+- Propagate user and tenant context headers
 - Add gateway version header
 - Remove internal headers from requests
 
 ### Response Transformation
 
-- Add security headers
+- Add security headers (X-Content-Type-Options, X-Frame-Options, etc.)
 - Add correlation headers for tracing
-- Remove internal service headers
+- Remove internal service headers from responses
 - Consistent error response format
-- CORS headers injection
 
 ## API Examples
-
-### Routing Configuration
-
-<details>
-<summary>Click to expand routing configuration</summary>
-
-Routes are defined in `application.yml`:
-
-```yaml
-spring:
-    cloud:
-        gateway:
-            routes:
-                - id: user-service-auth
-                  uri: http://iqscaffold-user-service:8080
-                  predicates:
-                      - Path=/api/v1/auth/**
-                  filters:
-                      - name: RequestRateLimiter
-                        args:
-                            redis-rate-limiter.replenish-rate: 60
-                            redis-rate-limiter.burst-capacity: 100
-```
-
-</details>
 
 ### Public Endpoints (No Authentication)
 
@@ -332,13 +199,12 @@ spring:
 
 #### Billing Service
 
-- `GET /api/v1/billing/subscription-plans` - List all subscription plans
-- `GET /api/v1/billing/subscription-plans/active` - List active subscription plans
+- `GET /api/v1/billing/subscription-plans/**` - List subscription plans
 - `POST /api/v1/billing/webhooks/**` - Payment provider webhooks (Stripe, PayPal, etc.)
 
 #### CRM Services
 
-- `POST /api/v1/crm/webhooks/**` - External CRM provider webhooks (HubSpot, Salesforce, etc.)
+- `POST /api/v1/crm/webhooks/**` - External CRM provider webhooks
 
 </details>
 
@@ -349,53 +215,31 @@ spring:
 
 #### User Service
 
-- `GET /api/v1/users/me` - Get current user
-- `POST /api/v1/auth/logout` - Logout current session
-- `GET /api/v1/admin/users` - List users (admin only)
+- `GET /api/v1/users/me` - Get current user profile
+- `GET /api/v1/admin/users` - List users (ADMIN role)
 
 #### Billing Service
 
-- `POST /api/v1/billing/payments/intent` - Create payment intent (USER role)
-- `GET /api/v1/billing/payments/{id}` - Get payment details (USER role)
-- `GET /api/v1/billing/payments` - List payments (BILLING_ADMIN+ role)
-- `POST /api/v1/billing/payments/{id}/refund` - Process refund (BILLING_ADMIN+ role)
-- `POST /api/v1/billing/subscriptions` - Create subscription (BILLING_ADMIN+ role)
-- `GET /api/v1/billing/subscriptions/**` - Subscription operations (USER+ role)
-- `GET /api/v1/billing/invoices/**` - Invoice operations (BILLING_ADMIN+ role)
-- `GET /api/v1/billing/payouts/**` - Payout operations (BILLING_ADMIN+ role)
-- `POST /api/v1/admin/billing/merchants/onboard` - Merchant onboarding (BILLING_ADMIN+ role)
-- `GET /api/v1/admin/billing/merchants/status/{orgId}` - Merchant status (BILLING_ADMIN+ role)
-- `GET/POST/PUT/DELETE /api/v1/admin/billing/gateway-config/**` - Gateway configuration (BILLING_ADMIN+ role)
+- `GET /api/v1/features/my-features` - Get tenant features
+- `GET /api/v1/features/enabled` - Get enabled features
+- `GET /api/v1/billing/subscriptions/**` - Subscription operations
+- `GET /api/v1/billing/payments/**` - Payment operations
+- `GET /api/v1/billing/invoices/**` - Invoice operations
+- `GET /api/v1/billing/payouts/**` - Payout operations
+- `GET /api/v1/admin/billing/**` - Admin billing operations (ADMIN role)
 
 #### CRM Services
 
-- `GET /api/v1/leads/**` - Lead management operations (USER+ role)
-- `POST /api/v1/leads` - Create new leads (USER+ role)
-- `PUT /api/v1/leads/{id}` - Update lead information (USER+ role)
-- `DELETE /api/v1/leads/{id}` - Delete leads (USER+ role)
-- `GET /api/v1/leads/{id}/activities/**` - Lead activity tracking (USER+ role)
-- `POST /api/v1/leads/{id}/activities` - Add lead activities (USER+ role)
-- `GET /api/v1/leads/{id}/notes/**` - Lead notes management (USER+ role)
-- `POST /api/v1/leads/{id}/notes` - Add lead notes (USER+ role)
-- `GET /api/v1/pipeline/**` - Pipeline management (USER+ role)
-- `POST /api/v1/pipeline` - Create pipeline stages (USER+ role)
-- `PUT /api/v1/pipeline/{id}` - Update pipeline configuration (USER+ role)
-- `GET /api/v1/pipeline/dashboard/**` - Pipeline dashboard data (USER+ role)
-- `GET /api/v1/pipeline/follow-ups/**` - Follow-up management (USER+ role)
-- `POST /api/v1/pipeline/follow-ups` - Create follow-up tasks (USER+ role)
-- `GET /api/v1/contacts/**` - Contact management (USER+ role)
-- `POST /api/v1/contacts` - Create new contacts (USER+ role)
-- `PUT /api/v1/contacts/{id}` - Update contact information (USER+ role)
-- `DELETE /api/v1/contacts/{id}` - Delete contacts (USER+ role)
-- `GET /api/v1/companies/**` - Company management (USER+ role)
-- `POST /api/v1/companies` - Create new companies (USER+ role)
-- `GET /api/v1/crm/webhooks` - CRM webhook management (ADMIN+ role)
+- `GET /api/v1/leads/**` - Lead management (CRM_ACCESS role)
+- `GET /api/v1/pipeline/**` - Pipeline management (CRM_ACCESS role)
+- `GET /api/v1/contacts/**` - Contact management (CRM_ACCESS role)
+- `GET /api/v1/companies/**` - Company management (CRM_ACCESS role)
 
 </details>
 
 ### Monitoring Endpoints
 
-- `/actuator/health` - Health status
+- `/actuator/health` - Health status (Redis + user service health indicators)
 - `/actuator/metrics` - Application metrics
 - `/actuator/prometheus` - Prometheus metrics
 - `/swagger-ui.html` - Aggregated API documentation
@@ -404,77 +248,35 @@ spring:
 
 A Grafana dashboard is available at `docs/monitoring/grafana-dashboard.json` providing real-time visibility into:
 
-- Gateway Health: uptime, request rate, error rate, p95 latency, total routed requests
-- Routing & Rate Limiting: request rate by route, gateway response time percentiles (p50/p95/p99)
-- JVM Memory: heap/non-heap usage, GC pause time, thread count
-- Circuit Breaker & Resilience: circuit breaker states (closed/open/half-open), retry attempts
-- Gateway Routing Metrics: rate limiting events, route success vs failures, downstream service latency
+- Gateway health: uptime, request rate, error rate, p95 latency
+- Routing metrics: request rate by route, response time percentiles (p50/p95/p99)
+- JVM memory: heap/non-heap usage, GC pause time, thread count
 
-The dashboard uses Prometheus as the data source and auto-refreshes every 30 seconds. Import it into your Grafana instance to monitor gateway performance and health.
-
-### Rate Limit Response
-
-<details>
-<summary>Click to expand rate limit response example</summary>
-
-When rate limit is exceeded:
-
-```json
-{
-    "type": "/problems/rate_limit_exceeded",
-    "title": "Too Many Requests",
-    "status": 429,
-    "detail": "Tenant rate limit exceeded",
-    "instance": "/api/v1/auth/login",
-    "code": "RATE_LIMIT_EXCEEDED",
-    "timestamp": "2024-01-15T10:30:00Z",
-    "retryAfter": 60,
-    "correlationId": "1634567890-abc12345",
-    "tenantId": "tenant-123"
-}
-```
-
-Headers:
-
-- `X-RateLimit-Limit: 60`
-- `X-RateLimit-Remaining: 0`
-- `X-RateLimit-Reset: 1634568790`
-- `Retry-After: 60`
-
-</details>
+The dashboard uses Prometheus as the data source and auto-refreshes every 30 seconds.
 
 ## Learning Points
 
 This implementation serves as a reference for:
 
 - Building reactive API gateways with Spring Cloud Gateway
-- Implementing distributed rate limiting with Redis
 - JWT validation and user context propagation
-- Circuit breaker patterns for fault tolerance
-- Multi-tenant request routing and isolation
+- Feature-based access control at the gateway level
+- Multi-tenant request routing and context isolation
 - Correlation ID tracking across services
 - API versioning strategies (path and header-based)
 - Request/response transformation patterns
 - Reactive programming with Project Reactor
-- Observability in distributed systems
+- Observability in distributed systems (tracing, metrics, structured logging)
+- Type-safe configuration with Java records and Bean Validation
 
 ## Adapting for Your Domain
 
-This gateway service demonstrates patterns applicable to various scenarios:
-
 ### API Gateway Patterns
 
+- SaaS applications with tenant isolation and feature gating
+- Microservices architectures requiring a unified entry point
+- Mobile app backends with centralized authentication
 - E-commerce platforms with multiple backend services
-- SaaS applications with tenant isolation
-- Microservices architectures requiring unified entry point
-- Mobile app backends with rate limiting needs
-
-### Rate Limiting Strategies
-
-- Public API protection from abuse
-- Tenant-based quota enforcement
-- Endpoint-specific throttling policies
-- DDoS mitigation at gateway level
 
 ### Authentication Gateway
 
@@ -483,21 +285,17 @@ This gateway service demonstrates patterns applicable to various scenarios:
 - Multi-tenant access control
 - Public vs protected endpoint segregation
 
-### Circuit Breaker Patterns
+### Feature Access Control
 
-- Fault tolerance for downstream service failures
-- Graceful degradation during outages
-- Automatic recovery detection
-- Fallback response strategies
+- Subscription-based feature gating at the gateway
+- Quota and limit enforcement before reaching services
+- Usage tracking for billing analytics
 
 ### Request Transformation
 
 - Header enrichment for downstream services
-- Correlation ID generation for tracing
-- User context propagation
-- Tenant context extraction and forwarding
-
-The patterns demonstrated here apply to any domain requiring centralized API management, distributed rate limiting, fault tolerance, and multi-tenant request routing.
+- Correlation ID generation for distributed tracing
+- User and tenant context extraction and forwarding
 
 ## Integration with Downstream Services
 
@@ -511,29 +309,21 @@ Downstream services receive enriched headers from the gateway:
 ```java
 @GetMapping("/protected")
 public ResponseEntity<?> protectedEndpoint(
-  @RequestHeader("X-User-ID") Long userId,
-  @RequestHeader("X-Username") String username,
-  @RequestHeader("X-User-Email") String email,
-  @RequestHeader("X-User-Authorities") String authorities,
-  @RequestHeader("X-User-Permissions") String permissions,
-  @RequestHeader("X-Tenant-ID") String tenantId,
-  @RequestHeader("X-Organization-ID") Long organizationId,
-  @RequestHeader("X-Correlation-ID") String correlationId
+    @RequestHeader("X-User-ID") Long userId,
+    @RequestHeader("X-Username") String username,
+    @RequestHeader("X-User-Email") String email,
+    @RequestHeader("X-User-Authorities") String authorities,
+    @RequestHeader("X-Tenant-ID") String tenantId,
+    @RequestHeader("X-Organization-ID") Long organizationId,
+    @RequestHeader("X-Correlation-ID") String correlationId
 ) {
-  // Parse authorities
-  List<String> authorityList = Arrays.asList(authorities.split(","));
-
-  // Use context for business logic
-  logger.info("Request from user {} (tenant: {}) with authorities: {} and correlation: {}", username, tenantId, authorityList, correlationId);
-
-  return ResponseEntity.ok(
-    /* response */
-  );
+    List<String> authorityList = Arrays.asList(authorities.split(","));
+    logger.info("Request from user {} (tenant: {}) correlation: {}", username, tenantId, correlationId);
+    return ResponseEntity.ok(/* response */);
 }
 ```
 
-**Security Note**: The gateway sanitizes all incoming user/tenant context headers before processing the request. This prevents clients from spoofing user identity by injecting malicious
-headers. Only the gateway can set these headers after JWT validation.
+**Security Note**: The gateway sanitizes all incoming user/tenant context headers before processing. This prevents clients from spoofing user identity by injecting malicious headers. Only the gateway sets these headers after JWT validation.
 
 </details>
 
@@ -546,49 +336,15 @@ Services can validate JWTs independently using the same JWK Set:
 
 ```yaml
 spring:
-    security:
-        oauth2:
-            resourceserver:
-                jwt:
-                    jwk-set-uri: http://iqscaffold-user-service:8080/.well-known/jwks.json
-```
-
-</details>
-
-### Rate Limit Headers
-
-<details>
-<summary>Click to expand rate limit headers example</summary>
-
-Services can check rate limit status from gateway responses:
-
-```java
-var rateLimitLimit = response.getHeaders().getFirst("X-RateLimit-Limit");
-
-var rateLimitRemaining = response.getHeaders().getFirst("X-RateLimit-Remaining");
-
-var rateLimitReset = response.getHeaders().getFirst("X-RateLimit-Reset");
-```
-
-</details>
-
-### Circuit Breaker Integration
-
-<details>
-<summary>Click to expand circuit breaker integration example</summary>
-
-Services should implement health checks for gateway monitoring:
-
-```java
-@GetMapping("/actuator/health")
-public ResponseEntity<Map<String, String>> health() {
-  return ResponseEntity.ok(Map.of("status", "UP"));
-}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          jwk-set-uri: http://iqscaffold-user-service:8080/.well-known/jwks.json
 ```
 
 </details>
 
 ---
 
-**Use this as a blueprint** for building reactive API gateways with intelligent routing, distributed rate limiting, circuit breaker patterns, and multi-tenant support in your microservices
-architecture.
+**Use this as a blueprint** for building reactive API gateways with intelligent routing, JWT authentication, feature-based access control, and multi-tenant support in your microservices architecture.

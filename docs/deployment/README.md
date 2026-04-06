@@ -17,9 +17,9 @@ The IQ Scaffold Gateway Service is deployed using Helm charts and automated CI/C
 | Environment | Namespace                   | Purpose                      |
 | ----------- | --------------------------- | ---------------------------- |
 | Dev         | `iqkvdev-dev-env`        | Development and WIP branches |
-| Test        | `iqscaffold-test-env`       | Feature branch testing       |
-| Staging     | `iqscaffold-staging-env`    | Pre-production validation    |
-| Production  | `iqscaffold-production-env` | Live production environment  |
+| Test        | `iqkvdev-test-env`       | Feature branch testing       |
+| Staging     | `iqkvdev-staging-env`    | Pre-production validation    |
+| Production  | `iqkvdev-production-env` | Live production environment  |
 
 ### Automated Deployment (CI/CD)
 
@@ -95,7 +95,7 @@ helm upgrade --install --atomic --wait --timeout 5m iqscaffold-gateway-service .
   --set image.tag=${DRONE_TAG} \
   --set infraServices.redis.password=${INFRA_REDIS_PASSWORD} \
   --set config.gateway.security.jwt.secret=${JWT_SECRET_KEY} \
-  --namespace iqscaffold-production-env
+  --namespace iqkvdev-production-env
 ```
 
 </details>
@@ -138,7 +138,7 @@ helm upgrade --install gateway-service ./ \
   --values values-production.yaml \
   --set infraServices.redis.password="${REDIS_PASSWORD}" \
   --set config.gateway.security.jwt.secret="${JWT_SECRET_KEY}" \
-  --namespace iqscaffold-production-env \
+  --namespace iqkvdev-production-env \
   --create-namespace
 ```
 
@@ -304,10 +304,10 @@ curl http://localhost:8080/actuator/health
 
 ```bash
 # Rollback to previous version
-helm rollback iqscaffold-gateway-service -n iqscaffold-production-env
+helm rollback iqscaffold-gateway-service -n iqkvdev-production-env
 
 # Or uninstall completely
-helm uninstall iqscaffold-gateway-service -n iqscaffold-production-env
+helm uninstall iqscaffold-gateway-service -n iqkvdev-production-env
 ```
 
 ### Security

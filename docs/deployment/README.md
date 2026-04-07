@@ -16,7 +16,7 @@ The IQ Scaffold Gateway Service is deployed using Helm charts and automated CI/C
 
 | Environment | Namespace                | Purpose                      |
 | ----------- | ------------------------ | ---------------------------- |
-| Dev         | `iqkvdev-dev-env`        | Development and WIP branches |
+| Dev         | `iqkvdev-test-env`        | Development and WIP branches |
 | Test        | `iqkvdev-test-env`       | Feature branch testing       |
 | Staging     | `iqkvdev-staging-env`    | Pre-production validation    |
 | Production  | `iqkvdev-production-env` | Live production environment  |
@@ -86,7 +86,7 @@ helm upgrade --install --atomic --wait --timeout 5m iqscaffold-gateway-service .
   --set image.tag=wip \
   --set infraServices.redis.password=${INFRA_REDIS_PASSWORD} \
   --set config.gateway.security.jwt.secret=${JWT_SECRET_KEY} \
-  --namespace iqkvdev-dev-env
+  --namespace iqkvdev-test-env
 
 # Production (Tagged releases)
 helm upgrade --install --atomic --wait --timeout 5m iqscaffold-gateway-service ./ \
@@ -114,7 +114,7 @@ helm upgrade --install gateway-service ./ \
   --values values-dev.yaml \
   --set infraServices.redis.password="your-redis-password" \
   --set config.gateway.security.jwt.secret="your-secure-symmetric-key" \
-  --namespace iqkvdev-dev-env \
+  --namespace iqkvdev-test-env \
   --create-namespace
 ```
 
@@ -127,7 +127,7 @@ helm upgrade --install gateway-service ./ \
   --values values-dev.yaml \
   --set infraServices.redis.password="${REDIS_PASSWORD}" \
   --set config.gateway.security.jwt.secret="${JWT_SECRET_KEY}" \
-  --namespace iqkvdev-dev-env \
+  --namespace iqkvdev-test-env \
   --create-namespace
 ```
 
@@ -236,7 +236,7 @@ Production deployments include:
     ```bash
     # Check Redis connectivity
     kubectl exec -it deployment/iqscaffold-gateway-service -n iqkvdev-test-env -- \
-      redis-cli -h iqkvdev-infra-redis-master.iqkvdev-dev-env.svc.cluster.local ping
+      redis-cli -h iqkvdev-infra-redis-master.iqkvdev-test-env.svc.cluster.local ping
     ```
 
 3. **JWT Validation Errors**

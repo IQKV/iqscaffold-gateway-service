@@ -16,7 +16,7 @@ The IQ Scaffold Gateway Service is deployed using Helm charts and automated CI/C
 
 | Environment | Namespace                | Purpose                      |
 | ----------- | ------------------------ | ---------------------------- |
-| Dev         | `iqkvdev-test-env`        | Development and WIP branches |
+| Dev         | `iqkvdev-test-env`       | Development and WIP branches |
 | Test        | `iqkvdev-test-env`       | Feature branch testing       |
 | Staging     | `iqkvdev-staging-env`    | Pre-production validation    |
 | Production  | `iqkvdev-production-env` | Live production environment  |

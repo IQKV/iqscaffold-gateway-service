@@ -9,20 +9,18 @@ WORKDIR /app
 
 # Copy Maven configuration files first for better layer caching
 COPY pom.xml .
-COPY iqscaffold-gateway-service/pom.xml iqscaffold-gateway-service/
 
 # Download dependencies in separate layer for better caching
-RUN mvn dependency:go-offline -pl iqscaffold-gateway-service -B
+RUN mvn dependency:go-offline -B
 
 # Copy source code
-COPY iqscaffold-gateway-service/src iqscaffold-gateway-service/src
+COPY src src
 
-# Build the application with optimizations
-RUN mvn clean package -pl iqscaffold-gateway-service -DskipTests -B && \
-    # Extract JAR layers for better Docker layer caching
+# Build the application and extract JAR layers for better Docker layer caching
+RUN mvn clean package -DskipTests -B && \
     mkdir -p target/dependency && \
-    cd iqscaffold-gateway-service/target && \
-    java -Djarmode=layertools -jar iqscaffold-gateway-service-*.jar extract --destination ../target/dependency
+    cd target && \
+    java -Djarmode=layertools -jar iqscaffold-gateway-service-*.jar extract --destination dependency
 
 # Production runtime stage optimized for reactive workloads
 FROM eclipse-temurin:21-jre-alpine

@@ -99,7 +99,6 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
-      target: builder
     image: iqscaffold/iqscaffold-gateway-service:dev
     container_name: iqscaffold-gateway-service-dev
     environment:
@@ -163,7 +162,7 @@ services:
     restart: unless-stopped
     volumes:
       - gateway_logs:/app/logs
-      - gateway_tmp:/tmp
+      - gateway_tmp:/app/tmp
     deploy:
       resources:
         limits:

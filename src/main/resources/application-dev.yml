@@ -14,7 +14,7 @@ spring:
 iqscaffold:
   cache:
     redis:
-      host: ${IQSCAFFOLD_CACHE_REDIS_HOST:iqkvdev-infra-redis-master.iqkvdev-test-env.svc.cluster.local}
+      host: ${IQSCAFFOLD_CACHE_REDIS_HOST:iqkvdev-infra-redis-master.iqkvdev-sit-env.svc.cluster.local}
       password: ${IQSCAFFOLD_CACHE_REDIS_PASSWORD:}
       enable-statistics: true
 

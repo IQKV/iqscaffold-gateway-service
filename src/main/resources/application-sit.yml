@@ -1,6 +1,6 @@
 # Development Environment Configuration (Kubernetes)
 # This configuration is for development deployment in Kubernetes cluster
-# Uses infrastructure services from iqkv-infra Helm chart
+# Uses infrastructure services from foundation-infra Helm chart
 
 server:
   forward-headers-strategy: FRAMEWORK  # Trust X-Forwarded-* headers from ingress controller
@@ -14,7 +14,7 @@ spring:
 iqscaffold:
   cache:
     redis:
-      host: ${IQSCAFFOLD_CACHE_REDIS_HOST:iqkv-infra-redis-master.iqkv-sit-env.svc.cluster.local}
+      host: ${IQSCAFFOLD_CACHE_REDIS_HOST:foundation-infra-redis-master.iqkv-sit-env.svc.cluster.local}
       password: ${IQSCAFFOLD_CACHE_REDIS_PASSWORD:}
       enable-statistics: true
 

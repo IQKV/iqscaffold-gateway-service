@@ -16,9 +16,9 @@ The IQ Scaffold Gateway Service is deployed using Helm charts and automated CI/C
 
 | Environment | Namespace         | Purpose                     |
 | ----------- | ----------------- | --------------------------- |
-| Test        | `iqkvdev-sit-env` | Feature branch testing      |
-| Staging     | `iqkvdev-uat-env` | Pre-production validation   |
-| Production  | `iqkvdev-prd-env` | Live production environment |
+| Test        | `iqkv-sit-env` | Feature branch testing      |
+| Staging     | `iqkv-uat-env` | Pre-production validation   |
+| Production  | `iqkv-prd-env` | Live production environment |
 
 ### Automated Deployment (CI/CD)
 
@@ -85,7 +85,7 @@ helm upgrade --install --atomic --wait --timeout 5m iqscaffold-gateway-service .
   --set image.tag=wip \
   --set infraServices.redis.password=${INFRA_REDIS_PASSWORD} \
   --set config.gateway.security.jwt.secret=${JWT_SECRET_KEY} \
-  --namespace iqkvdev-sit-env
+  --namespace iqkv-sit-env
 
 # Production (Tagged releases)
 helm upgrade --install --atomic --wait --timeout 5m iqscaffold-gateway-service ./ \
@@ -94,7 +94,7 @@ helm upgrade --install --atomic --wait --timeout 5m iqscaffold-gateway-service .
   --set image.tag=${DRONE_TAG} \
   --set infraServices.redis.password=${INFRA_REDIS_PASSWORD} \
   --set config.gateway.security.jwt.secret=${JWT_SECRET_KEY} \
-  --namespace iqkvdev-prd-env
+  --namespace iqkv-prd-env
 ```
 
 </details>
@@ -113,7 +113,7 @@ helm upgrade --install gateway-service ./ \
   --values values-sit.yaml \
   --set infraServices.redis.password="your-redis-password" \
   --set config.gateway.security.jwt.secret="your-secure-symmetric-key" \
-  --namespace iqkvdev-sit-env \
+  --namespace iqkv-sit-env \
   --create-namespace
 ```
 
@@ -126,7 +126,7 @@ helm upgrade --install gateway-service ./ \
   --values values-sit.yaml \
   --set infraServices.redis.password="${REDIS_PASSWORD}" \
   --set config.gateway.security.jwt.secret="${JWT_SECRET_KEY}" \
-  --namespace iqkvdev-sit-env \
+  --namespace iqkv-sit-env \
   --create-namespace
 ```
 
@@ -137,7 +137,7 @@ helm upgrade --install gateway-service ./ \
   --values values-prd.yaml \
   --set infraServices.redis.password="${REDIS_PASSWORD}" \
   --set config.gateway.security.jwt.secret="${JWT_SECRET_KEY}" \
-  --namespace iqkvdev-prd-env \
+  --namespace iqkv-prd-env \
   --create-namespace
 ```
 
@@ -227,39 +227,39 @@ Production deployments include:
 1. **Downstream Service Connection Failures**
 
     ```bash
-    kubectl logs deployment/iqscaffold-gateway-service -n iqkvdev-sit-env
+    kubectl logs deployment/iqscaffold-gateway-service -n iqkv-sit-env
     ```
 
 2. **Redis Connection Issues**
 
     ```bash
     # Check Redis connectivity
-    kubectl exec -it deployment/iqscaffold-gateway-service -n iqkvdev-sit-env -- \
-      redis-cli -h iqkvdev-infra-redis-master.iqkvdev-sit-env.svc.cluster.local ping
+    kubectl exec -it deployment/iqscaffold-gateway-service -n iqkv-sit-env -- \
+      redis-cli -h iqkv-infra-redis-master.iqkv-sit-env.svc.cluster.local ping
     ```
 
 3. **JWT Validation Errors**
 
     ```bash
-    kubectl logs deployment/iqscaffold-gateway-service -n iqkvdev-sit-env | grep "JWT"
+    kubectl logs deployment/iqscaffold-gateway-service -n iqkv-sit-env | grep "JWT"
     ```
 
 4. **Rate Limiting Issues**
 
     ```bash
-    kubectl logs deployment/iqscaffold-gateway-service -n iqkvdev-sit-env | grep "rate"
+    kubectl logs deployment/iqscaffold-gateway-service -n iqkv-sit-env | grep "rate"
     ```
 
 5. **Check Configuration**
 
     ```bash
-    kubectl describe configmap iqscaffold-gateway-service-config -n iqkvdev-sit-env
-    kubectl describe secret iqscaffold-gateway-service-secrets -n iqkvdev-sit-env
+    kubectl describe configmap iqscaffold-gateway-service-config -n iqkv-sit-env
+    kubectl describe secret iqscaffold-gateway-service-secrets -n iqkv-sit-env
     ```
 
 6. **Test Health Endpoints**
     ```bash
-    kubectl port-forward deployment/iqscaffold-gateway-service 8081:8081 -n iqkvdev-sit-env
+    kubectl port-forward deployment/iqscaffold-gateway-service 8081:8081 -n iqkv-sit-env
     curl http://localhost:8081/actuator/health
     ```
 
@@ -269,10 +269,10 @@ If deployments fail due to missing secrets, check:
 
 ```bash
 # List all secrets in namespace
-kubectl get secrets -n iqkvdev-sit-env
+kubectl get secrets -n iqkv-sit-env
 
 # Check specific secret content
-kubectl get secret iqscaffold-gateway-service-secrets -n iqkvdev-sit-env -o yaml
+kubectl get secret iqscaffold-gateway-service-secrets -n iqkv-sit-env -o yaml
 
 # Verify Drone CI secrets are configured
 drone secret ls --repository IQKV/iqscaffold-gateway-service
@@ -282,7 +282,7 @@ drone secret ls --repository IQKV/iqscaffold-gateway-service
 
 ```bash
 # Check circuit breaker metrics
-kubectl port-forward deployment/iqscaffold-gateway-service 8081:8081 -n iqkvdev-sit-env
+kubectl port-forward deployment/iqscaffold-gateway-service 8081:8081 -n iqkv-sit-env
 curl http://localhost:8081/actuator/metrics/resilience4j.circuitbreaker.state
 ```
 
@@ -290,7 +290,7 @@ curl http://localhost:8081/actuator/metrics/resilience4j.circuitbreaker.state
 
 ```bash
 # Test gateway routing through port-forward
-kubectl port-forward deployment/iqscaffold-gateway-service 8080:8080 -n iqkvdev-sit-env
+kubectl port-forward deployment/iqscaffold-gateway-service 8080:8080 -n iqkv-sit-env
 
 # Test user service routing
 curl -H "Authorization: Bearer your-jwt-token" http://localhost:8080/api/v1/users/profile
@@ -303,10 +303,10 @@ curl http://localhost:8080/actuator/health
 
 ```bash
 # Rollback to previous version
-helm rollback iqscaffold-gateway-service -n iqkvdev-prd-env
+helm rollback iqscaffold-gateway-service -n iqkv-prd-env
 
 # Or uninstall completely
-helm uninstall iqscaffold-gateway-service -n iqkvdev-prd-env
+helm uninstall iqscaffold-gateway-service -n iqkv-prd-env
 ```
 
 ### Security

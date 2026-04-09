@@ -164,7 +164,7 @@
                         <pattern>
                             {
                             "service": "iqscaffold-gateway-service",
-                            "environment": "production",
+                            "environment": "prd",
                             "thread": "%thread"
                             }
                         </pattern>
@@ -194,7 +194,7 @@
                         <pattern>
                             {
                             "service": "iqscaffold-gateway-service",
-                            "environment": "production",
+                            "environment": "prd",
                             "thread": "%thread"
                             }
                         </pattern>
@@ -225,7 +225,7 @@
                         <pattern>
                             {
                             "service": "iqscaffold-gateway-service",
-                            "environment": "production",
+                            "environment": "prd",
                             "type": "security",
                             "thread": "%thread"
                             }
@@ -256,7 +256,7 @@
                         <pattern>
                             {
                             "service": "iqscaffold-gateway-service",
-                            "environment": "production",
+                            "environment": "prd",
                             "type": "performance",
                             "thread": "%thread"
                             }

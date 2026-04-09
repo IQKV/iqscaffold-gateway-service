@@ -50,7 +50,7 @@ iqscaffold:
       request:
         additional-headers:
           X-Gateway-Version: "1.0.0"
-          X-Environment: "production"
+          X-Environment: "prd"
 
   observability:
     tracing:

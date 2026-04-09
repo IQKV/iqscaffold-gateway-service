@@ -60,7 +60,7 @@ iqscaffold:
       jwt:
         access-token-expiry: PT15M
         refresh-token-expiry: P7D
-        issuer: "iqkvdev-test"
+        issuer: "iqkv-test"
         audience: "iqscaffold-api"
         algorithm: "RS256"
         jwk-set-uri: "http://iqscaffold-user-service/api/v1/auth/.well-known/jwks.json"

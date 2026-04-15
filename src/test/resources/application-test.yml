@@ -17,7 +17,7 @@ spring:
       repositories:
         enabled: false  # Disable Redis repositories
 
-# Minimal IQ  Key Value Gateway Test Configuration
+# Minimal IQ Key Value Gateway Test Configuration
 iqscaffold:
   cache:
     redis:

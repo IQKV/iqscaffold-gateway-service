@@ -3,7 +3,7 @@
         {
             "name": "iqscaffold",
             "type": "com.iqscaffold.gatewayservice.config.IqScaffoldProperties",
-            "description": "Root configuration properties for IQ  Key Value Gateway Service"
+            "description": "Root configuration properties for IQ Key Value Gateway Service"
         },
         {
             "name": "iqscaffold.cache",

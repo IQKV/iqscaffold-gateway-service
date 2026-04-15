@@ -14,7 +14,7 @@
     <artifactId>iqscaffold-gateway-service</artifactId>
     <packaging>jar</packaging>
 
-    <name>IQ  Key Value Gateway Service</name>
+    <name>IQ Key Value Gateway Service</name>
     <description>API Gateway with routing, authentication, and rate limiting</description>
     <properties>
         <spring-boot.run.jvmArguments>-Duser.timezone=UTC</spring-boot.run.jvmArguments>

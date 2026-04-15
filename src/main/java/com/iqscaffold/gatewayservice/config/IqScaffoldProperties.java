@@ -19,7 +19,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 /**
- * Configuration properties for IQ  Key Value Gateway Service. All custom
+ * Configuration properties for IQ Key Value Gateway Service. All custom
  * configuration properties use the 'iqscaffold.' prefix for clear namespace
  * separation.
  */

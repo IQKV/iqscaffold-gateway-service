@@ -27,10 +27,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @OpenAPIDefinition(
     info = @Info(
-        title = "IQ  Key Value API Gateway",
+        title = "IQ Key Value API Gateway",
         version = "1.0.0",
         description = """
-            API Gateway for the IQ  Key Value microservices platform with intelligent routing, 
+            API Gateway for the IQ Key Value microservices platform with intelligent routing, 
             authentication, rate limiting, and circuit breaker patterns.
             
             ## Features
@@ -50,7 +50,7 @@ import org.springframework.context.annotation.Configuration;
             Use the dropdown in the top-right corner to switch between different service APIs.
             """,
         contact = @Contact(
-            name = "IQ  Key Value Platform Team",
+            name = "IQ Key Value Platform Team",
             email = "api-support@iqscaffold.com",
             url = "https://docs.iqscaffold.com"
         ),

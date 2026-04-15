@@ -2,7 +2,7 @@
 
 ### Overview
 
-The IQ  Key Value Gateway Service is deployed using Helm charts and automated CI/CD pipelines. The service provides API gateway functionality with routing, JWT authentication, rate limiting, circuit breakers, and multi-service orchestration for the microservices platform.
+The IQ Key Value Gateway Service is deployed using Helm charts and automated CI/CD pipelines. The service provides API gateway functionality with routing, JWT authentication, rate limiting, circuit breakers, and multi-service orchestration for the microservices platform.
 
 ### Prerequisites
 

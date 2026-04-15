@@ -1,4 +1,4 @@
-# Feature Access Configuration for IQ  Key Value Gateway
+# Feature Access Configuration for IQ Key Value Gateway
 # This configuration maps API endpoints to required features for subscription-based access control
 
 iqscaffold:

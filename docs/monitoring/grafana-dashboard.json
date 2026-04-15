@@ -15,7 +15,7 @@
             }
         ]
     },
-    "description": "IQ Scaffold Gateway Service - API Gateway monitoring with routing, rate limiting, and circuit breaker metrics",
+    "description": "IQ  Key Value Gateway Service - API Gateway monitoring with routing, rate limiting, and circuit breaker metrics",
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 1,
@@ -1771,7 +1771,7 @@
     },
     "timepicker": {},
     "timezone": "",
-    "title": "IQ Scaffold Gateway Service - API Gateway Metrics",
+    "title": "IQ  Key Value Gateway Service - API Gateway Metrics",
     "uid": "iqscaffold-gateway-service",
     "version": 1,
     "weekStart": ""

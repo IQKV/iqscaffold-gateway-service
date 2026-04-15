@@ -1,4 +1,4 @@
-# 🌐 IQ Scaffold Gateway Service
+# 🌐 IQ  Key Value Gateway Service
 
 > Reactive API gateway providing intelligent routing, JWT authentication, tenant context propagation, feature-based access control, and observability across microservices.
 
@@ -18,7 +18,7 @@
 
 ## Business Purpose
 
-A centralized entry point for the IQ Scaffold microservices platform that handles:
+A centralized entry point for the IQ  Key Value microservices platform that handles:
 
 - **Intelligent Routing** - Dynamic request routing to downstream services with path-based and header-based versioning
 - **Authentication Gateway** - JWT validation and user context propagation to all protected services
@@ -29,7 +29,7 @@ A centralized entry point for the IQ Scaffold microservices platform that handle
 
 ## Overview
 
-This is the front door to the IQ Scaffold microservices ecosystem. Built on Spring Cloud Gateway with reactive programming, it provides a single entry point for all client requests while handling cross-cutting concerns like authentication, authorization, feature validation, and observability.
+This is the front door to the IQ  Key Value microservices ecosystem. Built on Spring Cloud Gateway with reactive programming, it provides a single entry point for all client requests while handling cross-cutting concerns like authentication, authorization, feature validation, and observability.
 
 ## What It Demonstrates
 

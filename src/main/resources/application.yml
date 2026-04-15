@@ -89,7 +89,7 @@ spring:
               filters:
                 - StripPrefix=${iqscaffold.gateway.routing.api-prefix.strip-count:0}
 
-# IQ Scaffold Gateway Configuration
+# IQ  Key Value Gateway Configuration
 iqscaffold:
   # Internationalization configuration
   i18n:

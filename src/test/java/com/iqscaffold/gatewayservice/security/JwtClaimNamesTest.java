@@ -20,7 +20,7 @@ class JwtClaimNamesTest {
   }
 
   @Test
-  @DisplayName("Should have correct custom IQ Scaffold claim names")
+  @DisplayName("Should have correct custom IQ  Key Value claim names")
   void shouldHaveCorrectCustomIqScaffoldClaimNames() {
     assertThat(JwtClaimNames.TYPE).isEqualTo("type");
     assertThat(JwtClaimNames.USER_ID).isEqualTo("userId");

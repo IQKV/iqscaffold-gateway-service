@@ -772,7 +772,7 @@
                 },
                 {
                     "value": "",
-                    "description": "No prefix (production with api.iqscaffold.com)"
+                    "description": "No prefix (production with api.iqkv.dev)"
                 },
                 {
                     "value": "/v1",
@@ -822,7 +822,7 @@
                     "description": "Docker/Kubernetes User Service JWK endpoint"
                 },
                 {
-                    "value": "https://api.iqscaffold.com/.well-known/jwks.json",
+                    "value": "https://api.iqkv.dev/.well-known/jwks.json",
                     "description": "Production User Service JWK endpoint"
                 }
             ]
@@ -874,7 +874,7 @@
                     "description": "Allow all origins (not recommended for production)"
                 },
                 {
-                    "value": "https://app.iqscaffold.com",
+                    "value": "https://app.iqkv.dev",
                     "description": "Production frontend"
                 },
                 {
@@ -987,7 +987,7 @@
                     "description": "Docker/Kubernetes Redis service"
                 },
                 {
-                    "value": "redis.iqscaffold.com",
+                    "value": "redis.iqkv.dev",
                     "description": "Production Redis endpoint"
                 }
             ]

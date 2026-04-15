@@ -82,7 +82,7 @@ public record IqScaffoldProperties(
        * - Development/Staging: enabled=true, prefix="/api", stripCount=0 (keep /api
        * in URLs)
        * - Production: enabled=true, prefix="", stripCount=0 (no prefix, deployed on
-       * api.iqscaffold.com)
+       * api.iqkv.dev)
        * - Strip mode: enabled=true, prefix="/api", stripCount=1 (accept
        * /api/v1/admin/users, forward as /v1/admin/users)
        */

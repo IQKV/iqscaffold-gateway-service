@@ -48,7 +48,7 @@ class DownstreamErrorResponseFilterTest {
         HttpStatus.CONFLICT,
         "Username already exists"
     );
-    problemDetail.setType(URI.create("https://problems.iqscaffold.com/user-registration"));
+    problemDetail.setType(URI.create("https://problems.iqkv.dev/user-registration"));
     problemDetail.setTitle("User registration failed");
     problemDetail.setInstance(URI.create("/api/v1/auth/signup"));
     problemDetail.setProperty("path", "/api/v1/auth/signup");
@@ -57,7 +57,7 @@ class DownstreamErrorResponseFilterTest {
     
     // Simulate downstream response with type information
     String downstreamJson = "[\"org.springframework.http.ProblemDetail\"," + 
-        "{\"type\":\"https://problems.iqscaffold.com/user-registration\"," +
+        "{\"type\":\"https://problems.iqkv.dev/user-registration\"," +
         "\"title\":\"User registration failed\"," +
         "\"status\":409," +
         "\"detail\":\"Username already exists\"," +

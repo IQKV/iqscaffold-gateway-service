@@ -147,7 +147,7 @@ iqscaffold:
   
   gateway:
     routing:
-      # API prefix configuration - allows stripping /api prefix when deployed on api.iqscaffold.com
+      # API prefix configuration - allows stripping /api prefix when deployed on api.iqkv.dev
       api-prefix:
         enabled: true
         prefix: /api
